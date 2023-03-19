@@ -1,0 +1,9 @@
+## 🌈 Redis란?
+
+<br>
+
+* 레디스는 "<mark>RE</mark>mote <mark>Di</mark>tionary <mark>S</mark>ystem"의 약자로 메모리 기반의 key/value store이다.
+
+* 고성능 저장소로서 list, hash, set, sorted set등의 여러가지 자료구조를 지원함.
+
+* 레디스는 메모리에 위치해있기 때문에 디스크보다 훨씬 빨라 캐시 데이터 저장소의 역할을 주로 한다.(RDBMS의 캐시 솔루션)
