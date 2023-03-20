@@ -1,0 +1,32 @@
+server:
+  port: 5000
+
+spring:
+  application:
+    name: place
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/pickpack?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+    username: root # MySQL DB Username
+    password: ssafy # MySQL DB password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+
+#cloud:
+#  aws:
+#    credentials:   # ??? ??
+#      access-key:  # ????? ??
+#      secret-key:  # ????? ??
+#    s3:
+#      bucket: pickpack
+#    region:
+#      static: ap-northeast-2
+#    stack:
+#      auto: false
+#
