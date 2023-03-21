@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/item/city")
+@RequestMapping("/item")
 public class CityController {
     private final CityService cityService;
 
