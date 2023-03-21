@@ -26,5 +26,7 @@ public class Item {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Chatroom> chatroomList = new ArrayList<>();
+
+
 }
 
