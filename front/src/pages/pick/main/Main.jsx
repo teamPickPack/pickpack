@@ -1,7 +1,7 @@
 const Main = () => {
   return (
     <>
-      <div>메인입니다.</div>
+      <div>메인!!!입니다.</div>
     </>
   );
 };
