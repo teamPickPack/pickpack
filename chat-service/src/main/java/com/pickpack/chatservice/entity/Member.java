@@ -20,7 +20,7 @@ public class Member {
     private String nickname;
 
     @OneToMany(mappedBy = "member")
-    private List<SoldOut> soldOutList;
+    private List<Soldout> soldOutList;
     @OneToMany(mappedBy = "member")
     private List<MemberChatroom> memberChatroomList;
 
