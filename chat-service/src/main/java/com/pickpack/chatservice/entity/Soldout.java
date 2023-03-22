@@ -1,12 +1,9 @@
 package com.pickpack.chatservice.entity;
 
 import javax.persistence.*;
-import java.lang.module.FindException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-public class SoldOut {
+public class Soldout {
 
     @Id
     @Column(name = "soldout_id")
@@ -14,11 +11,11 @@ public class SoldOut {
     private Long id;
 
     @OneToOne(fetch=FetchType.LAZY)
-    @Column(name="item_id")
+    @JoinColumn(name="item_id")
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name="member_id")
+    @JoinColumn(name="member_id")
     private Member member;
 
 
