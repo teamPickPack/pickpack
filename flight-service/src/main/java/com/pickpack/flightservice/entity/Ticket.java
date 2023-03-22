@@ -7,8 +7,8 @@ import java.util.List;
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ticketId")
-    private String id;
+    @Column(name = "ticket_id")
+    private Long id;
     private int price;
     private int waypointNum;
     private String registTime;
@@ -20,7 +20,6 @@ public class Ticket {
     private String arrTime;
     private String arrDate;
     private int plusDate;
-
     @OneToMany(mappedBy = "ticket")
     private List<Flight> flightList;
 }
