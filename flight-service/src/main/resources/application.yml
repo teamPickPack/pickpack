@@ -26,6 +26,7 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
+    register-fetch-interval-seconds: 10
     register-with-eureka: true
     fetch-registry: true
     service-url:
