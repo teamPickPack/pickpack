@@ -6,9 +6,8 @@ import javax.persistence.*;
 public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ticketId")
-    private String id;
-    private String ticketId;
+    @Column(name = "flight_id")
+    private Long id;
     private String departure;
     private String destination;
     private String waitTime;
@@ -20,6 +19,6 @@ public class Flight {
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticketId")
+    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 }
