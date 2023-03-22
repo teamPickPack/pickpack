@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <property name="LOG_PATTERN" value="%-5level %d{yy-MM-dd HH:mm:ss}[%thread] [%logger{0}:%line] - %msg%n"/>
+    <property name="LOG_LEVEL" value="info"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %highlight([%-5level]) %cyan([%d{yyyy-MM-dd HH:mm:ss, ${logback.timezone:-Asia/Seoul}}]) %magenta([%thread]) : %green(%logger{2}) - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <!-- File에 로그 출력 세팅 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <!-- 출력패턴 설정-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 로그 전역 세팅 -->
+    <root level="${LOG_LEVEL}">
+        <!-- 위에 설정한 콘솔 설정 추가 -->
+        <appender-ref ref="CONSOLE"/>
+
+        <!-- 위에 설정한 파일 설정 추가 -->
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
