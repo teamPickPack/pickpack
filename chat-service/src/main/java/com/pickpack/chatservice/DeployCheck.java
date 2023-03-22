@@ -10,7 +10,7 @@ public class DeployCheck {
 
     @GetMapping("/check")
     public String welcomeCheck(){
-        return "welcome to the chat-service";
+        return "welcome to the 🎁 chat-service";
     }
 
 }
