@@ -2,9 +2,6 @@ server:
   port: 8000
 
 eureka:
-  instance:
-    lease-renewal-interval-in-seconds: 1
-    lease-expiration-duration-in-seconds: 2
   client:
     register-with-eureka: true
     fetch-registry: true
