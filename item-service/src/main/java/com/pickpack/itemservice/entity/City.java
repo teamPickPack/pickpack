@@ -13,4 +13,7 @@ public class City {
     private Long id;
     private String cityName;
 
+    private Float lat;
+    private Float lng;
+
 }
