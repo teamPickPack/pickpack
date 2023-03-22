@@ -12,7 +12,7 @@ import MySQLdb
 from pyspark.sql.types import StructType, StructField, BooleanType, DateType, IntegerType, LongType, StringType
 
 # data insert할 때 필요
-db_connection_str = 'mysql+pymysql://root:ssafy@j8b307.p.ssafy.io:3306/test?charset=utf8'
+db_connection_str = 'mysql+pymysql://root:@j8b307.p.ssafy.io:3306/test?charset=utf8'
 db_connection = create_engine(db_connection_str)
 
 conn = db_connection.connect()
