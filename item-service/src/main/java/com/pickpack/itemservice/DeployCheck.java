@@ -10,7 +10,7 @@ public class DeployCheck {
 
     @GetMapping("/check")
     public String welcomeCheck(){
-        return "welcome to the pick&pack 🥨 item-service";
+        return "Welcome to the pick&pack 🥨 item-service";
     }
 
 }
