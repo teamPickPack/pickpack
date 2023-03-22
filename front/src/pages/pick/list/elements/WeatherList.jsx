@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import Weather from './Weather'
+import WeatherItem from './WeatherItem'
 
 export default function WeatherList(){
     const [location] = useState({'longitude' : 127.0, 'latitude': 37.583328})
@@ -16,7 +16,7 @@ export default function WeatherList(){
             <div style={{fontSize: '20px', fontWeight: 'bold', margin: '0px 0px 8px 14px'}}>OO의 날씨</div>
             <div style={{display: 'flex'}}>
                 {weathers && weathers.map((weather) => {
-                    return Number(weather.dt_txt.split(" ")[1].split(":")[0]) % 12 === 0 ? <Weather key={weather.dt} weather={weather}/> : null
+                    return Number(weather.dt_txt.split(" ")[1].split(":")[0]) % 12 === 0 ? <WeatherItem key={weather.dt} weather={weather}/> : null
                 })
                 }
             </div>
