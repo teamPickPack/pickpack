@@ -15,7 +15,7 @@ public class Item {
     private String title;
     @Enumerated(EnumType.STRING)
     private Category category;
-    private int price;
+    private Integer price;
     private String content;
     private String imgUrl;
     private String registDate;
