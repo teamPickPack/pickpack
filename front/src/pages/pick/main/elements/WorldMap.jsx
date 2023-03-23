@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -16,50 +16,55 @@ import { NorthAmerica } from "./NorthAmerica.js";
 import { SouthAmerica } from "./SouthAmerica.js";
 import { Oceania } from "./Oceania.js";
 
-const CONTINENT_MAPPER = {
-  "North America": NorthAmerica,
-  "South America": SouthAmerica,
-  Africa: Africa,
-  Asia: Asia,
-  Europe: Europe,
-  Oceania: Oceania,
-};
+const CONTINENT_MAPPER = [
+  ["North America", NorthAmerica],
+  ["South America", SouthAmerica],
+  ["Africa", Africa],
+  ["Asia", Asia],
+  ["Europe", Europe],
+  ["Oceania", Oceania],
+];
+
+// mouse over 시 색상 변경..
+// zoom 단계에 따라 대륙별 국가별 구분 - 대륙 클릭 시 확대 해당 대륙의 나라 선택 가능..
+// 좌표 변경되어 맵페이지 변경되면 따라서 해당 맵페이지로 상태유지해서 대륙,국가별 좌표 값 이동..
 
 const WorldMap = () => {
   const position = [51.505, -0.09];
-
   return (
     <>
-      <MapContainer center={position} zoom={2} style={{ height: "600px" }}>
+      <MapContainer
+        center={position}
+        minZoom={2}
+        zoom={2}
+        style={{ height: "600px" }}
+      >
         <TileLayer url="https://mt0.google.com/vt/lyrs=m&hl=kr&x={x}&y={y}&z={z}" />
-        {/* <MapController /> */}
-        <Countries />
+        <MapController />
       </MapContainer>
     </>
   );
 };
 
-// mouse over 시 색상 변경
-// zoom 단계에 따라 대륙별 국가별 구분
-
-const Countries = () => {
+const MapController = () => {
   const [mapNum, setMapNum] = useState([0, 0]);
+  const [zoomLevel, setZoomLevel] = useState(2);
 
   const map = useMapEvents({
     click(e) {
       map.flyTo({ lat: e.latlng.lat, lng: e.latlng.lng });
-      map.getZoom();
-
       updateMapPosition();
     },
     dragend() {
       updateMapPosition();
     },
+    zoomanim(e) {
+      setZoomLevel(e.zoom);
+    },
   });
 
   const updateMapPosition = () => {
     const center = map.getCenter();
-    console.log(Math.round(center.lng / 360));
     const currNum = parseInt(Math.round(center.lng / 360));
 
     if (mapNum[0] !== currNum) {
@@ -67,100 +72,175 @@ const Countries = () => {
     }
   };
 
-  // useEffect(() => {
-  //   map.eachLayer((layer) => {
-  //     console.log(layer);
-  //     if (layer instanceof L.GeoJSON) {
-  //       console.log("remove");
-  //       map.removeLayer(layer);
-  //     }
-  //   });
+  const continentEachFeature = async (feature, layer) => {
+    const continentName = feature.properties.CONTINENT;
 
-  //   const target = Continents.features;
+    layer.on("click", (e) => {
+      setCountryLayer(continentName);
+      if (map.getZoom() > 2) {
+        map.flyTo(e.latlng, 2);
+        setZoomLevel(2);
+      } else {
+        map.flyTo(e.latlng, 4);
+        setZoomLevel(4);
+      }
+    });
+    layer.on("mouseover", () => {
+      layer.setStyle({ fillOpacity: 0.2, opacity: 0.6 });
+    });
+    layer.on("mouseout", () => {
+      layer.setStyle({ fillOpacity: 0, opacity: 0 });
+    });
 
-  //   for (let i = 0; i < target.length; i++) {
-  //     for (let j = 0; j < target[i].geometry.coordinates.length; j++) {
-  //       for (let k = 0; k < target[i].geometry.coordinates[j].length; k++) {
-  //         for (
-  //           let l = 0;
-  //           l < target[i].geometry.coordinates[j][k].length;
-  //           l++
-  //         ) {
-  //           Continents.features[i].geometry.coordinates[j][k][l][0] +=
-  //             mapNum[1] * 360;
-  //         }
-  //       }
-  //     }
-  //   }
+    layer.setStyle({ fillOpacity: 0, opacity: 0, color: "#432C7A" });
+  };
 
-  //   const newLayer = L.geoJSON(Continents, {
-  //     onEachFeature: onEachFeature,
-  //     bubblingMouseEvents: true,
-  //   });
+  const countryEachFeature = async (feature, layer) => {
+    layer.on("click", (e) => {
+      map.flyTo(e.latlng, map.getZoom() + 1);
+    });
+    layer.on("mouseover", () => {
+      layer.setStyle({ fillOpacity: 0.2, opacity: 0.2 });
+    });
+    layer.on("mouseout", () => {
+      layer.setStyle({ fillOpacity: 0, opacity: 0 });
+    });
 
-  //   map.addLayer(newLayer);
-  // }, [mapNum]);
+    layer.setStyle({ fillOpacity: 0, opacity: 0, color: "red" });
+  };
+
+  const continentLayer = useRef();
+  const countryLayer = useRef();
+
+  const setCountryLayer = (name) => {
+    console.log(name);
+    if (countryLayer.current)
+      CONTINENT_MAPPER.map((continent) => {
+        if (countryLayer.current[continent[0]] !== undefined) {
+          console.log(countryLayer.current);
+          map.removeLayer(countryLayer.current[continent[0]]);
+        }
+      });
+
+    CONTINENT_MAPPER.map((continent) => {
+      if (name === continent[0]) {
+        console.log(countryLayer.current);
+
+        countryLayer.current = {
+          [continent[0]]: L.geoJSON(continent[1], {
+            onEachFeature: countryEachFeature,
+            bubblingMouseEvents: false,
+          }),
+        };
+
+        countryLayer.current[continent[0]].eachLayer((layer) => {
+          if (layer._latlngs) {
+            layer._latlngs.map((latlng) => {
+              latlng.map((coord) => {
+                if (coord.length) {
+                  coord.map((point) => {
+                    point.lng = point.lng + mapNum[0] * 360;
+                  });
+                } else {
+                  coord.lng = coord.lng + mapNum[0] * 360;
+                }
+              });
+            });
+          }
+        });
+
+        console.log(countryLayer.current);
+
+        map.addLayer(countryLayer.current[continent[0]]);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (zoomLevel === 2) {
+      if (continentLayer.current) {
+        map.removeLayer(continentLayer.current);
+      }
+
+      if (countryLayer.current) {
+        CONTINENT_MAPPER.map((continent) => {
+          if (countryLayer.current[continent[0]] !== undefined) {
+            map.removeLayer(countryLayer.current[continent[0]]);
+          }
+        });
+      }
+
+      continentLayer.current = L.geoJSON(Continents, {
+        onEachFeature: continentEachFeature,
+        bubblingMouseEvents: false,
+      });
+
+      continentLayer.current.eachLayer((layer) => {
+        if (layer._latlngs) {
+          layer._latlngs.map((latlng) => {
+            latlng.map((coord) => {
+              coord.map((point) => {
+                point.lng = point.lng + mapNum[0] * 360;
+              });
+            });
+          });
+        }
+      });
+
+      map.addLayer(continentLayer.current);
+    }
+  }, [zoomLevel]);
 
   useEffect(() => {
     const layerList = [];
 
-    map.eachLayer((layer) => {
-      if (layer instanceof L.GeoJSON) {
-        console.log(layer);
+    continentLayer.current.eachLayer((layer) => {
+      if (layer._latlngs) {
+        layer._latlngs.map((latlng) => {
+          latlng.map((coord) => {
+            coord.map((point) => {
+              point.lng = point.lng + mapNum[1] * 360;
+            });
+          });
+        });
+
+        const copy = Object.assign(layer, {});
+        layerList.push(copy);
         map.removeLayer(layer);
       }
     });
 
-    const target = Continents.features;
+    CONTINENT_MAPPER.map((continent) => {
+      if (countryLayer.current)
+        if (countryLayer.current[continent[0]] !== undefined) {
+          countryLayer.current[continent[0]].eachLayer((layer) => {
+            if (layer._latlngs) {
+              layer._latlngs.map((latlng) => {
+                latlng.map((coord) => {
+                  if (coord.length) {
+                    coord.map((point) => {
+                      point.lng = point.lng + mapNum[1] * 360;
+                    });
+                  } else {
+                    coord.lng = coord.lng + mapNum[1] * 360;
+                  }
+                });
+              });
 
-    for (let i = 0; i < target.length; i++) {
-      for (let j = 0; j < target[i].geometry.coordinates.length; j++) {
-        for (let k = 0; k < target[i].geometry.coordinates[j].length; k++) {
-          for (
-            let l = 0;
-            l < target[i].geometry.coordinates[j][k].length;
-            l++
-          ) {
-            Continents.features[i].geometry.coordinates[j][k][l][0] +=
-              mapNum[1] * 360;
-          }
+              if (zoomLevel !== 2) {
+                const copy = Object.assign(layer, {});
+                layerList.push(copy);
+              }
+              map.removeLayer(layer);
+            }
+          });
         }
-      }
-    }
-
-    const newLayer = L.geoJSON(Continents, {
-      onEachFeature: onEachFeature,
-      bubblingMouseEvents: true,
     });
 
-    map.addLayer(newLayer);
+    layerList.forEach((layer) => {
+      map.addLayer(layer);
+    });
   }, [mapNum]);
-
-  const onEachFeature = async (feature, layer) => {
-    const continentName = feature.properties.CONTINENT;
-    let isChecked = false;
-
-    layer.on("click", (e) => {
-      // console.log(e);
-      // if (isChecked) layer.setStyle({ fillOpacity: 0, opacity: 0 });
-      // else layer.setStyle({ fillOpacity: 0.2, opacity: 0.2 });
-      // isChecked = !isChecked;
-
-      map.removeLayer(layer);
-    });
-    // layer.on("mouseover", () => {
-    //   if (!isChecked) {
-    //     layer.setStyle({ fillOpacity: 0.2, opacity: 0.2 });
-    //   }
-    // });
-    // layer.on("mouseout", () => {
-    //   if (!isChecked) {
-    //     layer.setStyle({ fillOpacity: 0, opacity: 0 });
-    //   }
-    // });
-
-    layer.setStyle({ fillOpacity: 0, opacity: 1, color: "#432C7A" });
-  };
 
   return null;
 };
