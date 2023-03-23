@@ -15,6 +15,7 @@ import { Europe } from "./Europe.js";
 import { NorthAmerica } from "./NorthAmerica.js";
 import { SouthAmerica } from "./SouthAmerica.js";
 import { Oceania } from "./Oceania.js";
+import styled from "styled-components";
 
 const CONTINENT_MAPPER = [
   ["North America", NorthAmerica],
@@ -32,7 +33,7 @@ const CONTINENT_MAPPER = [
 const WorldMap = () => {
   const position = [51.505, -0.09];
   return (
-    <>
+    <MapBox>
       <MapContainer
         center={position}
         minZoom={2}
@@ -42,9 +43,15 @@ const WorldMap = () => {
         <TileLayer url="https://mt0.google.com/vt/lyrs=m&hl=kr&x={x}&y={y}&z={z}" />
         <MapController />
       </MapContainer>
-    </>
+    </MapBox>
   );
 };
+
+const MapBox = styled.div`
+  .leaflet-control-attribution {
+    display: none;
+  }
+`;
 
 const MapController = () => {
   const [mapNum, setMapNum] = useState([0, 0]);
