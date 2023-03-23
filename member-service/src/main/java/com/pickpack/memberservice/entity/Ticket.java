@@ -11,8 +11,8 @@ public class Ticket {
     @Column(name = "ticket_id")
     private Long id;
 
-    private int price;
-    private int waypointNum;
+    private Integer price;
+    private Integer waypointNum;
     private String registTime;
     private String totalTime;
     private boolean codeShare;
@@ -21,7 +21,9 @@ public class Ticket {
     private String depDate;
     private String arrTime;
     private String arrDate;
-    private int plusDate;
+    private Integer plusDate;
+
+    private Integer totalTimeNum;
 
     @OneToMany(mappedBy = "ticket")
     private List<RoundTicketLike> roundTicketLikeList;
