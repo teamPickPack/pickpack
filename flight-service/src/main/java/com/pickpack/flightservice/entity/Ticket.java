@@ -17,8 +17,12 @@ public class Ticket {
     private String airline;
     private String depTime;
     private String depDate;
+    private String depName;
+    private String depCode;
     private String arrTime;
     private String arrDate;
+    private String arrName;
+    private String arrCode;
     private int plusDate;
     @OneToMany(mappedBy = "ticket")
     private List<Flight> flightList;
