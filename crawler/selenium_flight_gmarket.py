@@ -17,7 +17,7 @@ crawling_time = 0
 for dep in departure:
     for des in destination:
         if dep == des: continue
-        date='20230325'
+        date='20230326'
         for a in range(0,30):
             start = time.time()
             url='https://air.gmarket.co.kr/gm/init/srp/srpResultView.do?TTYPE=global&RTYPE=fromkr&SECTN=OW&DSTAD='+dep+'&ASTAD='+des+'&DDATE='+date+'&NADT=1&NCHD=0&NINF=0&CLS=Y&VIAYN=false&MSITE=P'
@@ -151,7 +151,7 @@ for dep in departure:
                             temp.append(" " + route_departure_airport)
                             temp.append(" " + route_departure_code)
                             
-                            route_info_duration = route.select_one('div.info div.left').get_text().strip() #비행시간
+                            route_info_duration = route.select_one('div.info div.left').get_text().strip() #비행시간\]po
                             route_info_flight = route.select_one('div.info div.right').get_text().strip() #항공편명
                             route_info_flight_share = 'False' #공동운항 항공사명
                             if('Operated by' in route_info_flight):
@@ -159,10 +159,24 @@ for dep in departure:
                                 route_info_flight = route_info_flight.split('Operated by')[0].strip()
                             print('이동 : ' + route_info_duration +' / '+ route_info_flight + ' / ' + route_info_flight_share)
 
+                            #중간 경유지[경유지명(공항코드)]
+                            if(route.select_one('div.country div.right div.item_airport')):
+                                route_info_mid_waypoint = route.select_one('div.country div.right div.item_airport')
+                                if(route_info_mid_waypoint.select_one('a')):
+                                    route_info_mid_waypoint.select_one('a').decompose()
+                                route_info_mid_waypoint = route_info_mid_waypoint.get_text().strip().replace("\n", "")
+                                route_info_mid_waypoint = route_info_mid_waypoint.split('중간 경유 : ')[1]
+                                route_info_mid_waypoint = route_info_mid_waypoint.strip()
+                            else:
+                                route_info_mid_waypoint = 'False'
+
+                            print('중간경유지 : ' + route_info_mid_waypoint)
+
                             #이동 정보 저장
                             temp.append(" " + route_info_duration)
                             temp.append(" " + route_info_flight)
                             temp.append(" " + route_info_flight_share)
+                            temp.append(" " + route_info_mid_waypoint)
 
                             route_destination_time = route.select_one('div.last div.item_time') #도착시간
                             if(route_destination_time.select_one('a')):
@@ -195,11 +209,11 @@ for dep in departure:
                             #경유 있을 경우 대기시간
                             temp.append(" " + waiting)
 
+                        searchList.append(temp)
                             # waiting = waiting.get_text().strip()
                             # last_page = soup.select_one('div.gt_content div.gt_paging a.spr_btn_end')['href'].split(" ")[1].replace("'", "")
                             # print(last_page)
                     print('-----------')
-                    searchList.append(temp)
 
                 #만약 지금이 마지막 페이지가 아니면 next button
                 last_page = soup.select_one('div.gt_content div.gt_paging a.spr_btn_end')['href'].split(" ")
@@ -232,67 +246,3 @@ for dep in departure:
             date='%d%02d%02d'%(i_year,i_mon,i_day)
             print(str(a) +'일자 :' + str(crawling_time))
             print(crawling_time)
-
-            # air_name=[]
-            # flight_money=[]
-            # flight_place=[]
-            # arrival_departure_time=[]
-            # departure_time=[]
-            # departure_air=[]
-            # arrival_time=[]
-            # arrival_air=[]
-            # flights_time=[]
-            # k=0
-            # for i in air_names:
-            #     air_name.append(i.get_text())
-                
-            # for i in flights_times:
-            #     flights_time.append(i.get_text())
-
-            # for i in flights_check:
-            #         arrival_departure_time.append(i.get_text())
-
-            # for k in range(len(arrival_departure_time)):
-            #     if k%2==0:
-            #         departure_time.append(arrival_departure_time[k])
-            #     elif k%2==1:
-            #         arrival_time.append(arrival_departure_time[k])
-
-            # for i in flights_place:
-            #         flight_place.append(i.get_text())
-
-            # for k in range(len(flight_place)):
-            #     if k%2==0:
-            #         departure_air.append(flight_place[k])
-            #     elif k%2==1:
-            #         arrival_air.append(flight_place[k])
-
-            # for i in flight_moneys:
-            #     flight_money.append(i.get_text())
-
-
-            # for i in range(len(air_name)):
-            #     temp=[]
-            #     temp.append(air_name[i])
-            #     temp.append(date)
-            #     temp.append(departure_time[i])
-            #     temp.append(departure_air[i])
-            #     temp.append(arrival_time[i])
-            #     temp.append(arrival_air[i])
-            #     temp.append(flights_time[i])
-            #     temp.append(flight_money[i])
-            #     searchList.append(temp)
-
-            
-            
-            # searchList=[]
-            # i_day=int(day)+1
-            # i_mon=int(mon)
-            # i_year=int(year)
-            # if month[i_mon-1]<i_day:
-            #     i_day=1
-            #     i_mon+=1
-            #     if i_mon>11:
-            #         i_mon=0
-            #         i_year+=1
-            # date='%d%02d%02d'%(i_year,i_mon,i_day)
