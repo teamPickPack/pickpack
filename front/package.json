@@ -12,7 +12,11 @@
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+<<<<<<< HEAD
     "react-icons": "^4.8.0",
+=======
+    "react-leaflet": "^4.2.1",
+>>>>>>> dc8af7552a2f46884a5739d1cc762abf55f4f2d6
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
