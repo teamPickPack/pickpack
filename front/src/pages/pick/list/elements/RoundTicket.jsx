@@ -1,43 +1,81 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import OneWayTicket from "./OneWayTicket"
 
-export default function RoundTicket(){
-    const [goZIndex, setGoZIndex] = useState(1);
-    const [returnZIndex, setReturnZIndex] = useState(-1);
 
+export default function RoundTicket(){
+    useEffect(() => {
+        const list = document.querySelectorAll('.container > div')
+        list.forEach((el, index) => {
+            el.style.zIndex = index  
+            el.addEventListener('click', function(){
+                let maxNum = Math.max(...zIndexArray)
+                let maxIndex = zIndexArray.findIndex(arr => arr === maxNum)
+                console.log(index)
+                console.log(maxNum, maxIndex)
+                zIndexArray = zIndexArray.map(arr => {
+                    if(arr > zIndexArray[index]){
+                        return arr - 1
+                    } else {
+                        return arr
+                    }
+                })
+            
+                zIndexArray[index] = maxNum
+                array.forEach((el, index) => {
+                    el.style.zIndex = zIndexArray[index]
+                })
+            })
+        })
+
+        let array = [...list]
+        let zIndexArray = array.map(arr => Number(arr.style.zIndex))
+
+    }, []);
     const handleZIndex = (type) => {
         if(type === 'go'){
-            console.log('고 크르릵');
-            if(goZIndex === -1) return;
-            setGoZIndex(-1);
-            setReturnZIndex(1);
+            console.log('GO 올려라');
         }
         else{
-            console.log('리턴 크르릵');
-            if(returnZIndex === -1) return;
-            setGoZIndex(1);
-            setReturnZIndex(-1);
+            console.log('RETURN 올려라');
         }
     }
     return(
-        <div style={{width: '800px', height: '320px', border: '2px solid blue', position: 'relative'}}>
-            <GoTicket onClick={() => handleZIndex('go')} zIndex={goZIndex}>
+        <>
+        <div className="container" style={{width: '800px', height: '320px', border: '2px solid blue', position: 'relative'}}>
+            <GoTicket className='tickets' onClick={() => handleZIndex('go')}>
                 <OneWayTicket twoWay={true}/>
             </GoTicket>
-            <ReturnTicket onClick={() => handleZIndex('return')} zIndex={returnZIndex}>
+            <ReturnTicket className='tickets' onClick={() => handleZIndex('return')}>
                 <OneWayTicket twoWay={true}/>
             </ReturnTicket>
             <TotalPrice>Total Price</TotalPrice>
         </div>
+        <div className="container" style={{width: '800px', height: '320px', border: '2px solid blue', position: 'relative'}}>
+            <GoTicket className='tickets' onClick={() => handleZIndex('go')}>
+                <OneWayTicket twoWay={true}/>
+            </GoTicket>
+            <ReturnTicket className='tickets' onClick={() => handleZIndex('return')}>
+                <OneWayTicket twoWay={true}/>
+            </ReturnTicket>
+            <TotalPrice>Total Price</TotalPrice>
+        </div>
+        <div className="container" style={{width: '800px', height: '320px', border: '2px solid blue', position: 'relative'}}>
+            <GoTicket className='tickets' onClick={() => handleZIndex('go')}>
+                <OneWayTicket twoWay={true}/>
+            </GoTicket>
+            <ReturnTicket className='tickets' onClick={() => handleZIndex('return')}>
+                <OneWayTicket twoWay={true}/>
+            </ReturnTicket>
+            <TotalPrice>Total Price</TotalPrice>
+        </div>
+        </>
     )
 }
-
 const GoTicket = styled.div`
     position: absolute;
     bottom: 0px;
     left: 0px;
-    z-index: ${(props) => props.zIndex};
     &:hover{
         cursor: pointer;
     }
@@ -47,7 +85,6 @@ const ReturnTicket = styled.div`
     position: absolute;
     top: 0px;
     right: 0px;
-    z-index: ${(props) => props.zIndex};
     &:hover{
         cursor: pointer;
     }
