@@ -1,18 +1,15 @@
-import {useEffect, useState} from 'react';
+import {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import OneWayTicket from "./OneWayTicket"
 
+export default function RoundTicket({isCheck, isLike, goWay, returnWay, totalPrice}){
 
-export default function RoundTicket(){
     useEffect(() => {
-        const list = document.querySelectorAll('.container > div')
+        const list = document.querySelectorAll('.tickets > div')
         list.forEach((el, index) => {
             el.style.zIndex = index  
             el.addEventListener('click', function(){
                 let maxNum = Math.max(...zIndexArray)
-                let maxIndex = zIndexArray.findIndex(arr => arr === maxNum)
-                console.log(index)
-                console.log(maxNum, maxIndex)
                 zIndexArray = zIndexArray.map(arr => {
                     if(arr > zIndexArray[index]){
                         return arr - 1
@@ -20,58 +17,50 @@ export default function RoundTicket(){
                         return arr
                     }
                 })
-            
                 zIndexArray[index] = maxNum
                 array.forEach((el, index) => {
                     el.style.zIndex = zIndexArray[index]
                 })
             })
         })
-
         let array = [...list]
         let zIndexArray = array.map(arr => Number(arr.style.zIndex))
-
     }, []);
-    const handleZIndex = (type) => {
-        if(type === 'go'){
-            console.log('GO 올려라');
-        }
-        else{
-            console.log('RETURN 올려라');
+
+    const [commonAlarmChecked, setCommonAlarmChecked] = useState(isLike);
+    const [commonCompareChecked, setCommonCompareChecked] = useState(isCheck);
+    const unifyChecked = (type) => {
+        if(type === 'compare'){
+            console.log('compareChecked 동기화하기')
+            // setUnifyCompareChecked((unifyCompareChecked) => !unifyCompareChecked);
+        } else{
+            console.log('alarmChecked 동기화하기');
+            if(commonAlarmChecked) alert('알림이 해제되었습니다.');
+            else alert('알림이 등록되었습니다.');
+            setCommonAlarmChecked((commonAlarmChecked) => !commonAlarmChecked);
         }
     }
     return(
         <>
-        <div className="container" style={{width: '800px', height: '320px', border: '2px solid blue', position: 'relative'}}>
-            <GoTicket className='tickets' onClick={() => handleZIndex('go')}>
-                <OneWayTicket twoWay={true}/>
-            </GoTicket>
-            <ReturnTicket className='tickets' onClick={() => handleZIndex('return')}>
-                <OneWayTicket twoWay={true}/>
+        <Tickets className="tickets">
+            <ReturnTicket>
+                <OneWayTicket unifyChecked={unifyChecked} twoWay={true} isLike={commonAlarmChecked} ticket={returnWay.ticket} flightList={returnWay.flightList}/>
             </ReturnTicket>
-            <TotalPrice>Total Price</TotalPrice>
-        </div>
-        <div className="container" style={{width: '800px', height: '320px', border: '2px solid blue', position: 'relative'}}>
-            <GoTicket className='tickets' onClick={() => handleZIndex('go')}>
-                <OneWayTicket twoWay={true}/>
+            <GoTicket>
+                <OneWayTicket unifyChecked={unifyChecked} twoWay={true} isLike={commonAlarmChecked} ticket={goWay.ticket} flightList={goWay.flightList}/>
             </GoTicket>
-            <ReturnTicket className='tickets' onClick={() => handleZIndex('return')}>
-                <OneWayTicket twoWay={true}/>
-            </ReturnTicket>
-            <TotalPrice>Total Price</TotalPrice>
-        </div>
-        <div className="container" style={{width: '800px', height: '320px', border: '2px solid blue', position: 'relative'}}>
-            <GoTicket className='tickets' onClick={() => handleZIndex('go')}>
-                <OneWayTicket twoWay={true}/>
-            </GoTicket>
-            <ReturnTicket className='tickets' onClick={() => handleZIndex('return')}>
-                <OneWayTicket twoWay={true}/>
-            </ReturnTicket>
-            <TotalPrice>Total Price</TotalPrice>
-        </div>
+            <TotalPrice>총 2,640,000원</TotalPrice>
+        </Tickets>
         </>
     )
 }
+
+const Tickets = styled.div`
+    width: 800px;
+    height: 320px;
+    border: 2px solid blue;
+    position: relative;
+`;
 const GoTicket = styled.div`
     position: absolute;
     bottom: 0px;
@@ -79,7 +68,7 @@ const GoTicket = styled.div`
     &:hover{
         cursor: pointer;
     }
-`
+`;
 
 const ReturnTicket = styled.div`
     position: absolute;
@@ -88,7 +77,7 @@ const ReturnTicket = styled.div`
     &:hover{
         cursor: pointer;
     }
-`
+`;
 
 const TotalPrice = styled.div`
     display: flex;
@@ -101,4 +90,4 @@ const TotalPrice = styled.div`
     height: 78px;
     font-size: 20px;
     font-weight: 600;
-`
+`;
