@@ -1,0 +1,16 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 1234
+
+cloud:
+  aws:
+    s3:
+      bucket: travelmaker2
+    #TODO CloudFormation
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: AKIAXDB4L5CHN5CQPZHG
+      secretKey: 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
