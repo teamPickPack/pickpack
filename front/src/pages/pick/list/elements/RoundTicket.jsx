@@ -14,7 +14,7 @@ export default function RoundTicket(){
             setReturnZIndex(1);
         }
         else{
-            console.log('리턴 크르릵')
+            console.log('리턴 크르릵');
             if(returnZIndex === -1) return;
             setGoZIndex(1);
             setReturnZIndex(-1);
