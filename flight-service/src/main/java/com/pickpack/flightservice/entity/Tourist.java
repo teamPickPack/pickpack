@@ -19,14 +19,5 @@ public class Tourist {
     private String imgUrl;
     @Enumerated(EnumType.STRING)
     private Continent continent;
-    @Transient
-    private String photoReference;
 
-    public Tourist(String touristName, Float lat, Float lng, Continent continent, String photoReference) {
-        this.touristName = touristName;
-        this.lat = lat;
-        this.lng = lng;
-        this.continent = continent;
-        this.photoReference = photoReference;
-    }
 }
