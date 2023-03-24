@@ -1,5 +1,6 @@
 import WeatherList from './elements/WeatherList'
-import TicketFront from './elements/TicketFront'
+import OneWayTicket from './elements/OneWayTicket'
+import RoundTicket from './elements/RoundTicket'
 
 export default function List(){
     
@@ -9,8 +10,9 @@ export default function List(){
                 <WeatherList />
             </div>
             <hr></hr>
-            <div>
-                <TicketFront/>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <OneWayTicket/>
+                <RoundTicket />
             </div>
         </>
     )
