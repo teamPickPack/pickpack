@@ -4,12 +4,11 @@ server:
 spring:
   application:
     name: item
-  cloud:
-    datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://54.180.157.223:3306/pickpack?
-      username: root # MySQL DB Username
-      password: ssafy # MySQL DB password
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://54.180.157.223:3306/pickpack?
+    username: root # MySQL DB Username
+    password: ssafy # MySQL DB password
 
   jpa:
     hibernate:
