@@ -16,6 +16,7 @@ public class Flight {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "flight_id")
     private Long id;
+    private Long ticketId;
     private String departure;
     private String destination;
     private String waitTime;
@@ -31,8 +32,4 @@ public class Flight {
     private String code;
     private String waypointName;
     private int plusDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id")
-    private Ticket ticket;
 }
