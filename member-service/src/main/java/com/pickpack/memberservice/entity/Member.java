@@ -20,6 +20,7 @@ public class Member {
     private String mid;
     private String pwd;
     private String nickname;
+    private String img_url;
 
     @OneToMany(mappedBy = "member")
     private List<OnewayTicketLike> onewayTicketLikeList;
