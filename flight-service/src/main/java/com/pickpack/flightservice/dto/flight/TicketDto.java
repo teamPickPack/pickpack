@@ -15,9 +15,7 @@ public class TicketDto {
     private long ticketId;
     private int waypointNum;
     private int price;
-    private String registDate;
     private String totalTime;
-    private int totalTimeNum;
     private String airline;
     private boolean codeshare;
     private String depTime;
