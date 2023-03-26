@@ -11,6 +11,7 @@ public class OnewayTicketLike {
     private Long id;
 
     private boolean isDelete;
+    private Integer wanted_price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -19,5 +20,6 @@ public class OnewayTicketLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
+
 
 }

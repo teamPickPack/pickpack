@@ -16,12 +16,12 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public void findBuyItems(Long memberId){
-        List<Item> boughtList = itemRepository.findBoughtList("BUY", memberId);
+//        List<Item> boughtList = itemRepository.findBoughtList("BUY", memberId);
     }
 
     @Transactional(readOnly = true)
     public void findSellItems(Long memberId){
-        List<Item> sellingList = itemRepository.findBoughtList("SELL", memberId);
+//        List<Item> sellingList = itemRepository.findBoughtList("SELL", memberId);
     }
 
 

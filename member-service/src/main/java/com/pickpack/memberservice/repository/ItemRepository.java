@@ -10,7 +10,7 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     // 마이페이지 - 구매한 목록(살게요)
-    @Query("select i from Item i join i.member m where m.id = :memberId and i.category = :cat")
-    List<Item> findBoughtList(@Param("cat")String category, Long memberId);
+//    @Query("select i from Item i join i.member m where m.id = :memberId and i.category = :cat")
+//    List<Item> findBoughtList(@Param("cat")String category, @Param("memberId")Long memberId);
 
 }
