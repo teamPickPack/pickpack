@@ -10,7 +10,6 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class TicketDto {
     private long ticketId;
     private int waypointNum;
@@ -40,4 +39,6 @@ public class TicketDto {
         }
         return str;
     }
+
+
 }
