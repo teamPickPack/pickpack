@@ -1,5 +1,7 @@
 package com.pickpack.memberservice.controller;
 
+import com.pickpack.memberservice.service.ItemService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +12,10 @@ import javax.ws.rs.Path;
 
 @RestController
 @RequestMapping("/api/member")
+@RequiredArgsConstructor
 public class ItemController {
+
+    private final ItemService itemService;
 
     @GetMapping("/health2")
     public String healthCheck(){
