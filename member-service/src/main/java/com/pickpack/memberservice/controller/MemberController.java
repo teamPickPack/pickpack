@@ -1,7 +1,8 @@
 package com.pickpack.memberservice.controller;
 
-import com.pickpack.memberservice.dto.JoinReqDto;
-import com.pickpack.memberservice.dto.JoinRespDto;
+import com.pickpack.memberservice.dto.member.FindRespDto;
+import com.pickpack.memberservice.dto.member.JoinReqDto;
+import com.pickpack.memberservice.dto.member.JoinRespDto;
 import com.pickpack.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,5 +29,15 @@ public class MemberController {
         JoinRespDto joinRespDto = memberService.join(joinReqDto);
         return new ResponseEntity<>(joinRespDto, HttpStatus.CREATED);
     }
+
+    /**
+     *  회원 정보 조회
+     */
+    @GetMapping("/{memberId}")
+    public ResponseEntity<?> info(@PathVariable Long memberId){
+        FindRespDto findRespDto = memberService.findMember(memberId);
+        return new ResponseEntity<>(findRespDto, HttpStatus.OK);
+    }
+
 
 }
