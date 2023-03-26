@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,18 +37,22 @@ public class Ticket {
     private String waypoints = wayPointToString();
 
     @OneToMany
-    @JoinColumn(name = "ticket_id", insertable=false, updatable=false)
+    @JoinColumn(name = "ticketId", insertable=false, updatable=false)
     private List<Flight> flightList;
 
     private String wayPointToString() {
         String str = "";
 
-        for(int i = 0; i < flightList.size(); i++) {
-            Flight flight = flightList.get(i);
-            str += flight.getDepName() + "(" + flight.getDepCode() + ")";
+        if(flightList != null) {
+            for(int i = 0; i < flightList.size(); i++) {
+                Flight flight = flightList.get(i);
+                str += flight.getDepName() + "(" + flight.getDepCode() + ")";
 
-            if(i != flightList.size() - 1) str += "/";
+                if(i != flightList.size() - 1) str += "/";
+            }
+            return str;
+        } else {
+            return "";
         }
-        return str;
     }
 }
