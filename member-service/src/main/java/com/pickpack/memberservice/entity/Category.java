@@ -4,5 +4,5 @@ import javax.persistence.Entity;
 
 
 public enum Category {
-    BUY,SELL, BORROW, RENT;
+    BUY, SELL, BORROW, RENT;
 }
