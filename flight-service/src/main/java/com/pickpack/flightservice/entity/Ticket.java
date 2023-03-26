@@ -20,7 +20,7 @@ public class Ticket {
     private int waypointNum;
     private String registTime;
     private String totalTime;
-    private boolean codeShare;
+    private boolean codeshare;
     private String airline;
     private String depTime;
     private String depDate;
