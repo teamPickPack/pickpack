@@ -1,4 +1,4 @@
-package com.pickpack.memberservice.dto;
+package com.pickpack.memberservice.dto.member;
 
 import com.pickpack.memberservice.entity.Member;
 import lombok.Getter;

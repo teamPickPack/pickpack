@@ -1,15 +1,15 @@
 package com.pickpack.memberservice.service;
 
-import com.pickpack.memberservice.dto.JoinReqDto;
-import com.pickpack.memberservice.dto.JoinRespDto;
+import com.pickpack.memberservice.dto.member.FindRespDto;
+import com.pickpack.memberservice.dto.member.JoinReqDto;
+import com.pickpack.memberservice.dto.member.JoinRespDto;
 import com.pickpack.memberservice.entity.Member;
 import com.pickpack.memberservice.exception.custom.AlreadyJoinException;
+import com.pickpack.memberservice.exception.custom.NotFoundMemberException;
 import com.pickpack.memberservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +36,16 @@ public class MemberService {
         
         // 정상 dto 응답
         return new JoinRespDto(memberPS);
+    }
+
+    @Transactional(readOnly = true)
+    public FindRespDto findMember(Long memberId){
+        // 회원이 존재하는지 검사.
+        Optional<Member> findedMember = memberRepository.findById(memberId);
+        if(!findedMember.isPresent()){
+            throw new NotFoundMemberException("존재하지 않는 회원입니다.");
+        }
+        return new FindRespDto(findedMember.get());
     }
 
 }
