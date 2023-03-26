@@ -30,5 +30,6 @@ public class Flight {
     private String flightTime;
     private String code;
     private String waypointName;
+    private String codeshareName;
     private int plusDate;
 }
