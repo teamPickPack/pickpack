@@ -10,11 +10,19 @@ public class RoundTicketLike {
     @Column(name = "round_ticket_like_id")
     private Long id;
 
+    private boolean isDelete;
+
+//    private Integer wanted_price;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id")
-    private Ticket ticket;
+    @JoinColumn
+    private Ticket ticket_to;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Ticket ticket_from;
 }
