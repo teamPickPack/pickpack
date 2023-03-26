@@ -18,7 +18,7 @@ public class Ticket {
     private Long id;
     private int price;
     private int waypointNum;
-    private String registTime;
+    private String registDate;
     private String totalTime;
     private boolean codeshare;
     private String airline;
