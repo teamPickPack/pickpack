@@ -38,7 +38,7 @@ const WorldMap = () => {
         center={position}
         minZoom={2}
         zoom={2}
-        style={{ height: "600px" }}
+        style={{ height: "540px" }}
       >
         <TileLayer url="https://mt0.google.com/vt/lyrs=m&hl=kr&x={x}&y={y}&z={z}" />
         <MapController />
@@ -48,6 +48,7 @@ const WorldMap = () => {
 };
 
 const MapBox = styled.div`
+  width: 100%;
   .leaflet-control-attribution {
     display: none;
   }
