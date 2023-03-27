@@ -1,6 +1,7 @@
 package com.pickpack.flightservice.controller.ticket;
 
 import com.pickpack.flightservice.api.request.OneWayTicketReq;
+import com.pickpack.flightservice.api.request.RoundTicketReq;
 import com.pickpack.flightservice.api.response.TicketRes;
 import com.pickpack.flightservice.service.ticket.TicketService;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,25 @@ public class TicketController {
     private TicketService ticketService;
 
     @PostMapping("/one")
-    public ResponseEntity<?> list(@RequestBody OneWayTicketReq ticketReq) {
+    public ResponseEntity<?> oneWayTicketList(@RequestBody OneWayTicketReq ticketReq) {
         try {
-            System.out.println("ticketService - list 실행");
-            List<TicketRes> list = ticketService.getTicketList(ticketReq);
+            List<TicketRes> list = ticketService.getOneWayTicketList(ticketReq);
+
+            if (list != null && !list.isEmpty()) {
+                return new ResponseEntity<List<TicketRes>>(list, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PostMapping("/round")
+    public ResponseEntity<?> roundTicketList(@RequestBody RoundTicketReq ticketReq) {
+        try {
+            System.out.println("ticketService - roundTicketlist 실행");
+            List<TicketRes> list = ticketService.getRoundTicketList(ticketReq);
 
             if (list != null && !list.isEmpty()) {
                 return new ResponseEntity<List<TicketRes>>(list, HttpStatus.OK);
