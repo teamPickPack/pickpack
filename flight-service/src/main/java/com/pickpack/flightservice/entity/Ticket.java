@@ -38,6 +38,7 @@ public class Ticket {
     @JoinColumn(name = "ticketId", insertable=false, updatable=false)
     private List<Flight> flightList;
 
+    //TODO : ""로만 뽑힌다.
     private String wayPointToString() {
         String str = "";
 

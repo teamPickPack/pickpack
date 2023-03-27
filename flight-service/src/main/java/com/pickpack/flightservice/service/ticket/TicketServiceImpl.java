@@ -1,6 +1,7 @@
 package com.pickpack.flightservice.service.ticket;
 
 import com.pickpack.flightservice.api.request.OneWayTicketReq;
+import com.pickpack.flightservice.api.request.RoundTicketReq;
 import com.pickpack.flightservice.api.response.TicketRes;
 import com.pickpack.flightservice.entity.Ticket;
 import com.pickpack.flightservice.repository.ticket.TicketRepository;
@@ -16,7 +17,7 @@ public class TicketServiceImpl implements TicketService {
     TicketRepository ticketRepository;
 
     @Override
-    public List<TicketRes> getTicketList(OneWayTicketReq ticketReq) {
+    public List<TicketRes> getOneWayTicketList(OneWayTicketReq ticketReq) {
         System.out.println(ticketReq);
 
         long memberId = ticketReq.getMemberId();
@@ -92,8 +93,6 @@ public class TicketServiceImpl implements TicketService {
         }
 
         //결과값 반환
-        System.out.println("티켓리스트" + ticketList);
-
         List<TicketRes> result = new ArrayList<>();
         for(Ticket ticket : ticketList) {
             TicketRes ticketRes = TicketRes.builder().
@@ -105,6 +104,12 @@ public class TicketServiceImpl implements TicketService {
         }
 
         return result;
+    }
+
+    @Override
+    public List<TicketRes> getRoundTicketList(RoundTicketReq ticketReq) {
+        //TODO : TicketServiceImpl - getRoundTicketList
+        return null;
     }
 
 }
