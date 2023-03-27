@@ -22,8 +22,6 @@ public class TicketController {
             System.out.println("ticketService - list 실행");
             List<TicketRes> list = ticketService.getTicketList(ticketReq);
 
-            System.out.println(list);
-
             if (list != null && !list.isEmpty()) {
                 return new ResponseEntity<List<TicketRes>>(list, HttpStatus.OK);
             } else {
