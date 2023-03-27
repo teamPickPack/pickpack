@@ -19,7 +19,7 @@ public class DeployCheck {
         Date today = new Date();
         System.out.println(today);
         System.out.println(LocalDateTime.now());
-        return "Welcome to the 🎄 member-service!!";
+        return "Welcome to the 🎄 member-service!!!!!";
     }
 
 }
