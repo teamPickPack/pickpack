@@ -2,13 +2,11 @@ package com.pickpack.chatservice.controller;
 
 import com.pickpack.chatservice.dto.CreateRoomDto;
 import com.pickpack.chatservice.dto.GetRoomDto;
-import com.pickpack.chatservice.entity.redis.ChatRoom;
+import com.pickpack.chatservice.entity.redis.RedisChatRoom;
 import com.pickpack.chatservice.repo.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +19,7 @@ public class ChatRoomController {
     private final ChatRoomRepository chatRoomRepository;
 
     @PostMapping("/room")
-    public ResponseEntity<ChatRoom> createRoom(@RequestBody CreateRoomDto createRoomDto) {
+    public ResponseEntity<RedisChatRoom> createRoom(@RequestBody CreateRoomDto createRoomDto) {
         return new ResponseEntity<>(chatRoomRepository.createChatRoom(createRoomDto), HttpStatus.CREATED);
     }
 

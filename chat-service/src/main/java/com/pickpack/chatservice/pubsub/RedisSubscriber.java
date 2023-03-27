@@ -1,7 +1,7 @@
 package com.pickpack.chatservice.pubsub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pickpack.chatservice.entity.redis.ChatMessage;
+import com.pickpack.chatservice.entity.redis.RedisChatMessage;
 import com.pickpack.chatservice.repo.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class RedisSubscriber{
     private final SimpMessageSendingOperations messagingTemplate;
     public void sendMessage(String publishMessage) {
         try {
-            ChatMessage roomMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
+            RedisChatMessage roomMessage = objectMapper.readValue(publishMessage, RedisChatMessage.class);
             chatMessageRepository.createMessage(roomMessage);
 
             // Websocket 구독자에게 채팅 메시지 Send

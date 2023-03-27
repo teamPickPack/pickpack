@@ -1,29 +1,37 @@
 package com.pickpack.chatservice.repo;
 
 import com.pickpack.chatservice.dto.IsNewDto;
-import com.pickpack.chatservice.entity.redis.ChatMessage;
+import com.pickpack.chatservice.entity.redis.RedisChatMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
-public class ChatMessageRepository {
+@Slf4j
+public class ChatMessageRepository implements Serializable {
     private static final String CHAT_MESSAGES = "CHAT_MESSAGES";
     private final RedisTemplate<String, Object> redisTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    private HashOperations<String, String, List<ChatMessage>> opsHashChatMessage;
+    private final DbChatMessageRepository dbChatMessageRepository;
+    private HashOperations<String, String, List<RedisChatMessage>> opsHashChatMessage;
 
     @PostConstruct
     private void init() {
+
         opsHashChatMessage = redisTemplate.opsForHash();
     }
     /**
@@ -32,8 +40,8 @@ public class ChatMessageRepository {
      *
      * @param message
      */
-    public void createMessage(ChatMessage message) {
-        List<ChatMessage> list;
+    public void createMessage(RedisChatMessage message) {
+        List<RedisChatMessage> list;
         if (!opsHashChatMessage.hasKey(CHAT_MESSAGES, message.getRoomId())) {
             list = new ArrayList<>();
         } else {
@@ -49,7 +57,7 @@ public class ChatMessageRepository {
      * @param roomId
      * @return List<ChatMessage>
      */
-    public List<ChatMessage> findMessage(String roomId) {
+    public List<RedisChatMessage> findMessage(String roomId) {
         return opsHashChatMessage.get(CHAT_MESSAGES, roomId);
     }
 
@@ -61,4 +69,43 @@ public class ChatMessageRepository {
             return null;
         }
     }
+    public void receiveMessageFromDB(){
+
+    }
+    //TODO ChatRoom 먼저 박고나서 시작해야됨
+    @Async
+//    @Scheduled(cron = "0 0/1 * * * *")
+    public int[][] sendMessageToDB(){
+        Map<String,List<RedisChatMessage>> map = opsHashChatMessage.entries(CHAT_MESSAGES);
+        Iterator<String>mapIter = map.keySet().iterator();
+        List<RedisChatMessage> allMessageList = new ArrayList<>();
+        while(mapIter.hasNext()){
+            String key = mapIter.next();
+            List<RedisChatMessage> iterMessageList = map.get(key);
+            if(iterMessageList.isEmpty()) continue;
+            Collections.addAll(allMessageList, iterMessageList.toArray(new RedisChatMessage[0]));
+        }
+        int[][] batchStatus = jdbcTemplate.batchUpdate
+                ("INSERT IGNORE INTO chat_message(room_id,type,sender_name,message,time) VALUES (?,?,?,?,?);",
+                        allMessageList,
+                        allMessageList.size(),
+                        new ParameterizedPreparedStatementSetter<RedisChatMessage>() {
+                            @Override
+                            public void setValues(PreparedStatement ps, RedisChatMessage chatMessage) throws SQLException {
+                                ps.setString(1, chatMessage.getRoomId());
+                                ps.setString(2,chatMessage.getType().name());
+                                ps.setString(3, chatMessage.getSender());
+                                ps.setString(4,chatMessage.getMessage());
+                                ps.setString(5,chatMessage.getTime().toString()+chatMessage.getSender());
+                            }
+                        }
+                );
+        System.out.println(batchStatus[0].length);
+        System.out.println(batchStatus.length);
+        //TODO 다시 살려야됨
+//        redisTemplate.delete(CHAT_MESSAGES);
+        log.info("삭제되었는가? : {}",redisTemplate.hasKey(CHAT_MESSAGES));
+        return batchStatus;
+    }
+
 }

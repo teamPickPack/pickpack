@@ -1,29 +1,27 @@
 package com.pickpack.chatservice.dto;
 
-import com.pickpack.chatservice.entity.redis.ChatRoom;
+import com.pickpack.chatservice.entity.redis.RedisChatRoom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
 public class GetRoomDto {
     private String chatRoomId;
-    private String itemId;
+    private Long itemId;
     private String imgUrl;
     private String lastMessage;
     private String nickName;
     private boolean isNew;
 
-    public GetRoomDto chatRoomToGetRoomDto(ChatRoom chatRoom,String memberId){
+    public GetRoomDto chatRoomToGetRoomDto(RedisChatRoom redisChatRoom, String memberId){
         GetRoomDto getRoomDto = new GetRoomDto();
-        getRoomDto.chatRoomId=chatRoom.getRoomId();
-        getRoomDto.itemId=chatRoom.getItemId();
-        getRoomDto.imgUrl= chatRoom.getImgUrl();
-        getRoomDto.lastMessage=chatRoom.getLastMessage();
-        getRoomDto.isNew=chatRoom.isNew();
-        getRoomDto.nickName = chatRoom.getSeller().equals(memberId)?chatRoom.getBuyer():chatRoom.getSeller();
+        getRoomDto.chatRoomId= redisChatRoom.getRoomId();
+        getRoomDto.itemId= redisChatRoom.getItemId();
+        getRoomDto.imgUrl= redisChatRoom.getImgUrl();
+        getRoomDto.lastMessage= redisChatRoom.getLastMessage();
+        getRoomDto.isNew= redisChatRoom.isNew();
+        getRoomDto.nickName = redisChatRoom.getSeller().equals(memberId)? redisChatRoom.getBuyer(): redisChatRoom.getSeller();
         return getRoomDto;
     }
 }

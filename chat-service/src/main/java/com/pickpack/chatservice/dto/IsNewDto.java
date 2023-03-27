@@ -1,6 +1,6 @@
 package com.pickpack.chatservice.dto;
 
-import com.pickpack.chatservice.entity.redis.ChatMessage;
+import com.pickpack.chatservice.entity.redis.RedisChatMessage;
 import lombok.Getter;
 
 import java.util.List;
@@ -10,7 +10,7 @@ public class IsNewDto {
     private String lastMessage;
     private int size;
 
-    public static IsNewDto create(List<ChatMessage> list){
+    public static IsNewDto create(List<RedisChatMessage> list){
         IsNewDto isNewDto = new IsNewDto();
         isNewDto.lastMessage=list.get(list.size()-1).getMessage();
         isNewDto.size=list.size();
