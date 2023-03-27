@@ -8,13 +8,13 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { Continents } from "./continents.js";
-import { Africa } from "./Africa.js";
-import { Asia } from "./Asia.js";
-import { Europe } from "./Europe.js";
-import { NorthAmerica } from "./NorthAmerica.js";
-import { SouthAmerica } from "./SouthAmerica.js";
-import { Oceania } from "./Oceania.js";
+import { Continents } from "./data/continents.js";
+import { Africa } from "./data/Africa.js";
+import { Asia } from "./data/Asia.js";
+import { Europe } from "./data/Europe.js";
+import { NorthAmerica } from "./data/NorthAmerica.js";
+import { SouthAmerica } from "./data/SouthAmerica.js";
+import { Oceania } from "./data/Oceania.js";
 import styled from "styled-components";
 
 const CONTINENT_MAPPER = [
@@ -38,7 +38,7 @@ const WorldMap = () => {
         center={position}
         minZoom={2}
         zoom={2}
-        style={{ height: "600px" }}
+        style={{ height: "540px" }}
       >
         <TileLayer url="https://mt0.google.com/vt/lyrs=m&hl=kr&x={x}&y={y}&z={z}" />
         <MapController />
@@ -48,6 +48,7 @@ const WorldMap = () => {
 };
 
 const MapBox = styled.div`
+  width: 100%;
   .leaflet-control-attribution {
     display: none;
   }
