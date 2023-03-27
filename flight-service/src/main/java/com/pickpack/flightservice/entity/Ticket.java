@@ -7,6 +7,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class Ticket {
@@ -32,26 +33,11 @@ public class Ticket {
     private int totalTimeNum;
 
     @Transient
-    private String waypoints = wayPointToString();
+    private String waypoints;
 
     @OneToMany
     @JoinColumn(name = "ticketId", insertable=false, updatable=false)
     private List<Flight> flightList;
 
-    //TODO : ""로만 뽑힌다.
-    private String wayPointToString() {
-        String str = "";
 
-        if(flightList != null) {
-            for(int i = 0; i < flightList.size(); i++) {
-                Flight flight = flightList.get(i);
-                str += flight.getDepName() + "(" + flight.getDepCode() + ")";
-
-                if(i != flightList.size() - 1) str += "/";
-            }
-            return str;
-        } else {
-            return "";
-        }
-    }
 }

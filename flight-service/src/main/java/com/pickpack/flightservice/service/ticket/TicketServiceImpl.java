@@ -3,6 +3,7 @@ package com.pickpack.flightservice.service.ticket;
 import com.pickpack.flightservice.api.request.OneWayTicketReq;
 import com.pickpack.flightservice.api.request.RoundTicketReq;
 import com.pickpack.flightservice.api.response.TicketRes;
+import com.pickpack.flightservice.entity.Flight;
 import com.pickpack.flightservice.entity.Ticket;
 import com.pickpack.flightservice.repository.ticket.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +96,8 @@ public class TicketServiceImpl implements TicketService {
         //결과값 반환
         List<TicketRes> result = new ArrayList<>();
         for(Ticket ticket : ticketList) {
+            ticket.setWaypoints(wayPointToString(ticket.getFlightList()));
+
             TicketRes ticketRes = TicketRes.builder().
                     isLike(false) //TODO : isLike 일단 임시로 false
                     .ticket(ticket)
@@ -110,6 +113,22 @@ public class TicketServiceImpl implements TicketService {
     public List<TicketRes> getRoundTicketList(RoundTicketReq ticketReq) {
         //TODO : TicketServiceImpl - getRoundTicketList
         return null;
+    }
+
+    private String wayPointToString(List<Flight> flightList) { //경유지 정해진 형식으로 변환
+        String str = "";
+
+        if(flightList != null) {
+            for(int i = 0; i < flightList.size(); i++) {
+                Flight flight = flightList.get(i);
+                str += flight.getDepName() + "(" + flight.getDepCode() + ")";
+
+                if(i != flightList.size() - 1) str += "/";
+            }
+            return str;
+        } else {
+            return "";
+        }
     }
 
 }
