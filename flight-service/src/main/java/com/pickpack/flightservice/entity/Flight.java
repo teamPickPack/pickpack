@@ -16,8 +16,6 @@ public class Flight {
     @Column(name = "flight_id")
     private Long id;
     private Long ticketId;
-    private String departure;
-    private String destination;
     private String waitTime;
     private String depTime;
     private String depDate;
