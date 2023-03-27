@@ -1,5 +1,10 @@
+* {
+  font-family: "Mulish";
+}
+
 .App {
   text-align: center;
+  min-width: 1200px;
 }
 
 .App-logo {
