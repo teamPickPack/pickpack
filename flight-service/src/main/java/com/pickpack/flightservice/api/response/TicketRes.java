@@ -2,14 +2,12 @@ package com.pickpack.flightservice.api.response;
 
 import com.pickpack.flightservice.dto.flight.TicketDto;
 import com.pickpack.flightservice.entity.Ticket;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@ToString
 public class TicketRes {
     private boolean isLike;
     private Ticket ticket;
