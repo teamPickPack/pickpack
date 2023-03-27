@@ -1,6 +1,6 @@
 package com.pickpack.flightservice.controller.ticket;
 
-import com.pickpack.flightservice.api.request.TicketReq;
+import com.pickpack.flightservice.api.request.OneWayTicketReq;
 import com.pickpack.flightservice.api.response.TicketRes;
 import com.pickpack.flightservice.service.ticket.TicketService;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ public class TicketController {
     private TicketService ticketService;
 
     @PostMapping("/one")
-    public ResponseEntity<?> list(@RequestBody TicketReq ticketReq) {
+    public ResponseEntity<?> list(@RequestBody OneWayTicketReq ticketReq) {
         try {
             System.out.println("ticketService - list 실행");
             List<TicketRes> list = ticketService.getTicketList(ticketReq);
