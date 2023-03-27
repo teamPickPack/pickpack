@@ -9,9 +9,9 @@ import org.springframework.aop.support.DefaultIntroductionAdvisor;
 import org.springframework.aop.target.SingletonTargetSource;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
+import org.springframework.web.socket.messaging.SubProtocolHandler;
 
-@Component
-public class AgentWebSocketHandlerDecoratorFactory implements WebSocketHandlerDecoratorFactory  {
+public class AgentWebSocketHandlerDecoratorFactory implements WebSocketHandlerDecoratorFactory {
     @Override
     public WebSocketHandler decorate(WebSocketHandler handler) {
         ProxyFactory proxyFactory = new ProxyFactory();

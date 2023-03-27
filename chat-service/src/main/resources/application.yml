@@ -4,6 +4,27 @@ spring:
       host: localhost
       port: 1234
 
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # rewriteBatchedStatements=true <- mysql jdbc
+    url: jdbc:mysql://localhost:3306/test?serverTimezone=UTC&characterEncoding=UTF-8&rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger
+    username: root
+    password: ssafy
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
 cloud:
   aws:
     s3:
@@ -14,3 +35,5 @@ cloud:
     credentials:
       accessKey: AKIAXDB4L5CHN5CQPZHG
       secretKey: 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
+
+

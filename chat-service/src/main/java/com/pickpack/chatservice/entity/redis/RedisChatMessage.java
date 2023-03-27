@@ -5,12 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.pickpack.chatservice.dto.FileDto;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-import reactor.util.annotation.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,7 +15,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class ChatMessage implements Serializable {
+public class RedisChatMessage implements Serializable {
+
+//    private static final long serialVersionUID = -3377559815188666211L;
+
+
 
     public enum MessageType {
         ENTER, TALK, IMAGE
@@ -33,8 +34,8 @@ public class ChatMessage implements Serializable {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime time;
 
-    public static ChatMessage convertFileToMessage(FileDto fileDto, String imgUrl){
-        ChatMessage chatMessage = new ChatMessage();
+    public static RedisChatMessage convertFileToMessage(FileDto fileDto, String imgUrl){
+        RedisChatMessage chatMessage = new RedisChatMessage();
         chatMessage.type=MessageType.IMAGE;
         chatMessage.roomId= fileDto.getRoomId();
         chatMessage.sender=fileDto.getSender();
