@@ -8,11 +8,11 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
-public class BuySellItemListApi {
+@Builder
+public class BorrowRentItemListApi {
 
-    private List<ItemDto> buyItemList;
-    private List<ItemDto> sellItemList;
+    private List<ItemDto> borrowItemList;
+    private List<ItemDto> rentItemList;
 
 }

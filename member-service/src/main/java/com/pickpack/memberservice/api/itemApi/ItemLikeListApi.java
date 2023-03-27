@@ -10,9 +10,9 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
-public class BuySellItemListApi {
+public class ItemLikeListApi {
 
-    private List<ItemDto> buyItemList;
-    private List<ItemDto> sellItemList;
+    private List<ItemDto> buyWishList;
+    private List<ItemDto> borrowWishList;
 
 }
