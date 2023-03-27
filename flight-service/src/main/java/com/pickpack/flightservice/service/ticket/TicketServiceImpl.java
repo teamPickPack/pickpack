@@ -17,6 +17,8 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<TicketRes> getTicketList(TicketReq ticketReq) {
+        System.out.println(ticketReq);
+
         long memberId = ticketReq.getMemberId();
         String departure = ticketReq.getInfo().getDeparture();
         String destination = ticketReq.getInfo().getDestination();
@@ -31,25 +33,56 @@ public class TicketServiceImpl implements TicketService {
         //검색
         if(direct.equals("직항")) {
             switch (sortType) {
-                case "priceRow" : ticketList = ticketRepository.findByDepNameAndArrNameAndDepDateAndWaypointNumIsAndPriceBetweenOrderByPriceAsc(departure, destination, date, 0, minPrice, maxPrice);
-                // TODO : TicketRepository 메소드 구현 - Sort by gapHigh & 직항
-                case "gapHigh" : return null;
-                case "depTimeEarly" : ticketList = ticketRepository.findByDepNameAndArrNameAndDepDateAndWaypointNumIsAndPriceBetweenOrderByDepTimeAsc(departure, destination, date, 0, minPrice, maxPrice);
-                case "depTimeLate" : ticketList = ticketRepository.findByDepNameAndArrNameAndDepDateAndWaypointNumIsAndPriceBetweenOrderByDepTimeDesc(departure, destination, date, 0, minPrice, maxPrice);
-                case "flightTimeRow" : ticketList = ticketRepository.findByDepNameAndArrNameAndDepDateAndWaypointNumIsAndPriceBetweenOrderByTotalTimeNumAsc(departure, destination, date, 0, minPrice, maxPrice);
+                case "priceRow" : {
+                    ticketList = ticketRepository.findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsAndPriceBetweenOrderByPriceAsc(departure, destination, date, 0, minPrice, maxPrice);
+                    break;
+                }
+                case "gapHigh" : {
+                    // TODO : TicketRepository 메소드 구현 - Sort by gapHigh & 직항
+                    ticketList =  null;
+                    break;
+                }
+                case "depTimeEarly" : {
+                    ticketList = ticketRepository.findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsAndPriceBetweenOrderByDepTimeAsc(departure, destination, date, 0, minPrice, maxPrice);
+                    System.out.println("switch 실행");
+                    System.out.println(ticketList);
+                    break;
+                }
+                case "depTimeLate" : {
+                    ticketList = ticketRepository.findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsAndPriceBetweenOrderByDepTimeDesc(departure, destination, date, 0, minPrice, maxPrice);
+                    break;
+                }
+                case "flightTimeRow" : {
+                    ticketList = ticketRepository.findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsAndPriceBetweenOrderByTotalTimeNumAsc(departure, destination, date, 0, minPrice, maxPrice);
+                    break;
+                }
             }
         } else {
             switch (sortType) {
-                case "priceRow" : ticketList = ticketRepository.findByDepNameAndArrNameAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByPriceAsc(departure, destination, date, 1, minPrice, maxPrice);
-                // TODO : TicketRepository 메소드 구현 - Sort by gapHigh & 경유
-                case "gapHigh" : return null;
-                case "depTimeEarly" : ticketList = ticketRepository.findByDepNameAndArrNameAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByDepTimeAsc(departure, destination, date, 1, minPrice, maxPrice);
-                case "depTimeLate" : ticketList = ticketRepository.findByDepNameAndArrNameAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByDepTimeDesc(departure, destination, date, 1, minPrice, maxPrice);
-                case "flightTimeRow" : ticketList = ticketRepository.findByDepNameAndArrNameAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByTotalTimeNumAsc(departure, destination, date, 1, minPrice, maxPrice);
+                case "priceRow" : ticketList = ticketRepository.findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByPriceAsc(departure, destination, date, 1, minPrice, maxPrice);
+                case "gapHigh" : {
+                    // TODO : TicketRepository 메소드 구현 - Sort by gapHigh & 경유
+                    ticketList = null;
+                    break;
+                }
+                case "depTimeEarly" : {
+                    ticketList = ticketRepository.findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByDepTimeAsc(departure, destination, date, 1, minPrice, maxPrice);
+                    break;
+                }
+                case "depTimeLate" : {
+                    ticketList = ticketRepository.findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByDepTimeDesc(departure, destination, date, 1, minPrice, maxPrice);
+                    break;
+                }
+                case "flightTimeRow" : {
+                    ticketList = ticketRepository.findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByTotalTimeNumAsc(departure, destination, date, 1, minPrice, maxPrice);
+                    break;
+                }
             }
         }
 
         //결과값 반환
+        System.out.println("티켓리스트" + ticketList);
+
         List<TicketRes> result = new ArrayList<>();
         for(Ticket ticket : ticketList) {
             TicketRes ticketRes = TicketRes.builder().

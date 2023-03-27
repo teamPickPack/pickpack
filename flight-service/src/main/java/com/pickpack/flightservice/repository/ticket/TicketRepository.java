@@ -7,31 +7,31 @@ import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     //priceRow & 직항
-    List<Ticket> findByDepNameAndArrNameAndDepDateAndWaypointNumIsAndPriceBetweenOrderByPriceAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
+    List<Ticket> findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsAndPriceBetweenOrderByPriceAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
 
     //TODO : gapHigh & 직항
 
     //depTimeEarly & 직항
-    List<Ticket> findByDepNameAndArrNameAndDepDateAndWaypointNumIsAndPriceBetweenOrderByDepTimeAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
+    List<Ticket> findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsAndPriceBetweenOrderByDepTimeAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
 
     //depTimeLate & 직항
-    List<Ticket> findByDepNameAndArrNameAndDepDateAndWaypointNumIsAndPriceBetweenOrderByDepTimeDesc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
+    List<Ticket> findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsAndPriceBetweenOrderByDepTimeDesc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
 
     //flightTimeRow & 직항
-    List<Ticket> findByDepNameAndArrNameAndDepDateAndWaypointNumIsAndPriceBetweenOrderByTotalTimeNumAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
+    List<Ticket> findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsAndPriceBetweenOrderByTotalTimeNumAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
 
     //priceRow & 경유
-    List<Ticket> findByDepNameAndArrNameAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByPriceAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
+    List<Ticket> findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByPriceAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
 
     //TODO : gapHigh & 경유
 
     //depTimeEarly & 경유
-    List<Ticket> findByDepNameAndArrNameAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByDepTimeAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
+    List<Ticket> findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByDepTimeAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
 
     //depTimeLate & 경유
-    List<Ticket> findByDepNameAndArrNameAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByDepTimeDesc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
+    List<Ticket> findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByDepTimeDesc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
 
     //flightTimeRow & 경유
-    List<Ticket> findByDepNameAndArrNameAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByTotalTimeNumAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
+    List<Ticket> findByDepCodeAndArrCodeAndDepDateAndWaypointNumIsGreaterThanEqualAndPriceBetweenOrderByTotalTimeNumAsc(String departure, String destination, String date, int waypointNum, int minPrice, int maxPrice);
 
 }
