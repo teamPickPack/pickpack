@@ -1,7 +1,11 @@
 package com.pickpack.chatservice.repo;
 
 import com.pickpack.chatservice.dto.IsNewDto;
+import com.pickpack.chatservice.entity.ChatMessage;
+import com.pickpack.chatservice.entity.ChatRoom;
+import com.pickpack.chatservice.entity.Item;
 import com.pickpack.chatservice.entity.redis.RedisChatMessage;
+import com.pickpack.chatservice.entity.redis.RedisChatRoom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
@@ -16,6 +20,9 @@ import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -25,7 +32,7 @@ public class ChatMessageRepository implements Serializable {
     private static final String CHAT_MESSAGES = "CHAT_MESSAGES";
     private final RedisTemplate<String, Object> redisTemplate;
     private final JdbcTemplate jdbcTemplate;
-
+    private final DbChatRoomRepository dbChatRoomRepository;
     private final DbChatMessageRepository dbChatMessageRepository;
     private HashOperations<String, String, List<RedisChatMessage>> opsHashChatMessage;
 
@@ -96,16 +103,33 @@ public class ChatMessageRepository implements Serializable {
                                 ps.setString(2,chatMessage.getType().name());
                                 ps.setString(3, chatMessage.getSender());
                                 ps.setString(4,chatMessage.getMessage());
-                                ps.setString(5,chatMessage.getTime().toString()+chatMessage.getSender());
+                                ps.setTimestamp(5, Timestamp.valueOf(chatMessage.getTime()));
                             }
                         }
                 );
         System.out.println(batchStatus[0].length);
         System.out.println(batchStatus.length);
-        //TODO 다시 살려야됨
-//        redisTemplate.delete(CHAT_MESSAGES);
+        redisTemplate.delete(CHAT_MESSAGES);
         log.info("삭제되었는가? : {}",redisTemplate.hasKey(CHAT_MESSAGES));
         return batchStatus;
     }
+    //TODO cron redisChatroomWarming후에 되도록
+    public void redisChatMessageWarming() {
 
+        //유효한 room들
+        List<ChatRoom> chatRoomList = dbChatRoomRepository.findAllValidRooms();
+        LocalDateTime cursorDate = LocalDateTime.now().minusDays(3);
+        Timestamp cursor = Timestamp.valueOf(cursorDate);
+        log.info("cursordate(7일전) ;{}",cursorDate);
+        Map<String, List<RedisChatMessage>> map = new HashMap<>();
+        for(ChatRoom chatRoom :chatRoomList){
+            List<ChatMessage> chatMessageList = dbChatMessageRepository.findChatMessagesByTimeAfterAndChatRoomOrderByTimeDesc(cursor,chatRoom);
+            List<RedisChatMessage> redisChatMessageList=new ArrayList<>();
+            for(ChatMessage chatMessage:chatMessageList){
+                redisChatMessageList.add(RedisChatMessage.convertToRedisChatMessage(chatMessage));
+            }
+            map.put(chatRoom.getRoomId(),redisChatMessageList);
+        }
+        opsHashChatMessage.putAll(CHAT_MESSAGES,map);
+    }
 }

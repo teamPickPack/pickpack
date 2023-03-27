@@ -14,10 +14,10 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
-    @Bean
-    public  AgentWebSocketHandlerDecoratorFactory agentWebSocketHandlerDecoratorFactory() {
-        return new AgentWebSocketHandlerDecoratorFactory();
-    }
+//    @Bean
+//    public  AgentWebSocketHandlerDecoratorFactory agentWebSocketHandlerDecoratorFactory() {
+//        return new AgentWebSocketHandlerDecoratorFactory();
+//    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -31,12 +31,11 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
 //                .withSockJS();
     }
 
-    //TODO 안 먹음
-    @Override
-    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
-        registration.setSendTimeLimit(20 * 10000);
-        registration.setSendBufferSizeLimit(50 * 1024 * 1024);
-        registration.setDecoratorFactories(agentWebSocketHandlerDecoratorFactory());
-    }
+//    @Override
+//    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+//        registration.setSendTimeLimit(20 * 10000);
+//        registration.setSendBufferSizeLimit(50 * 1024 * 1024);
+//        registration.setDecoratorFactories(agentWebSocketHandlerDecoratorFactory());
+//    }
 
 }
