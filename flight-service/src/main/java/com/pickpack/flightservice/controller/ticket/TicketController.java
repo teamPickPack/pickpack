@@ -1,15 +1,13 @@
 package com.pickpack.flightservice.controller.ticket;
 
-import com.pickpack.flightservice.api.request.TicketReq;
+import com.pickpack.flightservice.api.request.OneWayTicketReq;
+import com.pickpack.flightservice.api.request.RoundTicketReq;
 import com.pickpack.flightservice.api.response.TicketRes;
-import com.pickpack.flightservice.entity.Ticket;
 import com.pickpack.flightservice.service.ticket.TicketService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,10 +17,27 @@ import java.util.List;
 public class TicketController {
     private TicketService ticketService;
 
-    @GetMapping("/one")
-    public ResponseEntity<?> list(TicketReq ticketReq) {
+    @PostMapping("/one")
+    public ResponseEntity<?> oneWayTicketList(@RequestBody OneWayTicketReq ticketReq) {
         try {
-            List<TicketRes> list = ticketService.getTicketList(ticketReq);
+            List<TicketRes> list = ticketService.getOneWayTicketList(ticketReq);
+
+            if (list != null && !list.isEmpty()) {
+                return new ResponseEntity<List<TicketRes>>(list, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PostMapping("/round")
+    public ResponseEntity<?> roundTicketList(@RequestBody RoundTicketReq ticketReq) {
+        try {
+            System.out.println("ticketService - roundTicketlist 실행");
+            List<TicketRes> list = ticketService.getRoundTicketList(ticketReq);
+
             if (list != null && !list.isEmpty()) {
                 return new ResponseEntity<List<TicketRes>>(list, HttpStatus.OK);
             } else {
