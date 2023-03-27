@@ -18,7 +18,7 @@ public class RedisChatRoom implements Serializable {
     private String imgUrl;
     private String seller;
     private String buyer;
-    private int messageSize;
+    private Long messageSize;
     private String lastMessage;
     private boolean isNew;
 

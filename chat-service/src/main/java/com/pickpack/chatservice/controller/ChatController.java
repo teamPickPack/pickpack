@@ -28,17 +28,17 @@ public class ChatController {
         log.info("메시지 성공, 메시지 보낸 사람:{}",message.getSender());
         redisPublisher.publishMessage(message);
     }
-    @MessageMapping("/chat/img")
-    public void imgUpload(FileDto fileDto) {
-        log.info("이미지 성공, 이미지 보낸 사람:{}",fileDto.getSender());
-
-        //TODO exception처리
-        if(fileDto.getData().isEmpty()) throw new RuntimeException("파일이 비었음");
-        redisPublisher.publishImg(fileDto);
-    }
+//    @MessageMapping("/chat/img")
+//    public void imgUpload(FileDto fileDto) {
+//        log.info("이미지 성공, 이미지 보낸 사람:{}",fileDto.getSender());
+//
+//        //TODO exception처리
+//        if(fileDto.getData().isEmpty()) throw new RuntimeException("파일이 비었음");
+//        redisPublisher.publishImg(fileDto);
+//    }
     @GetMapping("/chat/message/{roomId}")
     public ResponseEntity<List<RedisChatMessage>> getMessages(@PathVariable String roomId) {
         return new ResponseEntity<>( chatMessageRepository.findMessage(roomId), HttpStatus.OK);
     }
-
+    //TODO 페이징처리!!!!!!!!!!!!!!!
 }

@@ -5,6 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,8 +23,9 @@ public class ChatMessage implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "room_id")
-    private String roomId;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private ChatRoom chatRoom;
 
     @Enumerated(EnumType.STRING)
     private RedisChatMessage.MessageType type;
@@ -33,10 +36,8 @@ public class ChatMessage implements Serializable {
 
     @Column
     private String message;
-
-    //TODO 겹칠수가 있을까..?
-    @Column(unique = true)
-    private String time;
+    //TODO RedisChatMessage time과 통일과정 필요
+    private Timestamp time;
 
 
 }

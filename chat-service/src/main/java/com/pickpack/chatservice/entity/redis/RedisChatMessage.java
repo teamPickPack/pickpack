@@ -5,15 +5,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.pickpack.chatservice.dto.FileDto;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import com.pickpack.chatservice.entity.ChatMessage;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class RedisChatMessage implements Serializable {
 
@@ -34,14 +35,14 @@ public class RedisChatMessage implements Serializable {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime time;
 
-    public static RedisChatMessage convertFileToMessage(FileDto fileDto, String imgUrl){
-        RedisChatMessage chatMessage = new RedisChatMessage();
-        chatMessage.type=MessageType.IMAGE;
-        chatMessage.roomId= fileDto.getRoomId();
-        chatMessage.sender=fileDto.getSender();
-        chatMessage.message=imgUrl;
-        chatMessage.time=LocalDateTime.now();
-        return chatMessage;
+    public static RedisChatMessage convertToRedisChatMessage(ChatMessage chatMessage){
+        RedisChatMessage redisChatMessage = new RedisChatMessage();
+        redisChatMessage.type=chatMessage.getType();
+        redisChatMessage.roomId= chatMessage.getChatRoom().getRoomId();
+        redisChatMessage.sender=chatMessage.getSender().getNickname();
+        redisChatMessage.message=chatMessage.getMessage();
+        redisChatMessage.time=chatMessage.getTime().toLocalDateTime();
+        return redisChatMessage;
     }
 
 }
