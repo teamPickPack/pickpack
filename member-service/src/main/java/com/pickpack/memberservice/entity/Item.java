@@ -23,8 +23,8 @@ public class Item {
     private String content;
     private String imgUrl;
     private String registDate;
-    private boolean isComplete;
-    private boolean isDelete;
+    private Boolean isComplete;
+    private Boolean isDelete;
     private String itemName;
 
     @ManyToOne(fetch = FetchType.LAZY)
