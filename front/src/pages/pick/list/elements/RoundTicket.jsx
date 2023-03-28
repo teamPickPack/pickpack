@@ -32,7 +32,6 @@ export default function RoundTicket({
                     el.style.zIndex = zIndexArray[index]
                 })
                 for(let i = 0; i < zIndexArray.length; i+=2){
-                    console.log(zIndexArray[i] < zIndexArray[i+1]);
                     if(zIndexArray[i] < zIndexArray[i+1]){
                         list[i].style.opacity = '.7';
                         list[i+1].style.opacity = '1';
@@ -157,8 +156,8 @@ export default function RoundTicket({
 const Tickets = styled.div`
     width: 800px;
     height: 320px;
-    border: 2px solid blue;
     position: relative;
+    margin: 8px 0px;
 `;
 const GoTicket = styled.div`
     position: absolute;
