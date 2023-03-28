@@ -9,17 +9,13 @@ public class OnewayTicketLike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "oneway_ticket_like_id")
     private Long id;
-
-    private boolean isDelete;
-    private Integer wanted_price;
-
+    private Boolean isDelete;
+    private Integer wantedPrice;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
-
 
 }
