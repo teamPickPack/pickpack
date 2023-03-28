@@ -17,6 +17,10 @@ spring:
       hibernate:
         format_sql: true
 
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
 logging:
   level:
     org.hibernate.sql : debug
