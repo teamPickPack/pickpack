@@ -10,16 +10,16 @@ public class Item {
     @Column(name = "item_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String title;
     @Enumerated(EnumType.STRING)
     private Category category;
-    private int price;
+    private Integer price;
     private String content;
     private String imgUrl;
     private String registDate;
     private boolean isComplete;
     private boolean isDelete;
+    private String itemName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -30,12 +30,13 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Chatroom> chatroomList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<Soldout> soldoutList;
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
+    private Soldout soldout;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private City city;
+
 }
 
 
