@@ -4,7 +4,6 @@ import com.pickpack.memberservice.api.itemApi.BorrowRentItemListApi;
 import com.pickpack.memberservice.api.itemApi.BuySellItemListApi;
 import com.pickpack.memberservice.api.itemApi.ItemLikeListApi;
 import com.pickpack.memberservice.dto.item.ItemDto;
-import com.pickpack.memberservice.repository.CityRepository;
 import com.pickpack.memberservice.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
