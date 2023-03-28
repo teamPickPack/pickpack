@@ -131,7 +131,7 @@ export default function OneWayTicket({
         }
     }
     return(
-        <Ticket ref={flightTicket} onAnimationEnd={() => deleteChangeAnimation(flightTicket)}>
+        <Ticket isRound={isRound} ref={flightTicket} onAnimationEnd={() => deleteChangeAnimation(flightTicket)}>
             <TicketBackground className="ticket-background" />
             { ticketType ? 
             <>
@@ -268,6 +268,7 @@ const Ticket = styled.div`
     border: 1px solid black;
     border-radius: 16px;
     position: relative;
+    margin: ${(props) => !props.isRound? '8' : '0'}px 0px;
     @keyframes changeTicketType{
         0%{
             transform: rotateY(0deg);

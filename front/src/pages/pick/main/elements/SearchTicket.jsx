@@ -196,7 +196,7 @@ const SearchTicket = () => {
     }
   }, [isCondition]);
 
-  console.log(wayType);
+  // console.log(wayType);
 
   useEffect(() => {
     if (wayType === "round") {

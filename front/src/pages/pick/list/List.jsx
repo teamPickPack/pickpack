@@ -1,6 +1,8 @@
 import WeatherList from './elements/WeatherList'
 import OneWayTicket from './elements/OneWayTicket'
 import RoundTicket from './elements/RoundTicket'
+import SearchTicket from '../main/elements/SearchTicket';
+import mainBanner from '../../../assets/image/mainBanner.png';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { compareAction } from '../../../store/compareSlice';
@@ -209,9 +211,13 @@ export default function List(){
     }, [compareList])
     const [compareBoxVisible, setCompareBoxVisible] = useState(compareList.length > 0 ? true : false);
     const [ticketListWidth, setTicketListWidth] = useState(compareBoxVisible? window.innerWidth - 320 : window.innerWidth)
-    const checkWidth = () =>{
-        setTicketListWidth(compareBoxVisible? window.innerWidth - 320 : window.innerWidth);
-    }
+    // let timer = null;
+    // const checkWidth = () =>{ //너비가 새로 조정이 되었으면?
+        // clearTimeout(timer);
+        // timer = setTimeout(function(){
+        //     setTicketListWidth(compareBoxVisible? window.innerWidth - 320 : window.innerWidth);
+        // }, 100);
+    // }
     const initialCheck = (mode, ticketId) => { //체크에 관련해서...
         let result = false;
         if(mode !== compareMode) return result;
@@ -223,10 +229,11 @@ export default function List(){
         }
         return result;
     }
-    useEffect(() => {
-        setTicketListWidth(compareBoxVisible? window.innerWidth - 320 : window.innerWidth);
+    useEffect(() => { //Box가 새로 생겨났으면?
+        console.log(window.innerWidth);
+        setTicketListWidth((ticketListWidth) => compareBoxVisible? window.innerWidth - 320 : ticketListWidth);
     }, [compareBoxVisible]);
-    window.addEventListener("resize", checkWidth);
+
     const [compareBoxTop, setCompareBoxTop] = useState(160);
     const [compareBoxHeight, setCompareBoxHeight] = useState(window.innerHeight-160);
     const checkHeight = () => {
@@ -241,15 +248,20 @@ export default function List(){
     window.addEventListener("scroll", checkHeight);
     return(
         <div>
-            <div>
-                <WeatherList />
-                <WeatherList />
-                <WeatherList />
-            </div>
-            <hr></hr>
-            <div style={{display: 'flex', justifyContent: 'center'}}>
+            <FistSection>
+                <SearchTicket />
+            </FistSection>
+            <Content flexStyle={compareBoxVisible}>
                 {compareBoxVisible ? 
                 <div style={{width: '320px', height: `${compareBoxHeight}px`, backgroundColor: '#e9e7ef', position: 'sticky', top: `${compareBoxTop}px`}}>
+                    <CompareBoxBtnList>
+                        <CompareBoxBtnItem color='#FCE2DB' width={120}>
+                            <span>항공권 비교하기</span>
+                        </CompareBoxBtnItem>
+                        <CompareBoxBtnItem color='#FF0000' width={64} onClick={() => window.confirm('비교 목록을 초기화하시겠습니까?')? dispatch(compareAction.deleteCompareList()) : null}>
+                            <span>초기화</span>
+                        </CompareBoxBtnItem>
+                    </CompareBoxBtnList>
                     {compareList.map((compareItem) => {
                         return(
                             <div key={compareItem.flightId}>
@@ -265,16 +277,24 @@ export default function List(){
                             </div>
                         )
                     })}
-                    <CompareBoxBtnList>
-                        <CompareBoxBtnItem color='#FCE2DB' width={160}>
-                            <span>항공권 비교하기</span>
-                        </CompareBoxBtnItem>
-                        <CompareBoxBtnItem color='#FF0000' width={80} onClick={() => window.confirm('비교 목록을 초기화하시겠습니까?')? dispatch(compareAction.deleteCompareList()) : null}>
-                            <span>초기화</span>
-                        </CompareBoxBtnItem>
-                    </CompareBoxBtnList>
                 </div> : null}
-                <TicketList ticketListWidth={ticketListWidth} style={{border: '1px solid gold', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <TicketList ticketListWidth={ticketListWidth} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0px'}}>
+                    <AdditionalInfo width={ticketListWidth}>
+                        <WeatherList className="weather-list" />
+                        <SearchInfo className="search-info" flexStyle={compareBoxVisible}>
+                            <span style={{fontSize: '16px', fontWeight: '600', marginRight: '16px'}}>총 40,000개의 결과</span>
+                            <div>
+                                <label style={{fontSize: '16px', fontWeight: '600'}}>정렬 </label>
+                                <select style={{fontSize: '16px', fontWeight: '600'}}>
+                                    <option value="">금액낮은순</option>
+                                    <option value="">변동폭큰순</option>
+                                    <option value="">출발시간빠른순</option>
+                                    <option value="">출발시간늦은순</option>
+                                    <option value="">소요시간낮은순</option>
+                                </select>
+                            </div>
+                        </SearchInfo>
+                    </AdditionalInfo>
                     {/* {data && data.map((one) => {
                         one.isCheck = initialCheck('oneWay', one.ticket.ticketId);
                         return(
@@ -282,6 +302,7 @@ export default function List(){
                             isCheck={one.isCheck} isLike={one.isLike} ticket={one.ticket} flightList={one.flightList} />
                         )
                     })} */}
+                    
                     {data && data.map((one) => {
                         one.isCheck = initialCheck('round', `${one.goWay.ticket.ticketId}-${one.returnWay.ticket.ticketId}`)
                         return(
@@ -291,11 +312,29 @@ export default function List(){
                     })}
                     {/* <RoundTicket isCheck={false} isLike={data2.isLike} goWay={data2.goWay} returnWay={data2.returnWay} totalPrice={data2.totalPrice} /> */}
                 </TicketList>
-            </div>
+            </Content>
         </div>
     )
 }
 
+const FistSection = styled.div`
+  text-align: center;
+  height: 200px;
+  background: url(${mainBanner});
+  background-size: cover;
+  padding: 48px 0;
+
+  .search-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
+const Content = styled.div`
+    display: flex;
+    justify-content: ${(props) => props.flexStyle ? 'space-between' : 'center'};
+`
 const TicketList = styled.div`
     width: ${(props) => props.ticketListWidth}px;
 `;
@@ -303,9 +342,7 @@ const TicketList = styled.div`
 const CompareItem = styled.div`
     transform: scale(${(props) => props.scale});
     transform-origin: top left;
-    margin: 8px 0px;
     height: 128px;
-
     .compare-oneWay {
         height: 120px;
     }
@@ -326,7 +363,9 @@ const CompareBoxBtnItem = styled.div`
     border-radius: 8px;
     width: ${(props) => props.width}px;
     background-color: ${(props) => props.color};
-    height: 32px;
+    height: 24px;
+    font-size: 12px;
+    font-weight: bold;
     border: 1px solid black;
     display: flex;
     justify-content: center;
@@ -338,4 +377,25 @@ const CompareBoxBtnItem = styled.div`
         opacity: .7;
         cursor: pointer;
     }
+`
+
+const AdditionalInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: ${(props) => props.width}px;
+    margin-bottom: 12px;
+
+    .weather-list{
+        justify-content: flex-start;
+    }
+    .search-info{
+        justify-content: flex-end;
+    }
+`;
+
+const SearchInfo = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
 `
