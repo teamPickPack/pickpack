@@ -12,8 +12,8 @@ from pyspark.sql import functions as func
 from pyspark.sql.functions import expr, date_add
 
 # MySQL DB 연결
-db = pymysql.connect(host="j8b307.p.ssafy.io", port=3306, user="root", password="ssafy", db="test")
-engine = create_engine("mysql+pymysql://root:ssafy@j8b307.p.ssafy.io:3306/test?charset=utf8")
+db = pymysql.connect(host="j8b307.p.ssafy.io", port=3306, user="root", password="", db="test")
+engine = create_engine("mysql+pymysql://root:@j8b307.p.ssafy.io:3306/test?charset=utf8")
 conn = engine.connect()
 cursor = db.cursor()
 
