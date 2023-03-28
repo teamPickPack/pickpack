@@ -2,7 +2,8 @@ package com.pickpack.flightservice.controller.ticket;
 
 import com.pickpack.flightservice.api.request.OneWayTicketReq;
 import com.pickpack.flightservice.api.request.RoundTicketReq;
-import com.pickpack.flightservice.api.response.TicketRes;
+import com.pickpack.flightservice.api.response.OneWayTicketRes;
+import com.pickpack.flightservice.api.response.RoundTicketRes;
 import com.pickpack.flightservice.service.ticket.TicketService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,17 +14,17 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/flight")
+@RequestMapping("/api/flight")
 public class TicketController {
     private TicketService ticketService;
 
     @PostMapping("/one")
     public ResponseEntity<?> oneWayTicketList(@RequestBody OneWayTicketReq ticketReq) {
         try {
-            List<TicketRes> list = ticketService.getOneWayTicketList(ticketReq);
+            List<OneWayTicketRes> list = ticketService.getOneWayTicketList(ticketReq);
 
             if (list != null && !list.isEmpty()) {
-                return new ResponseEntity<List<TicketRes>>(list, HttpStatus.OK);
+                return new ResponseEntity<List<OneWayTicketRes>>(list, HttpStatus.OK);
             } else {
                 return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
             }
@@ -36,10 +37,10 @@ public class TicketController {
     public ResponseEntity<?> roundTicketList(@RequestBody RoundTicketReq ticketReq) {
         try {
             System.out.println("ticketService - roundTicketlist 실행");
-            List<TicketRes> list = ticketService.getRoundTicketList(ticketReq);
+            List<RoundTicketRes> list = ticketService.getRoundTicketList(ticketReq);
 
             if (list != null && !list.isEmpty()) {
-                return new ResponseEntity<List<TicketRes>>(list, HttpStatus.OK);
+                return new ResponseEntity<List<RoundTicketRes>>(list, HttpStatus.OK);
             } else {
                 return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
             }
