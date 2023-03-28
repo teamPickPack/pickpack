@@ -1,6 +1,8 @@
 package com.pickpack.memberservice.controller;
 
 import com.pickpack.memberservice.api.flightApi.OneLikeTicketListApi;
+import com.pickpack.memberservice.api.flightApi.RoundLiketicketListApi;
+import com.pickpack.memberservice.dto.flight.RoundTicketLikeDto;
 import com.pickpack.memberservice.dto.flight.TicketLikeDto;
 import com.pickpack.memberservice.service.FlightService;
 import org.springframework.http.HttpStatus;
@@ -30,17 +32,21 @@ public class FlightController {
     @GetMapping("/{memberId}/one-flight")
     public ResponseEntity<?> findOneFlightLike(@PathVariable Long memberId){
 
-        List<TicketLikeDto> ticketLikeDtos = flightService.findlikeTicket(memberId);
+        List<TicketLikeDto> likeOnewayTicket = flightService.findlikeTicket(memberId);
         OneLikeTicketListApi oneLikeTicketListApi =
-                OneLikeTicketListApi.builder().OneLikeTicketList(ticketLikeDtos).build();
+                OneLikeTicketListApi.builder().OneLikeTicketList(likeOnewayTicket).build();
+
         return new ResponseEntity<>(oneLikeTicketListApi, HttpStatus.OK);
     }
 
     @GetMapping("/{memberId}/round-flight")
-    public void findTwoFlightLike(@PathVariable Long memberId){
+    public ResponseEntity<?> findTwoFlightLike(@PathVariable Long memberId){
 
+        List<RoundTicketLikeDto> likeRoundTicket = flightService.findLikeRoundTicket(memberId);
+        RoundLiketicketListApi roundLiketicketListApi =
+                RoundLiketicketListApi.builder().RoundLiketicketList(likeRoundTicket).build();
 
-
+        return new ResponseEntity<>(roundLiketicketListApi, HttpStatus.OK);
     }
 
 }
