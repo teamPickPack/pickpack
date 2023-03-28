@@ -1,9 +1,13 @@
 package com.pickpack.itemservice.entity;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
 public class Item {
 
     @Id
@@ -37,6 +41,36 @@ public class Item {
     @JoinColumn(name = "city_id")
     private City city;
 
+
+//    ====== 연관관계 메서드 ======
+    public void addItemLikeList(ItemLike itemLike){
+        itemLikeList.add(itemLike);
+        itemLike.setItem(this);
+    }
+
+    public void addChatroomList(Chatroom chatroom){
+        chatroomList.add(chatroom);
+        chatroom.setItem(this);
+    }
+
+//    ====== 생성 메서드 ======
+    private Item(String title, Category category, Integer price, String content, String itemName){
+        this.title = title;
+        this.category = category;
+        this.price = price;
+        this.content = content;
+        this.itemName = itemName;
+        this.registDate = LocalDateTime.now().toString();
+        this.isComplete = false;
+        this.isDelete = false;
+    }
+    public static Item createItem(String title, Category category, Integer price, String content, String itemName){
+        Item item = new Item(title, category, price, content, itemName);
+        return item;
+    }
+    private void setImage(String imgUrl){
+        this.imgUrl = imgUrl;
+    }
 }
 
 
