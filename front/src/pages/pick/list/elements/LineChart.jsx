@@ -4,7 +4,7 @@ import { Chart as ChartJS, CategoryScale } from "chart.js/auto";
 
 ChartJS.register(CategoryScale)
 
-export default function LineChart({data}){
+export default function LineChart({priceData}){
     const [chartData, setChartData] = useState(null)
     
     const options = {
@@ -163,17 +163,17 @@ export default function LineChart({data}){
 
     useEffect(() => { 
         setChartData({
-            labels: data.info.map((d) => d.date),
+            labels: priceData.info.map((d) => d.date),
             datasets: [
                 {
-                    data: data.info.map(() => data.avg),
+                    data: priceData.info.map(() => priceData.avg),
                     backgroundColor: 'transparent',
                     borderColor: 'red',
                     borderWidth: 1,
                     pointStyle: false,
                 },
                 {
-                    data: data.info.map((d) => d.price),
+                    data: priceData.info.map((d) => d.price),
                     backgroundColor: 'transparent',
                     borderColor: '#1A2B88',
                     borderWidth: 2,
@@ -181,7 +181,7 @@ export default function LineChart({data}){
                 },
             ]
         })
-    }, [data])
+    }, [priceData])
     return (
         <>
             {chartData && <Line options={options} data={chartData}/>}
