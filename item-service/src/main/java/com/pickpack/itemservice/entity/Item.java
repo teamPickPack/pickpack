@@ -1,4 +1,5 @@
 package com.pickpack.itemservice.entity;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Item {
 
     @Id
@@ -64,11 +66,13 @@ public class Item {
         this.isComplete = false;
         this.isDelete = false;
     }
-    public static Item createItem(String title, Category category, Integer price, String content, String itemName){
+    public static Item createItem(String title, Category category, Integer price, String content, String itemName, City city, Member member){
         Item item = new Item(title, category, price, content, itemName);
+        item.city = city;
+        item.member = member;
         return item;
     }
-    private void setImage(String imgUrl){
+    public void setImage(String imgUrl){
         this.imgUrl = imgUrl;
     }
 }

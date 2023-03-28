@@ -24,6 +24,12 @@ public class AwsS3Uploader {
 
 //    @Value("${cloud.aws.s3.bucket}")
     public String bucket = "pickpack8";
+    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+        File uploadFile = convert(multipartFile)        // 파일 생성
+                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File convert fail"));
+
+        return upload(uploadFile, dirName);
+    }
 
     public String upload(File uploadFile, String dirName) {
         String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();
