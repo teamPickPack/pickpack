@@ -9,6 +9,11 @@ spring:
     url: jdbc:mysql://54.180.157.223:3306/pickpack?
     username: root # MySQL DB Username
     password: ssafy # MySQL DB password
+  servlet:
+    multipart:
+      max-file-size: 256MB
+      max-request-size: 256MB
+      enabled: true
 
   jpa:
     hibernate:
@@ -19,7 +24,17 @@ spring:
 logging:
   level:
     org.hibernate.sql : debug
-
+cloud:
+  aws:
+    credentials:
+      access-key: # 승희에게 문의
+      secret-key: #
+    s3:
+      bucket: pickpack8
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
