@@ -19,7 +19,17 @@ spring:
 logging:
   level:
     org.hibernate.sql : debug
-
+cloud:
+  aws:
+    credentials:
+      access-key:
+      secret-key:
+    s3:
+      bucket: pickpack8
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
