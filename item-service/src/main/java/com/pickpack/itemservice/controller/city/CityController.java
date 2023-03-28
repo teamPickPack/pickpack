@@ -1,6 +1,6 @@
 package com.pickpack.itemservice.controller.city;
 
-import com.pickpack.itemservice.api.ListRes;
+import com.pickpack.itemservice.api.request.ListRes;
 import com.pickpack.itemservice.entity.City;
 import com.pickpack.itemservice.exception.CityListEmptyException;
 import com.pickpack.itemservice.service.city.CityService;
