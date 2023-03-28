@@ -33,10 +33,10 @@ public class Ticket {
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
     private List<OnewayTicketLike> onewayTicketLikeList;
 
-    @OneToMany(mappedBy = "ticket_to", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticketTo", cascade = CascadeType.ALL)
     private List<RoundTicketLike> toRoundTicketLikeList;
 
-    @OneToMany(mappedBy = "ticket_from", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticketFrom", cascade = CascadeType.ALL)
     private List<RoundTicketLike> fromRoundTicketLikeList;
 
     @Transient
