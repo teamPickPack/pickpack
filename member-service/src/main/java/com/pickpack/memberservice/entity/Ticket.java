@@ -1,9 +1,12 @@
 package com.pickpack.memberservice.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Getter
 public class Ticket {
 
     @Id
@@ -14,7 +17,7 @@ public class Ticket {
     private int waypointNum;
     private String registDate;
     private String totalTime;
-    private boolean codeshare;
+    private Boolean codeshare;
     private String airline;
     private String depTime;
     private String depDate;
