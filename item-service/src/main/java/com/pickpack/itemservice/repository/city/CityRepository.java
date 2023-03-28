@@ -1,4 +1,4 @@
-package com.pickpack.itemservice.repository;
+package com.pickpack.itemservice.repository.city;
 
 import com.pickpack.itemservice.entity.City;
 import org.springframework.data.jpa.repository.JpaRepository;

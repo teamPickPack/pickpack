@@ -19,7 +19,10 @@ public class ItemLike {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
+//   ====== 연관관계 메서드 ======
+    public void setItem(Item item) {
+        this.item = item;
+    }
 }
 
 
