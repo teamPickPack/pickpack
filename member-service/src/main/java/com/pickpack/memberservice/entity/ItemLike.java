@@ -10,7 +10,7 @@ public class ItemLike {
     @Column(name = "item_like_id")
     private Long id;
 
-    private boolean isDelete;
+    private Boolean isDelete;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
