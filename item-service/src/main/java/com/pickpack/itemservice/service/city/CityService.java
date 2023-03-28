@@ -1,7 +1,7 @@
-package com.pickpack.itemservice.service;
+package com.pickpack.itemservice.service.city;
 
 import com.pickpack.itemservice.entity.City;
-import com.pickpack.itemservice.repository.CityRepository;
+import com.pickpack.itemservice.repository.city.CityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;

@@ -1,9 +1,9 @@
-package com.pickpack.itemservice.controller;
+package com.pickpack.itemservice.controller.city;
 
-import com.pickpack.itemservice.api.ListRes;
+import com.pickpack.itemservice.api.request.ListRes;
 import com.pickpack.itemservice.entity.City;
 import com.pickpack.itemservice.exception.CityListEmptyException;
-import com.pickpack.itemservice.service.CityService;
+import com.pickpack.itemservice.service.city.CityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
