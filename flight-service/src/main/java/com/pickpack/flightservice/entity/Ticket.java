@@ -1,16 +1,15 @@
 package com.pickpack.flightservice.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,25 +33,11 @@ public class Ticket {
     private int totalTimeNum;
 
     @Transient
-    private String waypoints = wayPointToString();
+    private String waypoints;
 
     @OneToMany
     @JoinColumn(name = "ticketId", insertable=false, updatable=false)
     private List<Flight> flightList;
 
-    private String wayPointToString() {
-        String str = "";
 
-        if(flightList != null) {
-            for(int i = 0; i < flightList.size(); i++) {
-                Flight flight = flightList.get(i);
-                str += flight.getDepName() + "(" + flight.getDepCode() + ")";
-
-                if(i != flightList.size() - 1) str += "/";
-            }
-            return str;
-        } else {
-            return "";
-        }
-    }
 }
