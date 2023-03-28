@@ -14,7 +14,6 @@ import compareSlice from "./compareSlice";
 
 // reducer 추가하는 부분
 const reducers = combineReducers({ user: userSlice.reducer, compare: compareSlice.reducer });
-
 // storage에 올려서 사용할 것 추가하는 부분
 const persistConfig = {
   key: "root",
