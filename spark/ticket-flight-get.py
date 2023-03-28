@@ -9,7 +9,7 @@ pymysql.install_as_MySQLdb()
 from pyspark.sql.types import StructType, StructField, BooleanType, DateType, IntegerType, LongType, StringType
 
 
-db = pymysql.connect(host="j8b307.p.ssafy.io", port=3306, user="root", password="ssafy", db="pickpack")
+db = pymysql.connect(host="j8b307.p.ssafy.io", port=3306, user="root", password="", db="pickpack")
 cursor = db.cursor()
 
 spark = SparkSession.builder.appName("FlightService").getOrCreate()
