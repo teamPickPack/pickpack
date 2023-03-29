@@ -74,7 +74,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     }
 
     @Override
-    public List<Ticket> findWaypointIsGraterThan1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice) {
+    public List<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
@@ -82,7 +82,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
                         ticket.price.between(minPrice, maxPrice),
-                        ticket.waypointNum.gt(1)
+                        ticket.waypointNum.gt(waypointNum)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());

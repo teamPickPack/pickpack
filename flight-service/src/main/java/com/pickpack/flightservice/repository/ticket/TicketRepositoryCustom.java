@@ -10,5 +10,5 @@ import java.util.List;
 public interface TicketRepositoryCustom {
     List<Ticket> findAllTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice);
     List<Ticket> findWaypoint0or1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum);
-    List<Ticket> findWaypointIsGraterThan1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice);
+    List<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum);
 }
