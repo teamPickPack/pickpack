@@ -48,6 +48,14 @@ public class ItemController {
             return exceptionHandling(e);
         }
     }
+    @GetMapping("/{category}/city/{cityId}")
+    public ResponseEntity<?> getItemsSearchOnCity(@PathVariable("category") String category, @PathVariable("cityId") Long cityId){
+        try{
+            return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnCity(category, cityId)), HttpStatus.OK);
+        }catch (Exception e){
+            return exceptionHandling(e);
+        }
+    }
 
     private ResponseEntity<String> exceptionHandling(Exception e) {
         e.printStackTrace();

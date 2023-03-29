@@ -73,6 +73,14 @@ public class ItemService {
         return items;
     }
 
+    public List<ItemListDto> getItemsSearchOnCity(String categoryStr, Long cityId){
+        List<ItemListDto> items = itemRepository.getItemsSearchOnCity(categoryStr, cityId);
+        if(items.isEmpty()) {
+            throw new ListEmptyException(cityId + "에 대한 검색 결과가 없습니다.");
+        }
+        return items;
+    }
+
     private Category str2Category(String categoryStr){
         Category category = null;
         switch (categoryStr){

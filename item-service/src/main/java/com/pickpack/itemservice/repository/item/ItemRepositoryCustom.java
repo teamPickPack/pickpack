@@ -8,4 +8,5 @@ import java.util.List;
 public interface ItemRepositoryCustom {
     List<ItemListDto> getItemsWithCategory(String categoryStr);
     List<ItemListDto> getItemsSearchOnTitle(String categoryStr, String search);
+    List<ItemListDto> getItemsSearchOnCity(String categoryStr, Long cityId);
 }
