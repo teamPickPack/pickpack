@@ -1,4 +1,4 @@
-package com.pickpack.itemservice.api.request;
+package com.pickpack.itemservice.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
