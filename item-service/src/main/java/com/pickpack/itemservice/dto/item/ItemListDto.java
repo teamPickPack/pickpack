@@ -17,6 +17,7 @@ public class ItemListDto {
     private String itemName;
     private String imgUrl;
     private String registDate;
+    private Boolean isComplete;
     private Long cityId;
     private String cityName;
 }

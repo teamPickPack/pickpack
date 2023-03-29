@@ -29,13 +29,15 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                         item.itemName,
                         item.imgUrl,
                         item.registDate,
+                        item.isComplete,
                         city.id.as("cityId"),
                         city.cityName)).from(item)
                         .join(item.member, member)
                         .join(item.city, city)
                         .where(item.category.eq(Category.valueOf(categoryStr)))
-                        .where(item.isComplete.eq(Boolean.FALSE))
-                        .where(item.isDelete.eq(Boolean.FALSE)).fetch();
+                        .where(item.isDelete.eq(Boolean.FALSE))
+                        .orderBy(item.registDate.desc(),item.price.asc())
+                        .fetch();
         return itemsWithCategory;
     }
 }
