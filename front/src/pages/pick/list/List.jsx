@@ -259,7 +259,7 @@ export default function List(){
             <FistSection>
                 <SearchTicket />
             </FistSection>
-            <CompareModal />
+            {/* <CompareModal /> */}
             <Content flexStyle={compareBoxVisible}>
                 {compareBoxVisible ? 
                 <CompareBox height={compareBoxHeight} top={compareBoxTop}>
