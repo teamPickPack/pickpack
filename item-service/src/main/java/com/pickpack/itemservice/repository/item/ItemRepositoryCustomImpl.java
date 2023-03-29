@@ -55,4 +55,22 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                         .fetch();
         return itemsSearchOntitle;
     }
+
+    @Override
+    public List<ItemListDto> getItemsSearchOnCity(String categoryStr, Long cityId) {
+        List<ItemListDto> itemsSearchOnCity =
+                queryFactory.select(Projections.fields(ItemListDto.class,
+                item.id.as("itemId"),
+                member.id.as("memberId"),
+                item.title, item.category, item.price, item.itemName,
+                item.imgUrl, item.registDate, item.isComplete,
+                city.id.as("cityId"),
+                city.cityName)).from(item)
+                .join(item.member, member)
+                .join(item.city, city).on(city.id.eq(cityId))
+                .where(item.category.eq(Category.valueOf(categoryStr)))
+                .where(item.isDelete.eq(Boolean.FALSE))
+                .fetch();
+        return itemsSearchOnCity;
+    }
 }
