@@ -7,6 +7,12 @@ server:
 spring:
   application:
     name: member
+  config:
+    import: "optional:configserver:http://localhost:7777/"
+  cloud:
+    config:
+      name: info
+      profile: default
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://54.180.157.223:3306/pickpack?
