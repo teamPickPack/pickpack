@@ -14,11 +14,11 @@ spring:
       name: info
       profile: default
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://54.180.157.223:3306/pickpack?
-#    url: jdbc:mysql://localhost:3306/pickpack?
-    username: root
-    password: ssafy
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://54.180.157.223:3306/pickpack?
+##    url: jdbc:mysql://localhost:3306/pickpack?
+#    username: root
+#    password: ssafy
 
   jpa:
     hibernate:
