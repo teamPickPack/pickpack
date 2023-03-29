@@ -1,12 +1,9 @@
 spring:  
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://43.201.19.30:3306/pickpack?
+    url: jdbc:mysql://54.180.157.223:3306/pickpack?
     username: root 
     password: {cipher}AQDCPUp05MZNDA97WDYZet4ss26OzUwbWw7FLmWL83w/NqkYElXLejjzDQSgjsR7AZKMhko32FhSp9WTq8eHpLulZs5fluiRcU26zBB3fCeYZs5LO55ggatL6UQwLeSIPaRPBPbNNrAqoROl+e2pwn8bCw/7ihYfQTx5pu9JEh5dgVtAXQOLd4UkSs/BBxndgOpeLTE7Qt4/tWrNln5ZGpCuP7J6HVlaYYMmQT7IErwPWHtVxP+9DqX51EdMPTcj9BtKNiWzXhHEswEhH0tjPMiNd26PS6i5NVbVtzzcKqCDlyNktzzCDJdaHemWqltP0gTfagRiF5CBkM/ueIXwsdwNbQiNwHq8Je4yt1ImCKu2TIytMws4U9gf9HNnEWoMAvA=
-
-
-
 
 
 
