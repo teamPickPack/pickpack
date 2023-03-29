@@ -42,7 +42,9 @@ export default function FlightList(){
         }
     }
     return(
-            <FlightDetailAllItem ref={FlightDetailAllItemRef}>
+            <FlightDetailAllItem centerAlign={!scrollLeftButtonVisible && !scrollRightButtonVisible} ref={FlightDetailAllItemRef}>
+                <FlightItem/>
+                <FlightItem/>
                 <FlightItem/>
                 <FlightItem/>
                 <FlightItem/>
@@ -57,6 +59,8 @@ export default function FlightList(){
 const FlightDetailAllItem = styled.div`
     display: flex;
     overflow-x: hidden;
+    overflow-y: hidden;
+    justify-content: ${(props) => props.centerAlign? 'center' : 'none'};
     padding: 0px 8px;
     .scroll-button{
         position: absolute;
