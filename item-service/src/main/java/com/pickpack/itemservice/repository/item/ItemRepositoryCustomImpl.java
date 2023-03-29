@@ -1,8 +1,10 @@
 package com.pickpack.itemservice.repository.item;
 
+import com.pickpack.itemservice.dto.item.ItemDetailDto;
 import com.pickpack.itemservice.dto.item.ItemListDto;
 import com.pickpack.itemservice.entity.Category;
 import com.pickpack.itemservice.entity.Item;
+import com.pickpack.itemservice.entity.Member;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -72,5 +74,40 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                 .where(item.isDelete.eq(Boolean.FALSE))
                 .fetch();
         return itemsSearchOnCity;
+    }
+
+    @Override
+    public ItemDetailDto getItemById(Long itemId) {
+        ItemDetailDto itemDetail =
+                queryFactory.select(Projections.fields(ItemDetailDto.class,
+                        item.id.as("itemId"),
+                        member.id.as("memberId"),
+                        member.nickname, item.title, item.content, item.category,
+                        item.price, item.itemName, item.imgUrl, item.registDate,
+                        item.isComplete, city.id.as("cityId"), city.cityName)).from(item)
+                        .join(item.member, member)
+                        .join(item.city, city)
+                        .where(item.id.eq(itemId))
+                        .fetchOne();
+        return itemDetail;
+    }
+
+    @Override
+    public List<ItemListDto> getItemsByMember(Long itemId, Long memberId) {
+       List<ItemListDto> itemsByMember =
+               queryFactory.select(Projections.fields(ItemListDto.class,
+                       item.id.as("itemId"),
+                       member.id.as("memberId"),
+                       item.title, item.category, item.price, item.itemName,
+                       item.imgUrl, item.registDate, item.isComplete,
+                       city.id.as("cityId"),
+                       city.cityName)).from(item)
+                       .join(item.member, member).on(member.id.eq(memberId))
+                       .join(item.city, city)
+                       .where(item.isDelete.eq(Boolean.FALSE))
+                       .where((item.isComplete.eq(Boolean.FALSE)))
+                       .where(item.id.ne(itemId))
+                       .fetch();
+       return itemsByMember;
     }
 }
