@@ -12,8 +12,8 @@ export default function WeatherList(){
         }).catch((err) => console.log(err))
     }, [location])
     return(
-        <div style={{border: '1px solid purple'}}>
-            <div style={{fontSize: '20px', fontWeight: 'bold', margin: '0px 0px 8px 14px'}}>OO의 날씨</div>
+        <div>
+            <div style={{fontSize: '16px', fontWeight: '600', margin: '0px 0px 8px 14px', textAlign: 'left'}}>도착지 날씨</div>
             <div style={{display: 'flex'}}>
                 {weathers && weathers.map((weather) => {
                     return Number(weather.dt_txt.split(" ")[1].split(":")[0]) % 12 === 0 ? <WeatherItem key={weather.dt} weather={weather}/> : null
