@@ -7,11 +7,12 @@ server:
 spring:
   application:
     name: item
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://54.180.157.223:3306/pickpack?
-    username: root # MySQL DB Username
-    password: ssafy # MySQL DB password
+  config:
+    import: "optional:configserver:http://54.180.157.223:7777/"
+  cloud:
+    config:
+      name: member
+      profile: default
   servlet:
     multipart:
       max-file-size: 256MB
@@ -29,9 +30,6 @@ logging:
     org.hibernate.sql : debug
 cloud:
   aws:
-    credentials:
-      access-key: # 승희에게 문의
-      secret-key: #
     s3:
       bucket: pickpack8
     region:
