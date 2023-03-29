@@ -1,5 +1,7 @@
 package com.pickpack.itemservice.service.item;
 
+import com.pickpack.itemservice.api.response.ItemDetailRes;
+import com.pickpack.itemservice.dto.item.ItemDetailDto;
 import com.pickpack.itemservice.dto.item.ItemListDto;
 import com.pickpack.itemservice.entity.Category;
 import com.pickpack.itemservice.entity.City;
@@ -7,7 +9,7 @@ import com.pickpack.itemservice.entity.Item;
 import com.pickpack.itemservice.entity.Member;
 import com.pickpack.itemservice.exception.CityIsNullException;
 import com.pickpack.itemservice.exception.ListEmptyException;
-import com.pickpack.itemservice.exception.MemberIsNullException;
+import com.pickpack.itemservice.exception.IsNullException;
 import com.pickpack.itemservice.repository.city.CityRepository;
 import com.pickpack.itemservice.repository.item.ItemRepository;
 import com.pickpack.itemservice.repository.member.MemberRepository;
@@ -20,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -41,7 +45,7 @@ public class ItemService {
         // member get
         Optional<Member> memberOptional = memberRepository.findById(memberId);
         if(memberOptional.isEmpty()){
-            throw new MemberIsNullException("회원 ID가 적절하지 않습니다.");
+            throw new IsNullException("회원 ID가 적절하지 않습니다.");
         }
         Member member = memberOptional.get();
         Item item = Item.createItem(title, str2Category(categoryStr), price, content, itemName, city, member);
@@ -79,6 +83,17 @@ public class ItemService {
             throw new ListEmptyException(cityId + "에 대한 검색 결과가 없습니다.");
         }
         return items;
+    }
+
+    public ItemDetailRes getItemById(Long itemId){
+        ItemDetailDto item = itemRepository.getItemById(itemId);
+
+        if(item == null){
+            throw new IsNullException(itemId + "에 해당하는 물품 게시글이 없습니다.");
+        }
+        List<ItemListDto> items = itemRepository.getItemsByMember(itemId, item.getMemberId());
+//        item.setItemList(getOtherItemsOfItemById((List<Item>)  item.getItemList(), item.getMemberId()));
+        return new ItemDetailRes(item, items);
     }
 
     private Category str2Category(String categoryStr){

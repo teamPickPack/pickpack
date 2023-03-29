@@ -2,6 +2,7 @@ package com.pickpack.itemservice.controller.item;
 
 import com.pickpack.itemservice.api.response.ListRes;
 import com.pickpack.itemservice.dto.item.ItemCreateDto;
+import com.pickpack.itemservice.dto.item.ItemDetailDto;
 import com.pickpack.itemservice.service.item.ItemService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.LinkedList;
 
 @RestController
 @AllArgsConstructor
@@ -49,6 +52,15 @@ public class ItemController {
     public ResponseEntity<?> getItemsSearchOnCity(@PathVariable("category") String category, @PathVariable("cityId") Long cityId){
         try{
             return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnCity(category, cityId)), HttpStatus.OK);
+        }catch (Exception e){
+            return exceptionHandling(e);
+        }
+    }
+
+    @GetMapping("/{itemId}/detail")
+    public ResponseEntity<?> getItemById(@PathVariable("itemId") Long itemId){
+        try{
+            return new ResponseEntity<>(itemService.getItemById(itemId), HttpStatus.OK);
         }catch (Exception e){
             return exceptionHandling(e);
         }
