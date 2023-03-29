@@ -1,6 +1,7 @@
 package com.pickpack.chatservice.controller;
 
 import com.pickpack.chatservice.entity.redis.RedisChatMessage;
+import com.pickpack.chatservice.service.chat.ChatMessageService;
 import com.pickpack.chatservice.service.chat.pubsub.RedisPublisher;
 import com.pickpack.chatservice.repo.redis.RedisChatMessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 public class ChatController {
     private final RedisPublisher redisPublisher;
-    private final RedisChatMessageRepository redisChatMessageRepository;
+    private final ChatMessageService chatMessageService;
 
     /**
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
@@ -37,7 +38,7 @@ public class ChatController {
 //    }
     @GetMapping("/chat/message/{roomId}")
     public ResponseEntity<List<RedisChatMessage>> getMessages(@PathVariable String roomId) {
-        return new ResponseEntity<>( redisChatMessageRepository.findMessage(roomId), HttpStatus.OK);
+        return new ResponseEntity<>(chatMessageService.getMessages(roomId), HttpStatus.OK);
     }
     //TODO 페이징처리!!!!!!!!!!!!!!!
 }

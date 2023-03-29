@@ -24,6 +24,7 @@ public class ChatMessageServiceImpl implements ChatMessageService{
     private final RedisChatMessageRepository redisChatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    @Override
     public void createMessage(RedisChatMessage message) {
         //roomid와 sender로 room수정
         //TODO 아 이거 뭔데~~~~~~~~~~~~~~~~~
@@ -38,9 +39,13 @@ public class ChatMessageServiceImpl implements ChatMessageService{
         list.add(message);
         redisChatMessageRepository.saveMessageList(message.getRoomId(), list);
     }
-
+    @Override
+    public List<RedisChatMessage> getMessages(String roomId){
+        return redisChatMessageRepository.findMessagesByRoomId(roomId);
+    }
 
     //TODO ChatRoom 먼저 박고나서 시작해야됨
+    @Override
     @Async
 //    @Scheduled(cron = "0 0/1 * * * *")
     public void sendMessageToDB() {
@@ -57,11 +62,12 @@ public class ChatMessageServiceImpl implements ChatMessageService{
         }
 
         int[][] batchStatus = redisChatMessageRepository.writeMessageFromRedisToDB(allMessageList);
-        redisChatMessageRepository.deleteMessageKey();
+        redisChatMessageRepository.deleteAllMessage();
     }
 
 
     //TODO cron redisChatroomWarming후에 되도록
+    @Override
     public void redisChatMessageWarming() {
         //유효한 room들
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllValidRooms();
