@@ -6,16 +6,17 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GetRoomDto {
+public class GetRoomDTO {
     private String chatRoomId;
     private Long itemId;
     private String imgUrl;
     private String lastMessage;
+    private String lastMessageTime;
     private String nickName;
     private boolean isNew;
 
-    public GetRoomDto chatRoomToGetRoomDto(RedisChatRoom redisChatRoom, String memberId){
-        GetRoomDto getRoomDto = new GetRoomDto();
+    public GetRoomDTO chatRoomToGetRoomDto(RedisChatRoom redisChatRoom, String memberId){
+        GetRoomDTO getRoomDto = new GetRoomDTO();
         getRoomDto.chatRoomId= redisChatRoom.getRoomId();
         getRoomDto.itemId= redisChatRoom.getItemId();
         getRoomDto.imgUrl= redisChatRoom.getImgUrl();

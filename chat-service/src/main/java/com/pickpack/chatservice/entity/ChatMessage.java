@@ -20,8 +20,7 @@ public class ChatMessage implements Serializable {
 
     @Column(name = "chat_id")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
@@ -30,13 +29,13 @@ public class ChatMessage implements Serializable {
     @Enumerated(EnumType.STRING)
     private RedisChatMessage.MessageType type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_name", referencedColumnName = "nickname")
-    private Member sender;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "sender_name", referencedColumnName = "nickname")
+    private String sender;
 
     @Column
     private String message;
-    //TODO RedisChatMessage time과 통일과정 필요
+    //TODO RedisChatMessage time과 통일과정 필요<-timestamp? localdatetime?
     private Timestamp time;
 
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.pickpack.chatservice.dto.FileDto;
 import com.pickpack.chatservice.entity.ChatMessage;
 import lombok.*;
 
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class RedisChatMessage implements Serializable {
 
-//    private static final long serialVersionUID = -3377559815188666211L;
+    private static final long serialVersionUID = -3377559815188666211L;
 
 
 
@@ -31,6 +30,8 @@ public class RedisChatMessage implements Serializable {
     private String sender; // 메시지 보낸사람
     private String message; // 메시지
 
+
+    //TODO 줄때 포맷팅
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime time;
@@ -39,7 +40,7 @@ public class RedisChatMessage implements Serializable {
         RedisChatMessage redisChatMessage = new RedisChatMessage();
         redisChatMessage.type=chatMessage.getType();
         redisChatMessage.roomId= chatMessage.getChatRoom().getRoomId();
-        redisChatMessage.sender=chatMessage.getSender().getNickname();
+        redisChatMessage.sender=chatMessage.getSender();
         redisChatMessage.message=chatMessage.getMessage();
         redisChatMessage.time=chatMessage.getTime().toLocalDateTime();
         return redisChatMessage;
