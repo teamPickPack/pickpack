@@ -1,10 +1,12 @@
 package com.pickpack.itemservice.service.item;
 
+import com.pickpack.itemservice.dto.item.ItemListDto;
 import com.pickpack.itemservice.entity.Category;
 import com.pickpack.itemservice.entity.City;
 import com.pickpack.itemservice.entity.Item;
 import com.pickpack.itemservice.entity.Member;
 import com.pickpack.itemservice.exception.CityIsNullException;
+import com.pickpack.itemservice.exception.ListEmptyException;
 import com.pickpack.itemservice.exception.MemberIsNullException;
 import com.pickpack.itemservice.repository.city.CityRepository;
 import com.pickpack.itemservice.repository.item.ItemRepository;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -52,6 +55,14 @@ public class ItemService {
         item.setImage(imgUrl);
         itemRepository.save(item);
         return item.getId();
+    }
+
+    public List<ItemListDto> getItems(String categoryStr){
+        List<ItemListDto> items = itemRepository.getItemsWithCategory(categoryStr);
+        if(items.isEmpty()){
+            throw new ListEmptyException("item 목록이 없습니다.");
+        }
+        return items;
     }
 
     private Category str2Category(String categoryStr){

@@ -2,7 +2,7 @@ package com.pickpack.itemservice.controller.city;
 
 import com.pickpack.itemservice.api.request.ListRes;
 import com.pickpack.itemservice.entity.City;
-import com.pickpack.itemservice.exception.CityListEmptyException;
+import com.pickpack.itemservice.exception.ListEmptyException;
 import com.pickpack.itemservice.service.city.CityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class CityController {
 
         if(cityList.isEmpty()){
             String errMsg = "도시 목록이 없습니다.";
-            exceptionHandling(new CityListEmptyException(errMsg));
+            exceptionHandling(new ListEmptyException(errMsg));
             return new ResponseEntity<String>("Error : " + errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(new ListRes(cityList), HttpStatus.OK);
