@@ -1,4 +1,4 @@
-package com.pickpack.itemservice.api.response;
+package com.pickpack.itemservice.api.request;
 
 import com.pickpack.itemservice.dto.item.ItemCreateDto;
 import lombok.AllArgsConstructor;
