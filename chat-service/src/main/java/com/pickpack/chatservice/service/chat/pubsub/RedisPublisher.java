@@ -1,6 +1,6 @@
-package com.pickpack.chatservice.pubsub;
+package com.pickpack.chatservice.service.chat.pubsub;
 
-import com.pickpack.chatservice.dto.FileDto;
+
 import com.pickpack.chatservice.entity.redis.RedisChatMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,12 +14,10 @@ import java.time.LocalDateTime;
 public class RedisPublisher {
     private final ChannelTopic channelTopic;
     private final RedisTemplate<String, Object> redisTemplate;
-//    private final FileUploadService fileUploadService;
 
     public void publishMessage(RedisChatMessage message) {
         if (RedisChatMessage.MessageType.ENTER.equals(message.getType())) {
             //TODO Setter를 써도 되는지에 대한 토의
-
             message.setMessage(message.getSender() + "님이 입장하셨습니다.");
         }
         message.setTime(LocalDateTime.now());

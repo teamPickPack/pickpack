@@ -31,11 +31,12 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
 //                .withSockJS();
     }
 
-//    @Override
-//    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
-//        registration.setSendTimeLimit(20 * 10000);
-//        registration.setSendBufferSizeLimit(50 * 1024 * 1024);
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setMessageSizeLimit(50 * 1024 * 1024);
+        registration.setSendTimeLimit(20 * 10000);
+        registration.setSendBufferSizeLimit(50 * 1024 * 1024);
 //        registration.setDecoratorFactories(agentWebSocketHandlerDecoratorFactory());
-//    }
+    }
 
 }

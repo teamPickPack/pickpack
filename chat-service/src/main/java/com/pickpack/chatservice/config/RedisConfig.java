@@ -1,6 +1,6 @@
 package com.pickpack.chatservice.config;
 
-import com.pickpack.chatservice.pubsub.RedisSubscriber;
+import com.pickpack.chatservice.service.chat.pubsub.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

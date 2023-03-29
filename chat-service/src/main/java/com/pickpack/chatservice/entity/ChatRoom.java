@@ -4,8 +4,9 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
-//TODO chatroom에 대한 id 수정(room_id+아이디)
+// TODO chatroom에 대한 id 수정(room_id+아이디)<-왜 그랬더라?
 @Entity
 @Getter
 @Table(name="chat_room")
@@ -14,22 +15,26 @@ public class ChatRoom implements Serializable {
 
     @Column(name = "room_id")
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String roomId;
 
     @ManyToOne
     @JoinColumn(name="item_id")
     private Item item;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_name",referencedColumnName ="nickname")
-    private Member seller;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "buyer_name",referencedColumnName ="nickname")
-    private Member buyer;
+
+    //TODO Member에 serializable 걸건지 연관관계를 끊을건지 결정
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "seller_name",referencedColumnName ="nickname")
+    private String seller;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "buyer_name",referencedColumnName ="nickname")
+    private String buyer;
 //    @Column
 //    private String itemName;
 //    private String imgUrl;
-    private Long messageSize;
+    private int messageSize;
     private String lastMessage;
     private boolean isNew;
+
+    @Column(name = "recent_time")
+    private Timestamp lastMessageTime;
 }

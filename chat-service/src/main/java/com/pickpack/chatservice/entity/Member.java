@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @Getter
 @ToString
-public class Member {
+public class Member{
 
     @Column(name = "member_id")
     @Id
@@ -28,10 +29,6 @@ public class Member {
     private String pwd;
     private String nickname;
     private String img_url;
-
-    //TODO db에 안겹치고..아니면 그냥 redishash로 전부 바꾸는게 이쁜가
-//    @OneToMany(mappedBy = "member")
-//    private List<MemberChatroom> memberChatroomList;
 
     @OneToMany(mappedBy = "member")
     private List<Item> itemList;

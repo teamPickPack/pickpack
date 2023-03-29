@@ -3,9 +3,8 @@ package com.pickpack.chatservice.dto;
 import lombok.Getter;
 
 @Getter
-public class CreateRoomDto {
+public class CreateRoomDTO {
     private Long itemId;
-    private String itemName;
     private String seller;
     private String buyer;
 }
