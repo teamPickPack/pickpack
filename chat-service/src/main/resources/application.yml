@@ -4,12 +4,18 @@ spring:
       host: localhost
       port: 1234
 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    # rewriteBatchedStatements=true <- mysql jdbc
-    url: jdbc:mysql://54.180.157.223:3306/pickpack?serverTimezone=UTC&characterEncoding=UTF-8&rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger
-    username: root
-    password: ssafy
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    # rewriteBatchedStatements=true <- mysql jdbc
+#    url: jdbc:mysql://54.180.157.223:3306/pickpack?serverTimezone=UTC&characterEncoding=UTF-8&rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger
+#    username: root
+#    password: ssafy
+  config:
+    import: "optional:configserver:http://54.180.157.223:7777/"
+  cloud:
+    config:
+      name: member
+      profile: default
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect

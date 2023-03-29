@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.sql.Timestamp;
 import java.util.List;
 
-public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
     List<ChatMessage> findChatMessagesByTimeAfterAndChatRoomOrderByTime(Timestamp time, ChatRoom chatRoom);
 
 }

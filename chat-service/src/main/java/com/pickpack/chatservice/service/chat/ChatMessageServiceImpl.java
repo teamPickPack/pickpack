@@ -20,16 +20,16 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class ChatMessageServiceImpl implements ChatMessageService{
-    private final RedisChatRoomRepository RedisChatRoomRepository;
+    private final RedisChatRoomRepository redisChatRoomRepository;
     private final RedisChatMessageRepository redisChatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     @Override
     public void createMessage(RedisChatMessage message) {
         //roomid와 sender로 room수정
-        //TODO 아 이거 뭔데~~~~~~~~~~~~~~~~~
-        RedisChatRoomRepository.updateRoomTime(message.getSender(), message.getRoomId(), message.getTime(),false);
+        redisChatRoomRepository.updateRoomTime(message.getSender(), message.getRoomId(), message.getTime(),false);
 
+        log.info("updateRoomTime(sender:{},roomid:{},time:{}",message.getSender(),message.getRoomId(),message.getTime());
         List<RedisChatMessage> list;
         if (!redisChatMessageRepository.isHasKeyOnChatMessage(message.getRoomId())){
             list = new ArrayList<>();

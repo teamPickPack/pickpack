@@ -9,7 +9,7 @@ import java.util.List;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
     //TODO DTO작업은 추후에..
     @Query(nativeQuery = true, value =
-            "SELECT room_id, cr.item_id,seller,buyer,message_size,last_message,is_new " +
+            "SELECT room_id, cr.item_id,seller,buyer,message_size,last_message,is_new,recent_time " +
                     "FROM chat_room as cr LEFT OUTER JOIN soldout as so ON cr.item_id=so.item_id " +
                     "WHERE so.soldout_id IS NULL")
     List<ChatRoom> findAllValidRooms();

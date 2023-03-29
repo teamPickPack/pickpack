@@ -34,7 +34,6 @@ public class ChatRoom implements Serializable {
     private int messageSize;
     private String lastMessage;
     private boolean isNew;
-
     @Column(name = "recent_time")
     private Timestamp lastMessageTime;
 }
