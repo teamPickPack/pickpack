@@ -78,7 +78,7 @@ export default function RoundTicket({
             //여기서도 세션 스토리지에 접근해서 데이터 넣어주고 빼줘야 함
             const payload = {
                 mode: 'round',
-                isLike,
+                isLike: commonLike,
                 flightId: `${goWay.ticket.ticketId}-${returnWay.ticket.ticketId}`,
                 flightData: [
                     {

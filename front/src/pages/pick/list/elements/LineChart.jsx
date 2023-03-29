@@ -28,6 +28,11 @@ export default function LineChart({priceData}){
             tooltip: {
                 enabled: false,
                 external: function(context) {
+                    console.log(context.tooltip.labelPointStyles);
+                    if(context === undefined) {
+                        console.log('undefined인데?');
+                        return;
+                    }
                     context.tooltip.labelPointStyles.forEach((point, index) => {
                         if(!point.pointStyle) {
                             // console.log(context);
@@ -96,6 +101,7 @@ export default function LineChart({priceData}){
 
                             let tableRoot = tooltipEl.querySelector('table');
                             tableRoot.innerHTML = innerHtml;
+                            console.log(tooltipEl)
                         }
 
                         const position = context.chart.canvas.getBoundingClientRect();
@@ -110,6 +116,7 @@ export default function LineChart({priceData}){
                         tooltipEl.style.borderRadius = '5px';
                         tooltipEl.style.backgroundColor = 'black';
                         tooltipEl.style.color = 'white';
+                        tooltipEl.style.zIndex = '100';
                         
                         tooltipEl.style.padding = tooltipModel.padding + 'px ' + tooltipModel.padding + 'px';
                         tooltipEl.style.pointerEvents = 'none';

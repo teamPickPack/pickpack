@@ -38,6 +38,7 @@ export default function OneWayTicket({
     };
 
     const changeTicketType = () => {
+        if(fromCompare) return;
         if(changing) return;
         setChanging(true);
         flightTicket.current.style.animation = 'changeTicketType 1s linear';
@@ -72,7 +73,7 @@ export default function OneWayTicket({
         }
         const payload = {
             mode: 'oneWay',
-            isLike,
+            isLike: like,
             flightId: ticket.ticketId,
             flightData: {
                 ticket,
@@ -127,6 +128,7 @@ export default function OneWayTicket({
             dispatch(compareAction.updateCompareItem(payload));
         }
         else{
+            handleLikeData(payload.flightId, !like);
             setLike((like) => !like);
         }
     }
@@ -334,32 +336,6 @@ const TicketLeftTopCodeShare = styled.span`
     background-color: #D9D9D9;
     margin-left: 8px;
 `;
-
-const TicketMiddleBorder = styled.div`
-    border-left: 2px dashed black;
-`;
-const BackTicketLeftMiddle = styled.div`
-    height: 192px;
-    border-bottom-left-radius: 16px;
-    display: flex;
-    background-color: white;
-    justify-content: center;
-    align-items: center;
-`;
-const BackTicketRightMiddle = styled.div`
-    height: 160px;
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    justify-content: space-between;
-
-    .right-analysis{
-        font-size: 10px;
-        margin: auto 0px;
-        font-weight: bold;
-        text-align: center;
-    }
-`
 const FrontTicketLeftMiddle = styled.div`
     height: 160px;
     width: 480px;
@@ -388,6 +364,32 @@ const FrontTicketLeftMiddle = styled.div`
         opacity: .7;
     }
 `;
+const TicketMiddleBorder = styled.div`
+    border-left: 2px dashed black;
+`;
+const BackTicketLeftMiddle = styled.div`
+    height: 192px;
+    border-bottom-left-radius: 16px;
+    display: flex;
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+`;
+const BackTicketRightMiddle = styled.div`
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    justify-content: space-between;
+
+    .right-analysis{
+        font-size: 10px;
+        margin: auto 0px;
+        font-weight: bold;
+        text-align: center;
+    }
+`
+
 const FrontTicketLeftBottom = styled.div`
     height: 32px;
     border-bottom-left-radius: 16px;
