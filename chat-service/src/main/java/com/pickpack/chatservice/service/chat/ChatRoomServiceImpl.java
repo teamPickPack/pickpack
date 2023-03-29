@@ -135,6 +135,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
                     .buyer(chatRoom.getBuyer())
                     .messageSize(chatRoom.getMessageSize())
                     .lastMessage(chatRoom.getLastMessage())
+                    .lastMessageTime(chatRoom.getLastMessageTime().toLocalDateTime())
                     .isNew(chatRoom.isNew())
                     .build();
             //seller꺼

@@ -4,6 +4,8 @@ import com.pickpack.chatservice.entity.redis.RedisChatRoom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor
 public class GetRoomDTO {
@@ -11,7 +13,7 @@ public class GetRoomDTO {
     private Long itemId;
     private String imgUrl;
     private String lastMessage;
-    private String lastMessageTime;
+    private LocalDateTime lastMessageTime;
     private String nickName;
     private boolean isNew;
 
@@ -20,6 +22,7 @@ public class GetRoomDTO {
         getRoomDto.chatRoomId= redisChatRoom.getRoomId();
         getRoomDto.itemId= redisChatRoom.getItemId();
         getRoomDto.imgUrl= redisChatRoom.getImgUrl();
+        getRoomDto.lastMessageTime=redisChatRoom.getLastMessageTime();
         getRoomDto.lastMessage= redisChatRoom.getLastMessage();
         getRoomDto.isNew= redisChatRoom.isNew();
         getRoomDto.nickName = redisChatRoom.getSeller().equals(memberId)? redisChatRoom.getBuyer(): redisChatRoom.getSeller();

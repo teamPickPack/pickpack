@@ -1,5 +1,6 @@
 package com.pickpack.chatservice.repo.redis;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.pickpack.chatservice.dto.IsNewDTO;
 import com.pickpack.chatservice.entity.redis.RedisChatMessage;
 import com.pickpack.chatservice.repo.ChatMessageRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
