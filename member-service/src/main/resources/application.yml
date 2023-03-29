@@ -8,17 +8,11 @@ spring:
   application:
     name: member
   config:
-    import: "optional:configserver:http://localhost:7777/"
+    import: "optional:configserver:http://54.180.157.223:7777/"
   cloud:
     config:
-      name: info
+      name: member
       profile: default
-  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://54.180.157.223:3306/pickpack?
-##    url: jdbc:mysql://localhost:3306/pickpack?
-#    username: root
-#    password: ssafy
 
   jpa:
     hibernate:
@@ -45,3 +39,17 @@ management:
       exposure:
         include: "*"
 
+
+########## 암호화 정보 ##############
+
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://54.180.157.223:3306/pickpack?
+#    username:  encrypt
+#    password:  encrypt
+
+#cloud:
+#  aws:
+#    credentials:
+#      access-key:  encrypt
+#      secret-key:  encrypt
