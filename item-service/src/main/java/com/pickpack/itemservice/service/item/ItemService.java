@@ -57,10 +57,18 @@ public class ItemService {
         return item.getId();
     }
 
-    public List<ItemListDto> getItems(String categoryStr){
+    public List<ItemListDto> getItemsWithCategory(String categoryStr){
         List<ItemListDto> items = itemRepository.getItemsWithCategory(categoryStr);
         if(items.isEmpty()){
             throw new ListEmptyException("item 목록이 없습니다.");
+        }
+        return items;
+    }
+
+    public List<ItemListDto> getItemsSearchOnTitle(String categoryStr, String search){
+        List<ItemListDto> items = itemRepository.getItemsSearchOnTitle(categoryStr, search);
+        if(items.isEmpty()){
+            throw new ListEmptyException(search + "에 대한 검색 결과가 없습니다.");
         }
         return items;
     }

@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.ws.rs.Path;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/item")
@@ -32,7 +34,16 @@ public class ItemController {
     @GetMapping("/{category}")
     public ResponseEntity<?> getItemsWithCategory(@PathVariable("category") String category){
         try{
-            return new ResponseEntity<>(new ListRes(itemService.getItems(category)), HttpStatus.OK);
+            return new ResponseEntity<>(new ListRes(itemService.getItemsWithCategory(category)), HttpStatus.OK);
+        }catch(Exception e){
+            return exceptionHandling(e);
+        }
+    }
+
+    @GetMapping("/{category}/title/{search}")
+    public ResponseEntity<?> getItemsSearchOnTitle(@PathVariable("category") String category, @PathVariable("search") String search){
+        try{
+            return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnTitle(category, search)), HttpStatus.OK);
         }catch(Exception e){
             return exceptionHandling(e);
         }
