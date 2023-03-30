@@ -2,11 +2,29 @@ import {useState, useEffect} from 'react';
 import {Line} from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale } from "chart.js/auto";
 
-ChartJS.register(CategoryScale)
-
-export default function LineChart({priceData}){
-    const [chartData, setChartData] = useState(null)
-    
+export default function LineChart({priceData, onCompare}){
+    ChartJS.register(CategoryScale, {
+        id: 'uniqueId',
+        afterDraw: function (chart) {
+            if (chart.tooltip._active && chart.tooltip._active.length && onCompare) {
+                const activePoint = chart.tooltip._active[0];
+                const ctx = chart.ctx;
+                const x = activePoint.element.x;
+                const topY = chart.scales.y.top;
+                const bottomY = chart.scales.y.bottom;
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, topY);
+                ctx.lineTo(x, bottomY);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#FF0000';
+                ctx.stroke();
+                ctx.restore();
+            }}
+        }
+    );
+    const [chartData, setChartData] = useState(null);
+    const color = ['#FF0013', 'orange', '#1CC500', '#72A2FF', 'purple'];
     const options = {
         responsive: true,
         animation: false,
@@ -17,7 +35,7 @@ export default function LineChart({priceData}){
             },
             //제목
             title: {
-                display: true, 
+                display: onCompare? false : true, 
                 font:{
                     size: 16,
                     weight: 'bold',
@@ -28,14 +46,11 @@ export default function LineChart({priceData}){
             tooltip: {
                 enabled: false,
                 external: function(context) {
-                    console.log(context.tooltip.labelPointStyles);
-                    if(context === undefined) {
-                        console.log('undefined인데?');
+                    if(context === undefined || context.tooltip === undefined || context.tooltip.labelPointStyles === undefined) {
                         return;
                     }
                     context.tooltip.labelPointStyles.forEach((point, index) => {
                         if(!point.pointStyle) {
-                            // console.log(context);
                             return
                         };
                         // Tooltip Element
@@ -47,16 +62,18 @@ export default function LineChart({priceData}){
                             tooltipEl.style.marginTop = "6px";
                             tooltipEl.id = 'chartjs-tooltip';
                             tooltipEl.innerHTML = '<table style="margin: 2px auto;"</table>';
-                            const indicator = document.createElement('div');
-                            indicator.style.position = "absolute";
-                            indicator.style.top = "-6px";
-                            indicator.style.height = "0px";
-                            indicator.style.width = "0px";
-                            indicator.style.borderBottom = "6px solid black";
-                            indicator.style.borderLeft = "6px solid black";
-                            indicator.style.borderTop = "6px solid transparent";
-                            indicator.style.borderRight = "6px solid transparent";
-                            tooltipEl.appendChild(indicator);
+                            if(!onCompare){
+                                const indicator = document.createElement('div');
+                                indicator.style.position = "absolute";
+                                indicator.style.top = "-6px";
+                                indicator.style.height = "0px";
+                                indicator.style.width = "0px";
+                                indicator.style.borderBottom = "6px solid black";
+                                indicator.style.borderLeft = "6px solid black";
+                                indicator.style.borderTop = "6px solid transparent";
+                                indicator.style.borderRight = "6px solid transparent";
+                                tooltipEl.appendChild(indicator);
+                            }
                             document.body.appendChild(tooltipEl);
                         }
 
@@ -85,23 +102,44 @@ export default function LineChart({priceData}){
                             const bodyLines = tooltipModel.body.map(getBody);
 
                             let innerHtml = '<thead>';
-
                             titleLines.forEach(function(title) {
                                 innerHtml += '<tr><th style="font-size: 10px; font-weight: bold;">' + title + '</th></tr>';
                             });
                             innerHtml += '</thead><tbody>';
-
-                            bodyLines.forEach(function(body, i) {
-                                if(i === index) {
-                                    const span = '<span>' + body + '원</span>';
-                                    innerHtml += '<tr><td style="font-size: 10px;">' + span + '</td></tr>';
+                            // 얘는 두 개의 길이가 맞을 때...
+                            if(bodyLines.length === priceData.length || priceData.length === undefined){
+                                bodyLines.forEach(function(body, i) {
+                                    if(onCompare){
+                                        const span = '<div style="font-size: 10px; margin: -1px 0px 0px 2px;"> ' + body + '원</div>';
+                                        const div = `<div style="width: 10px; height: 10px; border-radius: 2px; background-color: ${color[i]}"></div>`
+                                        innerHtml += '<tr><td style= "display: flex; align-items: center;">' + div + span + '</td></tr>';
+                                    }
+                                    if(!onCompare && i === index) {
+                                        const span = '<span>' + body + '원</span>';
+                                        innerHtml += '<tr><td style="font-size: 10px;">' + span + '</td></tr>';
+                                    }
+                                });
+                            }
+                            else{
+                                //첫 결과값이 몇 번쨰 priceData인지 알아야 함
+                                //=> 타겟 가격이
+                                for(let i = 0; i < bodyLines.length; i++){
+                                    let targetNumber = Number(bodyLines[i][0].replaceAll(",",""));
+                                    for(let j = 0; j < priceData.length; j++){
+                                        for(let k = 0; k < priceData[j].info.length; k++){
+                                            if(targetNumber === priceData[j].info[k].price && titleLines[0] === priceData[j].info[k].date){
+                                                const span = '<div style="font-size: 10px; margin: -1px 0px 0px 2px;"> ' + bodyLines[i][0] + '원</div>';
+                                                const div = `<div style="width: 10px; height: 10px; border-radius: 2px; background-color: ${color[j]}"></div>`
+                                                innerHtml += '<tr><td style= "display: flex; align-items: center;">' + div + span + '</td></tr>';
+                                            }
+                                        }
+                                    }
                                 }
-                            });
+                            }
                             innerHtml += '</tbody>';
 
                             let tableRoot = tooltipEl.querySelector('table');
                             tableRoot.innerHTML = innerHtml;
-                            console.log(tooltipEl)
                         }
 
                         const position = context.chart.canvas.getBoundingClientRect();
@@ -168,30 +206,59 @@ export default function LineChart({priceData}){
     }
     
 
-    useEffect(() => { 
-        setChartData({
-            labels: priceData.info.map((d) => d.date),
-            datasets: [
-                {
-                    data: priceData.info.map(() => priceData.avg),
-                    backgroundColor: 'transparent',
-                    borderColor: 'red',
-                    borderWidth: 1,
-                    pointStyle: false,
-                },
-                {
-                    data: priceData.info.map((d) => d.price),
-                    backgroundColor: 'transparent',
-                    borderColor: '#1A2B88',
-                    borderWidth: 2,
-                    pointStyle: true,
-                },
-            ]
-        })
+    useEffect(() => {
+        if(priceData.length === undefined){
+            setChartData({
+                labels: priceData.info.map((d) => d.date),
+                datasets: [
+                    {
+                        data: priceData.info.map(() => priceData.avg),
+                        backgroundColor: 'transparent',
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        pointStyle: false,
+                    },
+                    {
+                        data: priceData.info.map((d) => d.price),
+                        backgroundColor: 'transparent',
+                        borderColor: '#1A2B88',
+                        borderWidth: 2,
+                        pointStyle: true,
+                    },
+                ]
+            });
+            return;
+        }
+        //반복문 돌면서
+        let longestLabelLength = 0;
+        const data = {
+            labels: null,
+            datasets: [],
+        }
+        for(let i = 0; i < priceData.length; i++){
+            if(priceData[i].info.length > longestLabelLength){
+                data.labels = priceData[i].info.map((d) => d.date);
+                longestLabelLength = priceData[i].info.length;
+            }
+        }
+        for(let i = 0; i < priceData.length; i++){
+            const tmp =  [...priceData[i].info.map((d) => d.price)];
+            for(let j = 0; j < longestLabelLength - priceData[i].info.length; j++){
+                tmp.unshift(null);
+            }
+            data.datasets.push({
+                data: tmp,
+                backgroundColor: 'transparent',
+                borderColor: onCompare? color[i] : 'black',
+                borderWidth: 2,
+                pointStyle: true,
+            })
+        }
+        setChartData(data);
     }, [priceData])
     return (
         <>
-            {chartData && <Line options={options} data={chartData}/>}
+            {chartData && <Line options={onCompare? {...options, interaction: {mode: 'index', intersect: false}} : options} data={chartData}/>}
         </>
     )
 }
