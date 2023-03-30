@@ -1,569 +1,1299 @@
-const oneResponse = {
-    oneTicketList: [
-      {
-        isLike: false,
-        wantedPrice: 0,
-        ticketId: 1,
+const data1 = [
+    {
+        isLike: true,
+        isCheck: null,
         ticket: {
-          ticketId: null,
-          price: 2023900,
-          waypointNum: 1,
-          registDate: "2023-03-24",
-          totalTime: "19시간 15분",
-          codeshare: false,
-          airline: "KLM네덜란드항공",
-          depTime: "01:25",
-          depDate: "2023-03-26",
-          depName: "인천",
-          depCode: "ICN",
-          arrTime: "13:40",
-          arrDate: "2023-03-26",
-          arrName: "샤를드골",
-          arrCode: "CDG",
-          plusDate: 0,
-          totalTimeNum: 1155
-        },
-        flightList: [
-          {
-            id: 1,
             ticketId: 1,
-            waitTime: "0시간",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "08:15",
-            arrDate: "2023-03-26",
-            arrName: "암스테르담",
-            arrCode: "AMS",
-            flightTime: "13시간50분",
-            code: "KL0862",
-            waypointName: false,
-            codeshareName: false,
-            plusDate: 0
-          },
-          {
-            id: 2,
-            ticketId: 1,
-            waitTime: "04시간 10분",
-            depTime: "12:25",
-            depDate: "2023-03-26",
-            depName: "암스테르담",
-            depCode: "AMS",
-            arrTime: "13:40",
-            arrDate: "2023-03-26",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            flightTime: "01시간15분",
-            code: "KL1233",
-            waypointName: false,
-            codeshareName: false,
-            plusDate: 0
-          }
-        ]
-      },
-      {
+        },
+        flightList: null,
+    },
+    {
         isLike: false,
-        wantedPrice: 100000,
-        ticketId: 2,
+        isCheck: null,
         ticket: {
-          ticketId: null,
-          price: 1805400,
-          waypointNum: 1,
-          registDate: "2023-03-24",
-          totalTime: "23시간 20분",
-          codeshare: false,
-          airline: "KLM네덜란드항공",
-          depTime: "01:25",
-          depDate: "2023-03-26",
-          depName: "인천",
-          depCode: "ICN",
-          arrTime: "17:45",
-          arrDate: "2023-03-26",
-          arrName: "샤를드골",
-          arrCode: "CDG",
-          plusDate: 0,
-          totalTimeNum: 1400
+            ticketId: 2,
         },
-        flightList: [
-          {
-            id: 3,
-            ticketId: 2,
-            waitTime: "0시간",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "08:15",
-            arrDate: "2023-03-26",
-            arrName: "암스테르담",
-            arrCode: "AMS",
-            flightTime: "13시간50분",
-            code: "KL0862",
-            waypointName: false,
-            codeshareName: false,
-            plusDate: 0
-          },
-          {
-            id: 4,
-            ticketId: 2,
-            waitTime: "08시간 15분",
-            depTime: "16:30",
-            depDate: "2023-03-26",
-            depName: "암스테르담",
-            depCode: "AMS",
-            arrTime: "17:45",
-            arrDate: "2023-03-26",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            flightTime: "01시간15분",
-            code: "KL1243",
-            waypointName: false,
-            codeshareName: false,
-            plusDate: 0
-          }
-        ]
-      },
-      {
+        flightList: null,
+    },
+    
+    {
         isLike: false,
-        wantedPrice: 320000,
-        ticketId: 3,
+        isCheck: null,
         ticket: {
-          ticketId: null,
-          price: 1805400,
-          waypointNum: 1,
-          registDate: "2023-03-24",
-          totalTime: "37시간 30분",
-          codeshare: false,
-          airline: "KLM네덜란드항공",
-          depTime: "01:25",
-          depDate: "2023-03-26",
-          depName: "인천",
-          depCode: "ICN",
-          arrTime: "07:55",
-          arrDate: "2023-03-27",
-          arrName: "샤를드골",
-          arrCode: "CDG",
-          plusDate: 1,
-          totalTimeNum: 2250
-        },
-        flightList: [
-          {
-            id: 5,
             ticketId: 3,
-            waitTime: "0시간",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "08:15",
-            arrDate: "2023-03-26",
-            arrName: "암스테르담",
-            arrCode: "AMS",
-            flightTime: "13시간50분",
-            code: "KL0862",
-            waypointName: false,
-            codeshareName: false,
-            plusDate: 0
-          },
-          {
-            id: 6,
-            ticketId: 3,
-            waitTime: "22시간 20분",
-            depTime: "06:35",
-            depDate: "2023-03-27",
-            depName: "암스테르담",
-            depCode: "AMS",
-            arrTime: "07:55",
-            arrDate: "2023-03-27",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            flightTime: "01시간20분",
-            code: "KL1223",
-            waypointName: false,
-            codeshareName: false,
-            plusDate: 0
-          }
-        ]
-      }
-    ]
-  }
+        },
+        flightList: null,
+    },
+    
+    {
+        isLike: false,
+        isCheck: null,
+        ticket: {
+            ticketId: 4,
+        },
+        flightList: null,
+    },
+    
+    {
+        isLike: false,
+        isCheck: null,
+        ticket: {
+            ticketId: 5,
+        },
+        flightList: null,
+    },
+    
+    {
+        isLike: false,
+        isCheck: null,
+        ticket: {
+            ticketId: 6,
+        },
+        flightList: null,
+    }
+];
+const data2 = [
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 1,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 3,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: true,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 1,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 4,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: true,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 2,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 3,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 2,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 4,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+    {
+        isLike: false,
+        isCheck: null,
+        goWay: {
+            ticket: {
+                ticketId: 20,
+            },
+            flightList: null,
+        },
+        returnWay: {
+            ticket: {
+                ticketId: 40,
+            },
+            flightList: null,
+        },
+        totalPrice: 0,
+    },
+];
 
-const roundResponse = {
-    roundTicketList: [
-      {
-        isLike: false,
-        wantedPrice: 500000,
-        ticket_go: 3,
-        goWay: {
-          ticket: {
-            ticketId: null,
-            price: 1805400,
-            waypointNum: 1,
-            registDate: "2023-03-24",
-            totalTime: "37시간 30분",
-            codeshare: false,
-            airline: "KLM네덜란드항공",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "07:55",
-            arrDate: "2023-03-27",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            plusDate: 1,
-            totalTimeNum: 2250
-          },
-          flightList: [
-            {
-              id: 5,
-              ticketId: 3,
-              waitTime: "0시간",
-              depTime: "01:25",
-              depDate: "2023-03-26",
-              depName: "인천",
-              depCode: "ICN",
-              arrTime: "08:15",
-              arrDate: "2023-03-26",
-              arrName: "암스테르담",
-              arrCode: "AMS",
-              flightTime: "13시간50분",
-              code: "KL0862",
-              waypointName: false,
-              codeshareName: false,
-              plusDate: 0
-            },
-            {
-              id: 6,
-              ticketId: 3,
-              waitTime: "22시간 20분",
-              depTime: "06:35",
-              depDate: "2023-03-27",
-              depName: "암스테르담",
-              depCode: "AMS",
-              arrTime: "07:55",
-              arrDate: "2023-03-27",
-              arrName: "샤를드골",
-              arrCode: "CDG",
-              flightTime: "01시간20분",
-              code: "KL1223",
-              waypointName: false,
-              codeshareName: false,
-              plusDate: 0
-            }
-          ]
-        },
-        ticket_come: 2,
-        returnWay: {
-          ticket: {
-            ticketId: null,
-            price: 1805400,
-            waypointNum: 1,
-            registDate: "2023-03-24",
-            totalTime: "23시간 20분",
-            codeshare: false,
-            airline: "KLM네덜란드항공",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "17:45",
-            arrDate: "2023-03-26",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            plusDate: 0,
-            totalTimeNum: 1400
-          },
-          flightList: [
-            {
-              id: 3,
-              ticketId: 2,
-              waitTime: "0시간",
-              depTime: "01:25",
-              depDate: "2023-03-26",
-              depName: "인천",
-              depCode: "ICN",
-              arrTime: "08:15",
-              arrDate: "2023-03-26",
-              arrName: "암스테르담",
-              arrCode: "AMS",
-              flightTime: "13시간50분",
-              code: "KL0862",
-              waypointName: false,
-              codeshareName: false,
-              plusDate: 0
-            },
-            {
-              id: 4,
-              ticketId: 2,
-              waitTime: "08시간 15분",
-              depTime: "16:30",
-              depDate: "2023-03-26",
-              depName: "암스테르담",
-              depCode: "AMS",
-              arrTime: "17:45",
-              arrDate: "2023-03-26",
-              arrName: "샤를드골",
-              arrCode: "CDG",
-              flightTime: "01시간15분",
-              code: "KL1243",
-              waypointName: false,
-              codeshareName: false,
-              plusDate: 0
-            }
-          ]
-        }
-      },
-      {
-        isLike: false,
-        wantedPrice: 80000,
-        ticket_go: 10,
-        goWay: {
-          ticket: {
-            ticketId: null,
-            price: 2361600,
-            waypointNum: 1,
-            registDate: "2023-03-24",
-            totalTime: "25시간 40분",
-            codeshare: true,
-            airline: "KLM네덜란드항공",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "20:05",
-            arrDate: "2023-03-26",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            plusDate: 0,
-            totalTimeNum: 1540
-          },
-          flightList: [
-            {
-              id: 19,
-              ticketId: 10,
-              waitTime: "0시간",
-              depTime: "01:25",
-              depDate: "2023-03-26",
-              depName: "인천",
-              depCode: "ICN",
-              arrTime: "08:15",
-              arrDate: "2023-03-26",
-              arrName: "암스테르담",
-              arrCode: "AMS",
-              flightTime: "13시간50분",
-              code: "KL0862",
-              waypointName: false,
-              codeshareName: false,
-              plusDate: 0
-            },
-            {
-              id: 20,
-              ticketId: 10,
-              waitTime: "10시간 25분",
-              depTime: "18:40",
-              depDate: "2023-03-26",
-              depName: "암스테르담",
-              depCode: "AMS",
-              arrTime: "20:05",
-              arrDate: "2023-03-26",
-              arrName: "샤를드골",
-              arrCode: "CDG",
-              flightTime: "01시간25분",
-              code: "KL2017",
-              waypointName: false,
-              codeshareName: "에어프랑스",
-              plusDate: 0
-            }
-          ]
-        },
-        ticket_come: 6,
-        returnWay: {
-          ticket: {
-            ticketId: null,
-            price: 2023900,
-            waypointNum: 1,
-            registDate: "2023-03-24",
-            totalTime: "16시간 25분",
-            codeshare: true,
-            airline: "KLM네덜란드항공",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "10:50",
-            arrDate: "2023-03-26",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            plusDate: 0,
-            totalTimeNum: 985
-          },
-          flightList: [
-            {
-              id: 11,
-              ticketId: 6,
-              waitTime: "0시간",
-              depTime: "01:25",
-              depDate: "2023-03-26",
-              depName: "인천",
-              depCode: "ICN",
-              arrTime: "08:15",
-              arrDate: "2023-03-26",
-              arrName: "암스테르담",
-              arrCode: "AMS",
-              flightTime: "13시간50분",
-              code: "KL0862",
-              waypointName: false,
-              codeshareName: false,
-              plusDate: 0
-            },
-            {
-              id: 12,
-              ticketId: 6,
-              waitTime: "01시간 15분",
-              depTime: "09:30",
-              depDate: "2023-03-26",
-              depName: "암스테르담",
-              depCode: "AMS",
-              arrTime: "10:50",
-              arrDate: "2023-03-26",
-              arrName: "샤를드골",
-              arrCode: "CDG",
-              flightTime: "01시간20분",
-              code: "KL2003",
-              waypointName: false,
-              codeshareName: "에어프랑스",
-              plusDate: 0
-            }
-          ]
-        }
-      },
-      {
-        isLike: false,
-        wantedPrice: 490000,
-        ticket_go: 9,
-        goWay: {
-          ticket: {
-            ticketId: null,
-            price: 2023900,
-            waypointNum: 1,
-            registDate: "2023-03-24",
-            totalTime: "21시간 25분",
-            codeshare: true,
-            airline: "KLM네덜란드항공",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "15:50",
-            arrDate: "2023-03-26",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            plusDate: 0,
-            totalTimeNum: 1285
-          },
-          flightList: [
-            {
-              id: 17,
-              ticketId: 9,
-              waitTime: "0시간",
-              depTime: "01:25",
-              depDate: "2023-03-26",
-              depName: "인천",
-              depCode: "ICN",
-              arrTime: "08:15",
-              arrDate: "2023-03-26",
-              arrName: "암스테르담",
-              arrCode: "AMS",
-              flightTime: "13시간50분",
-              code: "KL0862",
-              waypointName: false,
-              codeshareName: false,
-              plusDate: 0
-            },
-            {
-              id: 18,
-              ticketId: 9,
-              waitTime: "06시간 15분",
-              depTime: "14:30",
-              depDate: "2023-03-26",
-              depName: "암스테르담",
-              depCode: "AMS",
-              arrTime: "15:50",
-              arrDate: "2023-03-26",
-              arrName: "샤를드골",
-              arrCode: "CDG",
-              flightTime: "01시간20분",
-              code: "KL2013",
-              waypointName: false,
-              codeshareName: "에어프랑스",
-              plusDate: 0
-            }
-          ]
-        },
-        ticket_come: 7,
-        returnWay: {
-          ticket: {
-            ticketId: null,
-            price: 1805400,
-            waypointNum: 1,
-            registDate: "2023-03-24",
-            totalTime: "17시간 30분",
-            codeshare: true,
-            airline: "KLM네덜란드항공",
-            depTime: "01:25",
-            depDate: "2023-03-26",
-            depName: "인천",
-            depCode: "ICN",
-            arrTime: "11:55",
-            arrDate: "2023-03-26",
-            arrName: "샤를드골",
-            arrCode: "CDG",
-            plusDate: 0,
-            totalTimeNum: 1050
-          },
-          flightList: [
-            {
-              id: 13,
-              ticketId: 7,
-              waitTime: "0시간",
-              depTime: "01:25",
-              depDate: "2023-03-26",
-              depName: "인천",
-              depCode: "ICN",
-              arrTime: "08:15",
-              arrDate: "2023-03-26",
-              arrName: "암스테르담",
-              arrCode: "AMS",
-              flightTime: "13시간50분",
-              code: "KL0862",
-              waypointName: false,
-              codeshareName: false,
-              plusDate: 0
-            },
-            {
-              id: 14,
-              ticketId: 7,
-              waitTime: "02시간 20분",
-              depTime: "10:35",
-              depDate: "2023-03-26",
-              depName: "암스테르담",
-              depCode: "AMS",
-              arrTime: "11:55",
-              arrDate: "2023-03-26",
-              arrName: "샤를드골",
-              arrCode: "CDG",
-              flightTime: "01시간20분",
-              code: "KL2007",
-              waypointName: false,
-              codeshareName: "에어프랑스",
-              plusDate: 0
-            }
-          ]
-        }
-      }
-    ]
-  }
-
-export {oneResponse, roundResponse}
+export {data1, data2};

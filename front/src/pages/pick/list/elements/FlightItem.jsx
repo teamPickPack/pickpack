@@ -15,7 +15,7 @@ export default function FlightItem(){
                     <div style={{fontSize: '8px'}}>09:00</div>
                 </div>
             </div>
-            <div id="flight-info" style={{position: 'relative',  width: '64px', display: 'flex', flexDirection: 'column', justifyContent: 'center', margin: '0px 4px'}}>
+            <div id="flight-info" style={{position: 'relative',  width: '64px', display: 'flex', flexDirection: 'column', justifyContent: 'center', margin: '0px 4px', height: '160px'}}>
                 <div style={{position: 'absolute', bottom: '79px', fontSize: '8px', padding: '4px',display: 'block', width: '56px', wordBreak: 'break-all'}}>LH4051 Operated by 대한항공</div>
                 <div style={{borderTop:'1px solid black', borderBottom: '1px solid black', position: 'relative', width: '64px'}}>
                     <div style={{position: 'absolute', top: '-5px', right: '0px', borderTop: '2px solid black', borderRight: '2px solid black', width: '8px', height: '8px' , transform: 'rotate(45deg)'}}></div>
