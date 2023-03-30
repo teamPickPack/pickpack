@@ -16,6 +16,8 @@ import com.pickpack.itemservice.repository.member.MemberRepository;
 import com.pickpack.itemservice.s3.AwsS3Uploader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +36,7 @@ public class ItemService {
     private final MemberRepository memberRepository;
     private final AwsS3Uploader s3Uploader;
     private static String dirName = "item";
+    private static Integer itemSize = 12;
 
     public Long createItem(Long memberId, String title, String categoryStr, Integer price, String content, String itemName, Long cityId, MultipartFile img){
         // city get
@@ -61,24 +64,30 @@ public class ItemService {
         return item.getId();
     }
 
-    public List<ItemListDto> getItemsWithCategory(String categoryStr){
-        List<ItemListDto> items = itemRepository.getItemsWithCategory(categoryStr);
+    public List<ItemListDto> getItemsWithCategory(String categoryStr, Integer page){
+        PageRequest pageRequest = PageRequest.of(page, itemSize,
+                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
+        List<ItemListDto> items = itemRepository.getItemsWithCategory( pageRequest, categoryStr);
         if(items.isEmpty()){
             throw new ListEmptyException("item 목록이 없습니다.");
         }
         return items;
     }
 
-    public List<ItemListDto> getItemsSearchOnTitle(String categoryStr, String search){
-        List<ItemListDto> items = itemRepository.getItemsSearchOnTitle(categoryStr, search);
+    public List<ItemListDto> getItemsSearchOnTitle(String categoryStr, String search, Integer page){
+        PageRequest pageRequest = PageRequest.of(page, itemSize,
+                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
+        List<ItemListDto> items = itemRepository.getItemsSearchOnTitle(pageRequest, categoryStr, search);
         if(items.isEmpty()){
             throw new ListEmptyException(search + "에 대한 검색 결과가 없습니다.");
         }
         return items;
     }
 
-    public List<ItemListDto> getItemsSearchOnCity(String categoryStr, Long cityId){
-        List<ItemListDto> items = itemRepository.getItemsSearchOnCity(categoryStr, cityId);
+    public List<ItemListDto> getItemsSearchOnCity(String categoryStr, Long cityId, Integer page){
+        PageRequest pageRequest = PageRequest.of(page, itemSize,
+                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
+        List<ItemListDto> items = itemRepository.getItemsSearchOnCity(pageRequest, categoryStr, cityId);
         if(items.isEmpty()) {
             throw new ListEmptyException(cityId + "에 대한 검색 결과가 없습니다.");
         }
@@ -91,9 +100,16 @@ public class ItemService {
         if(item == null){
             throw new IsNullException(itemId + "에 해당하는 물품 게시글이 없습니다.");
         }
-        List<ItemListDto> items = itemRepository.getItemsByMember(itemId, item.getMemberId());
+        List<ItemListDto> items = itemRepository.getItemsByMember(itemId, item.getMemberId(), item.getCategory());
 //        item.setItemList(getOtherItemsOfItemById((List<Item>)  item.getItemList(), item.getMemberId()));
         return new ItemDetailRes(item, items);
+    }
+
+    public Long completeItem(Long itemId){
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new IsNullException(itemId + "에 해당하는 물품 게시글이 없습니다."));
+        item.complete();
+        itemRepository.save(item);
+        return item.getId();
     }
 
     private Category str2Category(String categoryStr){
