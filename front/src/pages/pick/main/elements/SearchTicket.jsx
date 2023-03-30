@@ -4,17 +4,25 @@ import styled from "styled-components";
 import { flightAction } from "../../../../store/flightSlice";
 import flightSearchImg from "../../../../assets/image/flight-search-img.png";
 import airplaneImg from "../../../../assets/image/airplane-img.png";
+import { relationOfAirport } from "./data/Relation";
+import { SwitchSVG, CalendarSVG, ConditionSVG, CloseSVG } from "./SVG";
 
 const SearchTicket = () => {
   const dispatch = useDispatch();
 
   const [isCondition, setIsCondition] = useState(false);
+  const [isSelecter, setIsSelecter] = useState(false);
+  const [directLength, setDirectLength] = useState(1);
 
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 30);
 
+  const [selectedContinent, setSelectedContinent] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+
   const {
     wayType,
+    criterion,
     departure,
     destination,
     startDate,
@@ -28,7 +36,16 @@ const SearchTicket = () => {
     return state.flight;
   });
 
+  const resetCondition = () => {
+    setDirect([true, false, false, false]);
+    setMinPrice(0);
+    setLeftPrice(0);
+    setMaxPrice(2000);
+    setRightPrice(2000);
+  };
+
   const setWayType = (data) => {
+    resetCondition();
     dispatch(flightAction.setWayType(data));
   };
   const setDeparture = (data) => {
@@ -123,8 +140,6 @@ const SearchTicket = () => {
     balloonRight.current.style.transform = `translate(${
       200 - pixel + pixel * 0.032
     }px,-22px)`;
-
-    console.log(leftPrice, rightPrice);
   };
 
   useEffect(() => {
@@ -190,13 +205,11 @@ const SearchTicket = () => {
 
   useEffect(() => {
     if (isCondition) {
-      document.getElementById("condition-box").style.display = "block";
+      document.getElementById("condition-container").style.display = "block";
     } else {
-      document.getElementById("condition-box").style.display = "none";
+      document.getElementById("condition-container").style.display = "none";
     }
   }, [isCondition]);
-
-  // console.log(wayType);
 
   useEffect(() => {
     if (wayType === "round") {
@@ -209,30 +222,35 @@ const SearchTicket = () => {
     }
 
     setIsCondition(false);
-    setDirect("all");
-    setMinPrice(0);
-    setLeftPrice(0);
-    setMaxPrice(2000);
-    setRightPrice(2000);
   }, [wayType]);
 
-  useEffect(() => {
-    if (direct === "all") {
-      document.getElementById("all-route").checked = true;
-    } else if (direct === "0") {
-      document.getElementById("non-stop").checked = true;
-    } else if (direct === "1") {
-      document.getElementById("1-stop").checked = true;
-    } else {
-      document.getElementById("2-more-stop").checked = true;
-    }
-  });
-
   const changePlace = () => {
+    if (criterion === "depatrue") {
+      dispatch(flightAction.setCriterion("destination"));
+    } else {
+      dispatch(flightAction.setCriterion("departure"));
+    }
+
     const _temp = departure;
     setDeparture(destination);
     setDestination(_temp);
   };
+
+  useEffect(() => {
+    let length = 0;
+
+    for (let index = 0; index < 4; index++) {
+      if (direct[index]) {
+        length++;
+      }
+    }
+
+    if (length === 0) {
+      setDirect([true, false, false, false]);
+    }
+
+    setDirectLength(length);
+  }, [direct]);
 
   const SearchTicketList = () => {
     console.log(
@@ -270,13 +288,11 @@ const SearchTicket = () => {
           </div>
           <div className="filter-list">
             <span>
-              {direct === "all"
-                ? "직항/경유 전체"
-                : direct === "0"
-                ? "직항"
-                : direct === "1"
-                ? "경유 1회"
-                : "경유 2회 이상"}
+              {direct[0] && "직항/경유 전체"}
+              {direct[1] && "직항"}
+              {direct[2] && (direct[1] ? ", 경유 1회" : "경유 1회")}
+              {direct[3] &&
+                (directLength > 1 ? ", 경유 2회 이상" : "경유 2회 이상")}
             </span>
             <span>
               {(leftPrice * 10000)
@@ -292,17 +308,34 @@ const SearchTicket = () => {
         </TicketType>
         <TicketInner place={departure}>
           <div className="left-div">
-            <PlaceInfo place={departure}>
+            <PlaceInfo
+              place={departure}
+              cursor={criterion === "departure" ? "not-allowed" : "pointer"}
+              onClick={() => {
+                if (criterion !== "departure") {
+                  setIsSelecter(true);
+                }
+              }}
+            >
               <div className="info-header">
                 <p>출발</p>
               </div>
               <div className="info-body">
-                <div className="place-name">
-                  {departure.name}
-                  <br />
-                  {departure.subName && departure.subName}
-                </div>
-                <div className="place-code">({departure.code})</div>
+                {departure.code ? (
+                  <>
+                    <div className="place-name">
+                      {departure.name}
+                      <br />
+                      {departure.subName && departure.subName}
+                    </div>
+                    <div className="place-code">({departure.code})</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="place-name">출발지</div>
+                    <div className="place-code">선택</div>
+                  </>
+                )}
               </div>
             </PlaceInfo>
             <div className="switching-btn" onClick={changePlace}>
@@ -311,19 +344,121 @@ const SearchTicket = () => {
               </div>
               <SwitchSVG />
             </div>
-            <PlaceInfo place={destination}>
+            <PlaceInfo
+              place={destination}
+              cursor={criterion === "destination" ? "not-allowed" : "pointer"}
+              onClick={() => {
+                if (criterion !== "destination") {
+                  setIsSelecter(true);
+                }
+              }}
+            >
               <div className="info-header">
                 <p>도착</p>
               </div>
               <div className="info-body">
-                <div className="place-name">
-                  {destination.name}
-                  <br />
-                  {destination.subName && destination.subName}
-                </div>
-                <div className="place-code">({destination.code})</div>
+                {destination.code ? (
+                  <>
+                    <div className="place-name">
+                      {destination.name}
+                      <br />
+                      {destination.subName && destination.subName}
+                    </div>
+                    <div className="place-code">({destination.code})</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="place-name">도착지</div>
+                    <div className="place-code">선택</div>
+                  </>
+                )}
               </div>
             </PlaceInfo>
+            {isSelecter && (
+              <>
+                <div
+                  className="select-container"
+                  onClick={() => {
+                    setIsSelecter(false);
+                    setSelectedContinent("");
+                    setSelectedCountry("");
+                  }}
+                />
+                <SelectContainer criterion={criterion}>
+                  <div className="select-box">
+                    <button
+                      onClick={() => {
+                        setIsSelecter(false);
+                        setSelectedContinent("");
+                        setSelectedCountry("");
+                      }}
+                    >
+                      Ⅹ
+                    </button>
+                    <SelectSection
+                      data={relationOfAirport}
+                      type="continent"
+                      selected={(data) => {
+                        setSelectedContinent(data);
+                        setSelectedCountry("");
+                        const selectedItem = {
+                          name: data.name_ko,
+                          subName: "",
+                          code: data.code,
+                        };
+                        if (criterion === "departure") {
+                          setDestination(selectedItem);
+                        } else {
+                          setDeparture(selectedItem);
+                        }
+                      }}
+                    />
+                    {selectedContinent && (
+                      <SelectSection
+                        data={selectedContinent.countries}
+                        type="country"
+                        selected={(data) => {
+                          console.log(data);
+                          setSelectedCountry(data);
+                          const selectedItem = {
+                            name: data.name_ko,
+                            subName: "",
+                            code: data.code,
+                          };
+                          if (criterion === "departure") {
+                            setDestination(selectedItem);
+                          } else {
+                            setDeparture(selectedItem);
+                          }
+                        }}
+                      />
+                    )}
+                    {selectedCountry && (
+                      <SelectSection
+                        data={selectedCountry.airports}
+                        type="airport"
+                        selected={(data) => {
+                          console.log(data);
+                          const selectedItem = {
+                            name: data.city,
+                            subName: "",
+                            code: data.code,
+                          };
+                          if (criterion === "departure") {
+                            setDestination(selectedItem);
+                          } else {
+                            setDeparture(selectedItem);
+                          }
+                          setIsSelecter(false);
+                          setSelectedContinent("");
+                          setSelectedCountry("");
+                        }}
+                      />
+                    )}
+                  </div>
+                </SelectContainer>
+              </>
+            )}
           </div>
           <div className="center-div">
             <DateButton id="start-date">
@@ -340,7 +475,6 @@ const SearchTicket = () => {
                     endDate ? endDate : maxDate.toISOString().substring(0, 10)
                   }
                   onChange={(e) => {
-                    console.log(e);
                     setStartDate(e.target.value);
                   }}
                   defaultValue={startDate}
@@ -381,170 +515,188 @@ const SearchTicket = () => {
                 <ConditionSVG />
                 <span className="condition-text">검색조건</span>
               </div>
-              <ConditionBox id="condition-box">
-                <div className="condition-header">
-                  <span>검색조건</span>
-                  <button
-                    onClick={() => {
-                      setIsCondition(!isCondition);
-                    }}
-                  >
-                    <CloseSVG />
-                  </button>
-                </div>
-                <div className="condition-body">
-                  <div className="stop-condition">
-                    <h3>경유</h3>
-                    <label htmlFor="all-route">
-                      <input
-                        id="all-route"
-                        name="direct"
-                        type="radio"
-                        value="all"
-                        onClick={(event) => {
-                          setDirect(event.target.value);
-                        }}
-                      />
-                      <span>전체</span>
-                    </label>
-                    <label htmlFor="non-stop">
-                      <input
-                        id="non-stop"
-                        name="direct"
-                        type="radio"
-                        value="0"
-                        onClick={(event) => {
-                          setDirect(event.target.value);
-                        }}
-                      />
-                      직항
-                    </label>
-                    <label htmlFor="1-stop">
-                      <input
-                        id="1-stop"
-                        name="direct"
-                        type="radio"
-                        value="1"
-                        onClick={(event) => {
-                          setDirect(event.target.value);
-                        }}
-                      />
-                      경유 1회
-                    </label>
-                    <label htmlFor="2-more-stop">
-                      <input
-                        id="2-more-stop"
-                        name="direct"
-                        type="radio"
-                        value="2"
-                        onClick={(event) => {
-                          setDirect(event.target.value);
-                        }}
-                      />
-                      경유 2회 이상
-                    </label>
+              <div id="condition-container">
+                <div
+                  className="condition-container"
+                  onClick={() => setIsCondition(!isCondition)}
+                />
+                <ConditionBox id="condition-box">
+                  <div className="condition-header">
+                    <span>검색조건</span>
+                    <button
+                      onClick={() => {
+                        setIsCondition(!isCondition);
+                      }}
+                    >
+                      <CloseSVG />
+                    </button>
                   </div>
-                  <div className="price-condition">
-                    <h3>가격</h3>
-                    <div className="slider">
-                      <input
-                        ref={balloonLeft}
-                        type="number"
-                        className="balloon-left"
-                        onClick={() => {
-                          balloonLeft.current.style.display = "block";
-                        }}
-                        onBlur={(e) => {
-                          leftPriceValid(e);
-                          balloonLeft.current.style.display = "none";
-                        }}
-                        defaultValue={leftPrice}
-                      />
-                      <input
-                        type="range"
-                        id="left-range"
-                        min={minPrice}
-                        max={maxPrice}
-                        onFocus={() => {
-                          balloonLeft.current.style.display = "block";
-                        }}
-                        onChange={leftPriceValid}
-                        defaultValue={leftPrice}
-                      />
-                      <input
-                        ref={balloonRight}
-                        type="number"
-                        className="balloon-right"
-                        onClick={() => {
-                          balloonRight.current.style.display = "block";
-                        }}
-                        onBlur={(e) => {
-                          rightPriceValid(e);
-                          balloonRight.current.style.display = "none";
-                        }}
-                        defaultValue={rightPrice}
-                      />
-                      <input
-                        type="range"
-                        id="right-range"
-                        min={minPrice}
-                        max={maxPrice}
-                        onFocus={() => {
-                          balloonRight.current.style.display = "block";
-                        }}
-                        onChange={rightPriceValid}
-                        defaultValue={rightPrice}
-                      />
-                      <div className="track">
-                        <div className="range" ref={range}></div>
-                        <span className="first-point"></span>
-                        <span className="second-point"></span>
-                        <span className="third-point"></span>
-                        <div>
-                          <span className="min-price">
-                            <label htmlFor="min-price">최소</label>
-                            <input
-                              id="min-price"
-                              type="number"
-                              onBlur={(e) => priceValid("min", e)}
-                              defaultValue={minPrice}
-                            />
-                          </span>
-                          <span className="price-point">
-                            {parseInt(minPrice + (maxPrice - minPrice) / 4)
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                          </span>
-                          <span className="price-point">
-                            {parseInt(
-                              minPrice + ((maxPrice - minPrice) * 2) / 4
-                            )
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                          </span>
-                          <span className="price-point">
-                            {parseInt(
-                              minPrice + ((maxPrice - minPrice) * 3) / 4
-                            )
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                          </span>
-                          <span className="max-price">
-                            <label htmlFor="max-price">최대</label>
-                            <input
-                              id="max-price"
-                              type="number"
-                              onBlur={(e) => priceValid("max", e)}
-                              defaultValue={maxPrice}
-                            />
-                          </span>
-                          <span className="amount-unit">(단위 : 만원)</span>
+                  <div className="condition-body">
+                    <div className="condition-reset" onClick={resetCondition}>
+                      초기화
+                    </div>
+                    <div className="stop-condition">
+                      <h3>경유</h3>
+                      <label htmlFor="all-route">
+                        <input
+                          id="all-route"
+                          name="direct"
+                          type="checkbox"
+                          checked={direct[0]}
+                          onChange={(e) => {
+                            setDirect([e.target.checked, false, false, false]);
+                          }}
+                        />
+                        <span>전체</span>
+                      </label>
+                      <label htmlFor="non-stop">
+                        <input
+                          id="non-stop"
+                          name="direct"
+                          type="checkbox"
+                          checked={direct[1]}
+                          onChange={(e) => {
+                            const _direct = [...direct];
+                            _direct[0] = false;
+                            _direct[1] = e.target.checked;
+                            setDirect(_direct);
+                          }}
+                        />
+                        <span>직항</span>
+                      </label>
+                      <label htmlFor="1-stop">
+                        <input
+                          id="1-stop"
+                          name="direct"
+                          type="checkbox"
+                          checked={direct[2]}
+                          onChange={(e) => {
+                            const _direct = [...direct];
+                            _direct[0] = false;
+                            _direct[2] = e.target.checked;
+                            setDirect(_direct);
+                          }}
+                        />
+                        <span>경유 1회</span>
+                      </label>
+                      <label htmlFor="2-more-stop">
+                        <input
+                          id="2-more-stop"
+                          name="direct"
+                          type="checkbox"
+                          checked={direct[3]}
+                          onChange={(e) => {
+                            const _direct = [...direct];
+                            _direct[0] = false;
+                            _direct[3] = e.target.checked;
+                            setDirect(_direct);
+                          }}
+                        />
+                        <span>경유 2회 이상</span>
+                      </label>
+                    </div>
+                    <div className="price-condition">
+                      <h3>가격</h3>
+                      <div className="slider">
+                        <input
+                          ref={balloonLeft}
+                          type="number"
+                          className="balloon-left"
+                          onClick={() => {
+                            balloonLeft.current.style.display = "block";
+                          }}
+                          onBlur={(e) => {
+                            leftPriceValid(e);
+                            balloonLeft.current.style.display = "none";
+                          }}
+                          defaultValue={leftPrice}
+                        />
+                        <input
+                          type="range"
+                          id="left-range"
+                          min={minPrice}
+                          max={maxPrice}
+                          onFocus={() => {
+                            balloonLeft.current.style.display = "block";
+                          }}
+                          onChange={leftPriceValid}
+                          defaultValue={leftPrice}
+                        />
+                        <input
+                          ref={balloonRight}
+                          type="number"
+                          className="balloon-right"
+                          onClick={() => {
+                            balloonRight.current.style.display = "block";
+                          }}
+                          onBlur={(e) => {
+                            rightPriceValid(e);
+                            balloonRight.current.style.display = "none";
+                          }}
+                          defaultValue={rightPrice}
+                        />
+                        <input
+                          type="range"
+                          id="right-range"
+                          min={minPrice}
+                          max={maxPrice}
+                          onFocus={() => {
+                            balloonRight.current.style.display = "block";
+                          }}
+                          onChange={rightPriceValid}
+                          defaultValue={rightPrice}
+                        />
+                        <div className="track">
+                          <div className="range" ref={range}></div>
+                          <span className="first-point"></span>
+                          <span className="second-point"></span>
+                          <span className="third-point"></span>
+                          <div>
+                            <span className="min-price">
+                              <label htmlFor="min-price">최소</label>
+                              <input
+                                id="min-price"
+                                type="number"
+                                onBlur={(e) => priceValid("min", e)}
+                                defaultValue={minPrice}
+                              />
+                            </span>
+                            <span className="price-point">
+                              {parseInt(minPrice + (maxPrice - minPrice) / 4)
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            </span>
+                            <span className="price-point">
+                              {parseInt(
+                                minPrice + ((maxPrice - minPrice) * 2) / 4
+                              )
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            </span>
+                            <span className="price-point">
+                              {parseInt(
+                                minPrice + ((maxPrice - minPrice) * 3) / 4
+                              )
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            </span>
+                            <span className="max-price">
+                              <label htmlFor="max-price">최대</label>
+                              <input
+                                id="max-price"
+                                type="number"
+                                onBlur={(e) => priceValid("max", e)}
+                                defaultValue={maxPrice}
+                              />
+                            </span>
+                            <span className="amount-unit">(단위 : 만원)</span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </ConditionBox>
+                </ConditionBox>
+              </div>
             </SearchCondition>
           </div>
           <div className="right-div">
@@ -558,116 +710,66 @@ const SearchTicket = () => {
   );
 };
 
-const SwitchSVG = () => {
+const SelectSection = (props) => {
+  console.log(props.data);
   return (
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 28 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M19.9862 0.467999L27.4525 6.8609C28.1258 7.4373 28.1781 8.3447 27.6093 8.9726L27.4542 9.12339L19.9879 15.5315C19.2594 16.1567 18.0775 16.1574 17.348 15.5329C16.6747 14.9566 16.6223 14.049 17.1912 13.4212L17.3463 13.2703L21.6219 9.60109L1.86658 9.60111C0.909343 9.60111 0.120395 8.98348 0.0125622 8.18779L0 8.00119C0 7.18071 0.720576 6.50447 1.6489 6.41204L1.86658 6.40128L21.635 6.40126L17.348 2.73182C16.6747 2.15538 16.6225 1.24788 17.1914 0.619991L17.3465 0.469199C18.019 -0.107843 19.0778 -0.152689 19.8104 0.334982L19.9862 0.467999ZM27.9813 23.8138L27.994 24.0003C27.994 24.8209 27.2734 25.497 26.3451 25.5895L26.1275 25.6002H6.37191L10.6535 29.2682C11.3266 29.8447 11.3789 30.7521 10.8099 31.3801L10.6546 31.5308C9.98211 32.1079 8.92336 32.1527 8.19084 31.6649L8.01492 31.5319L0.548588 25.1382C-0.124594 24.5617 -0.176858 23.6543 0.392169 23.0264L0.547357 22.8756L8.01368 16.47C8.74229 15.8449 9.92415 15.8444 10.6535 16.4689C11.3266 17.0453 11.3789 17.9528 10.8099 18.5808L10.6546 18.7315L6.37938 22.4004H26.1275C27.0846 22.4004 27.8736 23.0181 27.9813 23.8138Z"
-        fill="#212121"
-      />
-    </svg>
+    <Section>
+      {props.data.map((element) => {
+        return (
+          <div key={element.code}>
+            <input
+              id={element.code}
+              name={props.type}
+              type="radio"
+              value={element.code}
+              onClick={() => {
+                props.selected(element);
+              }}
+            />
+            <label htmlFor={element.code}>
+              {element.name_ko ? element.name_ko : element.city}
+            </label>
+          </div>
+        );
+      })}
+    </Section>
   );
 };
 
-const CalendarSVG = () => {
-  return (
-    <svg
-      fill="none"
-      className="calendar-btn"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M0.25 3.875C0.25 2.97754 0.977537 2.25 1.875 2.25H18.125C19.0225 2.25 19.75 2.97754 19.75 3.875V20.125C19.75 21.0225 19.0225 21.75 18.125 21.75H1.875C0.977537 21.75 0.25 21.0225 0.25 20.125V3.875ZM18.125 3.875H1.875V20.125H18.125V3.875Z"
-        fill="#BBBBBB"
-      />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M14.875 0.625C15.3237 0.625 15.6875 0.988769 15.6875 1.4375V4.6875C15.6875 5.13623 15.3237 5.5 14.875 5.5C14.4263 5.5 14.0625 5.13623 14.0625 4.6875V1.4375C14.0625 0.988769 14.4263 0.625 14.875 0.625Z"
-        fill="#BBBBBB"
-      />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M5.125 0.625C5.57373 0.625 5.9375 0.988769 5.9375 1.4375V4.6875C5.9375 5.13623 5.57373 5.5 5.125 5.5C4.67627 5.5 4.3125 5.13623 4.3125 4.6875V1.4375C4.3125 0.988769 4.67627 0.625 5.125 0.625Z"
-        fill="#BBBBBB"
-      />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M0.25 7.9375C0.25 7.48877 0.613769 7.125 1.0625 7.125H18.9375C19.3862 7.125 19.75 7.48877 19.75 7.9375C19.75 8.38623 19.3862 8.75 18.9375 8.75H1.0625C0.613769 8.75 0.25 8.38623 0.25 7.9375Z"
-        fill="#BBBBBB"
-      />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M14.2476 11.4428C14.5553 11.7694 14.54 12.2836 14.2134 12.5914L9.47046 17.0601C9.15674 17.3557 8.66681 17.3549 8.3541 17.0582L5.78457 14.6207C5.45902 14.3119 5.44546 13.7976 5.75428 13.4721C6.06311 13.1465 6.57738 13.133 6.90293 13.4418L8.91518 15.3506L13.0991 11.4086C13.4257 11.1009 13.9399 11.1162 14.2476 11.4428Z"
-        fill="#BBBBBB"
-      />
-    </svg>
-  );
-};
+const Section = styled.section`
+  height: 246px;
+  overflow-y: scroll;
+  border: 1px solid #d9d9d9;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 
-const ConditionSVG = () => {
-  return (
-    <svg
-      width="4"
-      height="20"
-      viewBox="0 0 4 20"
-      className="condition-svg"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M2 3.07696C1.60444 3.07696 1.21776 2.98673 0.888861 2.81768C0.559963 2.64863 0.303617 2.40835 0.152242 2.12723C0.000866562 1.84611 -0.0387401 1.53677 0.0384303 1.23834C0.115601 0.939902 0.306083 0.665771 0.585788 0.450611C0.865493 0.23545 1.22186 0.0889247 1.60982 0.0295621C1.99778 -0.0298004 2.39992 0.000666594 2.76537 0.11711C3.13082 0.233554 3.44318 0.430745 3.66294 0.683746C3.8827 0.936748 4 1.2342 4 1.53848C4 1.94651 3.78929 2.33783 3.41421 2.62635C3.03914 2.91487 2.53043 3.07696 2 3.07696Z"
-        fill="#373F41"
-      />
-      <path
-        d="M2 11.5389C1.60444 11.5389 1.21776 11.4486 0.888861 11.2796C0.559963 11.1105 0.303617 10.8703 0.152242 10.5891C0.000866562 10.308 -0.0387401 9.99869 0.0384303 9.70025C0.115601 9.40182 0.306083 9.12769 0.585788 8.91253C0.865493 8.69737 1.22186 8.55084 1.60982 8.49148C1.99778 8.43211 2.39992 8.46258 2.76537 8.57902C3.13082 8.69547 3.44318 8.89266 3.66294 9.14566C3.8827 9.39866 4 9.69611 4 10.0004C4 10.4084 3.78929 10.7997 3.41421 11.0883C3.03914 11.3768 2.53043 11.5389 2 11.5389Z"
-        fill="#373F41"
-      />
-      <path
-        d="M2 19.9998C1.60444 19.9998 1.21776 19.9096 0.888861 19.7405C0.559963 19.5715 0.303617 19.3312 0.152242 19.0501C0.000866562 18.769 -0.0387401 18.4596 0.0384303 18.1612C0.115601 17.8628 0.306083 17.5886 0.585788 17.3735C0.865493 17.1583 1.22186 17.0118 1.60982 16.9524C1.99778 16.8931 2.39992 16.9235 2.76537 17.04C3.13082 17.1564 3.44318 17.3536 3.66294 17.6066C3.8827 17.8596 4 18.157 4 18.4613C4 18.8694 3.78929 19.2607 3.41421 19.5492C3.03914 19.8377 2.53043 19.9998 2 19.9998Z"
-        fill="#373F41"
-      />
-    </svg>
-  );
-};
+  label {
+    width: 140px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    border-color: #d9d9d9;
+    font-size: 16px;
+    font-weight: 600;
+  }
 
-const CloseSVG = () => {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M13 1L1 13"
-        stroke="#6C6F75"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M1 1L13 13"
-        stroke="#6C6F75"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-};
+  label:last-child {
+    border-width: 0 0 1px 0;
+  }
+
+  input[type="radio"] {
+    display: none;
+  }
+
+  input[type="radio"]:checked + label {
+    background: black;
+    color: white;
+  }
+`;
 
 const TicketBox = styled.div`
   width: 1080px;
@@ -741,7 +843,7 @@ const TicketType = styled.div`
     border-radius: 16px;
     font-style: normal;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     display: flex;
     align-items: center;
     text-align: center;
@@ -757,7 +859,7 @@ const TicketInner = styled.div`
   padding: 20px;
 
   .left-div {
-    width: 308px;
+    width: 320px;
     heigth: 120px;
     margin-right: 24px;
     display: flex;
@@ -783,10 +885,18 @@ const TicketInner = styled.div`
         opacity: 0.9;
 
         img {
-          width: 48px;
-          height: 48px;
+          width: 44px;
+          height: 44px;
         }
       }
+    }
+
+    .select-container {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
     }
   }
 
@@ -829,11 +939,11 @@ const TicketInner = styled.div`
 `;
 
 const PlaceInfo = styled.div`
-  // width: 160px;
   height: 100%;
+  min-width: 160px;
   font-weight: 600;
   color: #373f41;
-  font-family: "Mulish";
+  cursor: ${(props) => props.cursor};
 
   .info-header {
     display: flex;
@@ -847,13 +957,16 @@ const PlaceInfo = styled.div`
   }
 
   .info-body {
-    cursor: pointer;
     .place-name {
       height: 32px;
       margin-top: ${(props) => (props.place.subName.length > 0 ? 8 : 16)}px;
       margin-bottom: ${(props) => (props.place.subName.length > 0 ? 8 : 0)}px;
       font-size: ${(props) =>
-        props.place.name.length + props.place.subName.length > 5 ? 20 : 24}px;
+        props.place.name.length + props.place.subName.length > 6
+          ? 18
+          : props.place.name.length + props.place.subName.length > 4
+          ? 20
+          : 22}px;
       line-height: ${(props) => (props.place.subName.length > 0 ? 22 : 32)}px;
     }
 
@@ -954,6 +1067,14 @@ const SearchCondition = styled.div`
     font-weight: 600;
     transform: translate(8px, -16px);
   }
+
+  .condition-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 `;
 
 const ConditionBox = styled.div`
@@ -965,6 +1086,8 @@ const ConditionBox = styled.div`
   border-radius: 8px;
   transform: translate(-144px, 2px);
   transition: all 0.2s ease;
+  position: absolute;
+  z-index: 1000;
 
   .condition-header {
     display: flex;
@@ -995,6 +1118,23 @@ const ConditionBox = styled.div`
     height: 168px;
     padding: 24px 24px;
 
+    .condition-reset {
+      position: absolute;
+      transform: translate(430px, -20px);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-radius: 8px;
+      padding: 2px;
+
+      :hover {
+        opacity: 0.8;
+        color: #ffffff;
+        background: #432c7a;
+      }
+    }
+
     .stop-condition {
       height: 40px;
       display: flex;
@@ -1012,7 +1152,7 @@ const ConditionBox = styled.div`
         font-size: 16px;
         color: #616161;
 
-        input[type="radio"] {
+        input[type="checkbox"] {
           -webkit-appearance: none;
           width: 22px;
           height: 22px;
@@ -1022,9 +1162,13 @@ const ConditionBox = styled.div`
           margin-right: 8px;
         }
 
-        input[type="radio"]:checked {
+        input[type="checkbox"]:checked {
           background-color: #3c64b1;
           border-color: rgba(97, 97, 97, 0.5);
+        }
+
+        span {
+          height: 22px;
         }
       }
     }
@@ -1220,6 +1364,38 @@ const ConditionBox = styled.div`
           background: #d9d9d9;
           opacity: 0.5;
         }
+      }
+    }
+  }
+`;
+
+const SelectContainer = styled.div`
+  position: absolute;
+  z-index: 1000;
+
+  .select-box {
+    position: absolute;
+    display: flex;
+    background: white;
+    transform: translate(
+      ${(props) => (props.criterion === "departure" ? "8" : "-192")}px,
+      60px
+    );
+    padding: 24px 16px 16px 16px;
+    border-radius: 16px;
+    border: 1px solid #432c7a;
+
+    button {
+      position: absolute;
+      right: 12px;
+      top: 1px;
+      font-size: 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+
+      :hover {
+        opacity: 0.4;
       }
     }
   }

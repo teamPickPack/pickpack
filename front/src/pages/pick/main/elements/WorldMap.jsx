@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  GeoJSON,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Continents } from "./data/continents.js";
@@ -16,6 +10,11 @@ import { NorthAmerica } from "./data/NorthAmerica.js";
 import { SouthAmerica } from "./data/SouthAmerica.js";
 import { Oceania } from "./data/Oceania.js";
 import styled from "styled-components";
+import airportImg from "../../../../assets/image/airplane-img.png";
+import tourImg from "../../../../assets/image/tour-img.png";
+import { relationOfAirport } from "./data/Relation.js";
+import { useDispatch, useSelector } from "react-redux";
+import { flightAction } from "../../../../store/flightSlice.js";
 
 const CONTINENT_MAPPER = [
   ["North America", NorthAmerica],
@@ -26,75 +25,82 @@ const CONTINENT_MAPPER = [
   ["Oceania", Oceania],
 ];
 
-// mouse over 시 색상 변경..
-// zoom 단계에 따라 대륙별 국가별 구분 - 대륙 클릭 시 확대 해당 대륙의 나라 선택 가능..
-// 좌표 변경되어 맵페이지 변경되면 따라서 해당 맵페이지로 상태유지해서 대륙,국가별 좌표 값 이동..
+const WorldMap = (props) => {
+  const tourItem = props.tourItem;
+  const tourContinent = props.tourContinent;
+  const position = [25, 0];
 
-const WorldMap = () => {
-  const position = [51.505, -0.09];
   return (
     <MapBox>
       <MapContainer
         center={position}
-        minZoom={2}
+        minZoom={1}
         zoom={2}
-        style={{ height: "540px" }}
+        style={{ height: "480px" }}
+        worldCopyJump={true}
+        maxBounds={L.latLngBounds([-90, -Infinity], [90, Infinity])}
+        maxBoundsViscosity={1}
       >
-        <TileLayer url="https://mt0.google.com/vt/lyrs=m&hl=kr&x={x}&y={y}&z={z}" />
-        <MapController />
+        <TileLayer url="http://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}" />
+        {/* <TileLayer url="http://mt0.google.com/vt/lyrs=p&hl=ko&x={x}&y={y}&z={z}" /> */}
+        {/* <TileLayer url="http://mt0.google.com/vt/lyrs=y&hl=ko&x={x}&y={y}&z={z}" /> */}
+        {/* <TileLayer url="http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png" /> */}
+        <MapController tourItem={tourItem} tourContinent={tourContinent} />
       </MapContainer>
     </MapBox>
   );
 };
 
-const MapBox = styled.div`
-  width: 100%;
-  .leaflet-control-attribution {
-    display: none;
-  }
-`;
-
-const MapController = () => {
-  const [mapNum, setMapNum] = useState([0, 0]);
+const MapController = (props) => {
   const [zoomLevel, setZoomLevel] = useState(2);
+  const [selectedContinent, setSelectedContinent] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const tourItem = props.tourItem;
+  const markers = useRef();
+
+  const dispatch = useDispatch();
+
+  const criterion = useSelector((state) => {
+    return state.flight.criterion;
+  });
 
   const map = useMapEvents({
     click(e) {
       map.flyTo({ lat: e.latlng.lat, lng: e.latlng.lng });
-      updateMapPosition();
-    },
-    dragend() {
-      updateMapPosition();
     },
     zoomanim(e) {
       setZoomLevel(e.zoom);
     },
+    zoomend(e) {
+      if (airportMarkers.current) {
+        if (e.target._zoom > 3) {
+          airportMarkers.current.getLayers().forEach((marker) => {
+            marker.openTooltip();
+          });
+        } else {
+          airportMarkers.current.getLayers().forEach((marker) => {
+            marker.closeTooltip();
+          });
+        }
+      }
+      if (markers.current && e.target._zoom < 3) {
+        markers.current.closeTooltip();
+      }
+    },
   });
-
-  const updateMapPosition = () => {
-    const center = map.getCenter();
-    const currNum = parseInt(Math.round(center.lng / 360));
-
-    if (mapNum[0] !== currNum) {
-      setMapNum([currNum, currNum - mapNum[0]]);
-    }
-  };
 
   const continentEachFeature = async (feature, layer) => {
     const continentName = feature.properties.CONTINENT;
 
     layer.on("click", (e) => {
       setCountryLayer(continentName);
-      if (map.getZoom() > 2) {
-        map.flyTo(e.latlng, 2);
-        setZoomLevel(2);
-      } else {
-        map.flyTo(e.latlng, 4);
-        setZoomLevel(4);
-      }
+      setSelectedContinent(layer);
+      map.removeLayer(layer);
+      map.flyTo(e.latlng, 3);
+      setZoomLevel(3);
     });
     layer.on("mouseover", () => {
-      layer.setStyle({ fillOpacity: 0.2, opacity: 0.6 });
+      layer.setStyle({ fillOpacity: 0.2, opacity: 0.3 });
     });
     layer.on("mouseout", () => {
       layer.setStyle({ fillOpacity: 0, opacity: 0 });
@@ -105,71 +111,222 @@ const MapController = () => {
 
   const countryEachFeature = async (feature, layer) => {
     layer.on("click", (e) => {
-      map.flyTo(e.latlng, map.getZoom() + 1);
+      setSelectedCountry(layer);
+      map.flyTo(
+        e.latlng,
+        map.getZoom() > 4 ? map.getZoom() : map.getZoom() + 1
+      );
     });
     layer.on("mouseover", () => {
-      layer.setStyle({ fillOpacity: 0.2, opacity: 0.2 });
+      layer.setStyle({ fillOpacity: 0.2 });
     });
     layer.on("mouseout", () => {
-      layer.setStyle({ fillOpacity: 0, opacity: 0 });
+      layer.setStyle({ fillOpacity: 0 });
     });
 
-    layer.setStyle({ fillOpacity: 0, opacity: 0, color: "red" });
+    layer.setStyle({ fillOpacity: 0, opacity: 0.3, color: "red" });
   };
 
   const continentLayer = useRef();
   const countryLayer = useRef();
+  const airportMarkers = useRef();
+  const tourMarker = useRef();
+
+  const flightIcon = L.icon({
+    iconUrl: airportImg,
+    iconSize: [28, 28],
+  });
 
   const setCountryLayer = (name) => {
-    console.log(name);
     if (countryLayer.current)
       CONTINENT_MAPPER.map((continent) => {
         if (countryLayer.current[continent[0]] !== undefined) {
-          console.log(countryLayer.current);
           map.removeLayer(countryLayer.current[continent[0]]);
         }
       });
 
+    removeAirportMarkers();
+
+    let currContinent;
+
+    relationOfAirport.forEach((continent) => {
+      if (continent.name === name) {
+        currContinent = continent;
+      }
+    });
+
+    const selectedItem = {
+      name: currContinent.name_ko,
+      subName: "",
+      code: currContinent.code,
+    };
+
+    if (criterion === "departure") {
+      dispatch(flightAction.setDestination(selectedItem));
+    } else {
+      dispatch(flightAction.setDeparture(selectedItem));
+    }
+
     CONTINENT_MAPPER.map((continent) => {
       if (name === continent[0]) {
-        console.log(countryLayer.current);
-
         countryLayer.current = {
-          [continent[0]]: L.geoJSON(continent[1], {
+          [continent[0]]: L.geoJSON(null, {
             onEachFeature: countryEachFeature,
             bubblingMouseEvents: false,
           }),
         };
 
-        countryLayer.current[continent[0]].eachLayer((layer) => {
-          if (layer._latlngs) {
-            layer._latlngs.map((latlng) => {
-              latlng.map((coord) => {
-                if (coord.length) {
-                  coord.map((point) => {
-                    point.lng = point.lng + mapNum[0] * 360;
-                  });
-                } else {
-                  coord.lng = coord.lng + mapNum[0] * 360;
-                }
-              });
-            });
+        continent[1].features.forEach((country) => {
+          const countryName = country.properties.name_en;
+
+          for (let index = 0; index < currContinent.countries.length; index++) {
+            if (currContinent.countries[index].name_en === countryName) {
+              countryLayer.current[continent[0]].addData(country);
+
+              break;
+            }
           }
         });
-
-        console.log(countryLayer.current);
 
         map.addLayer(countryLayer.current[continent[0]]);
       }
     });
+
+    currContinent.countries.forEach((country) => {
+      country.airports.forEach((airport) => {
+        airportMarkers.current.addLayer(
+          L.marker([airport.lat, airport.lng], {
+            icon: flightIcon,
+            bubblingMouseEvents: false,
+          })
+            .bindPopup(
+              `공항명: ${airport.name}<br/>국가: ${airport.country}<br/>도시: ${airport.city}`
+            )
+            .bindTooltip(airport.name)
+            .on("tooltipopen", (e) => {
+              if (map.getZoom() < 4) e.target.closeTooltip();
+            })
+            .on("mouseover", (e) => {
+              if (map.getZoom() > 3) {
+                e.target.openTooltip();
+              }
+            })
+            .on("click", (e) => {
+              const selectedAirport = {
+                name: airport.city,
+                subName: "",
+                code: airport.code,
+              };
+
+              if (criterion === "departure") {
+                dispatch(flightAction.setDestination(selectedAirport));
+              } else {
+                dispatch(flightAction.setDeparture(selectedAirport));
+              }
+            })
+        );
+      });
+    });
+  };
+
+  const removeAirportMarkers = () => {
+    airportMarkers.current.getLayers().forEach((layer) => {
+      airportMarkers.current.removeLayer(layer);
+    });
   };
 
   useEffect(() => {
-    if (zoomLevel === 2) {
-      if (continentLayer.current) {
-        map.removeLayer(continentLayer.current);
-      }
+    if (selectedCountry !== null) {
+      removeAirportMarkers();
 
+      let currContinent;
+
+      relationOfAirport.forEach((continent) => {
+        if (continent.name === selectedContinent.feature.properties.CONTINENT) {
+          currContinent = continent;
+        }
+      });
+
+      currContinent.countries.forEach((country) => {
+        if (country.name_en === selectedCountry.feature.properties.name_en) {
+          const selectedItem = {
+            name: country.name_ko,
+            subName: "",
+            code: country.code,
+          };
+
+          if (criterion === "departure") {
+            dispatch(flightAction.setDestination(selectedItem));
+          } else {
+            dispatch(flightAction.setDeparture(selectedItem));
+          }
+          country.airports.forEach((airport) => {
+            airportMarkers.current.addLayer(
+              L.marker([airport.lat, airport.lng], {
+                icon: flightIcon,
+                bubblingMouseEvents: false,
+              })
+                .bindPopup(
+                  `공항명: ${airport.name}<br/>국가: ${airport.country}<br/>도시: ${airport.city}`
+                )
+                .bindTooltip(airport.name)
+                .on("tooltipopen", (e) => {
+                  if (map.getZoom() < 4) e.target.closeTooltip();
+                })
+                .on("mouseover", (e) => {
+                  if (map.getZoom() > 3) {
+                    e.target.openTooltip();
+                  }
+                })
+                .on("click", (e) => {
+                  const selectedAirport = {
+                    name: airport.city,
+                    subName: "",
+                    code: airport.code,
+                  };
+
+                  if (criterion === "departure") {
+                    dispatch(flightAction.setDestination(selectedAirport));
+                  } else {
+                    dispatch(flightAction.setDeparture(selectedAirport));
+                  }
+                })
+            );
+          });
+        }
+      });
+    }
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    if (continentLayer.current !== undefined) {
+      map.removeLayer(continentLayer.current);
+    }
+    continentLayer.current = L.geoJSON(Continents, {
+      onEachFeature: continentEachFeature,
+      bubblingMouseEvents: false,
+    });
+
+    if (selectedContinent !== null)
+      continentLayer.current.getLayers().forEach((layer) => {
+        if (
+          layer.feature.properties.CONTINENT ===
+          selectedContinent.feature.properties.CONTINENT
+        ) {
+          continentLayer.current.removeLayer(layer);
+        }
+      });
+
+    map.addLayer(continentLayer.current);
+  }, [selectedContinent]);
+
+  // 공항마커추가
+  useEffect(() => {
+    airportMarkers.current = L.featureGroup().addTo(map);
+  }, []);
+
+  useEffect(() => {
+    if (zoomLevel === 1) {
       if (countryLayer.current) {
         CONTINENT_MAPPER.map((continent) => {
           if (countryLayer.current[continent[0]] !== undefined) {
@@ -178,79 +335,65 @@ const MapController = () => {
         });
       }
 
-      continentLayer.current = L.geoJSON(Continents, {
-        onEachFeature: continentEachFeature,
-        bubblingMouseEvents: false,
-      });
-
-      continentLayer.current.eachLayer((layer) => {
-        if (layer._latlngs) {
-          layer._latlngs.map((latlng) => {
-            latlng.map((coord) => {
-              coord.map((point) => {
-                point.lng = point.lng + mapNum[0] * 360;
-              });
-            });
-          });
-        }
-      });
-
-      map.addLayer(continentLayer.current);
+      removeAirportMarkers();
+      setSelectedContinent(null);
     }
   }, [zoomLevel]);
 
   useEffect(() => {
-    const layerList = [];
+    if (markers.current) map.removeLayer(markers.current);
 
-    continentLayer.current.eachLayer((layer) => {
-      if (layer._latlngs) {
-        layer._latlngs.map((latlng) => {
-          latlng.map((coord) => {
-            coord.map((point) => {
-              point.lng = point.lng + mapNum[1] * 360;
-            });
-          });
-        });
+    if (tourItem !== null) {
+      const tourIcon = L.icon({
+        iconUrl: tourImg,
+        iconSize: [64, 64],
+      });
 
-        const copy = Object.assign(layer, {});
-        layerList.push(copy);
-        map.removeLayer(layer);
-      }
-    });
+      markers.current = L.marker([tourItem.lat, tourItem.lng], {
+        icon: tourIcon,
+        bubblingMouseEvents: false,
+      })
+        .bindTooltip(
+          `<img src=${tourItem.imgUrl} style="width:120px;height:80px"}}/><br/>${tourItem.touristName}`,
+          { offset: L.point([15, 0]) }
+        )
+        .on("tooltipopen", (e) => {
+          if (map.getZoom() < 1) e.target.closeTooltip();
+        })
+        .on("mouseout", (e) => {
+          if (map.getZoom() > 2) {
+            e.target.openTooltip();
+          }
+        })
+        .addTo(map);
 
-    CONTINENT_MAPPER.map((continent) => {
-      if (countryLayer.current)
-        if (countryLayer.current[continent[0]] !== undefined) {
-          countryLayer.current[continent[0]].eachLayer((layer) => {
-            if (layer._latlngs) {
-              layer._latlngs.map((latlng) => {
-                latlng.map((coord) => {
-                  if (coord.length) {
-                    coord.map((point) => {
-                      point.lng = point.lng + mapNum[1] * 360;
-                    });
-                  } else {
-                    coord.lng = coord.lng + mapNum[1] * 360;
-                  }
-                });
-              });
+      map.flyTo([tourItem.lat, tourItem.lng], 3);
 
-              if (zoomLevel !== 2) {
-                const copy = Object.assign(layer, {});
-                layerList.push(copy);
-              }
-              map.removeLayer(layer);
-            }
-          });
-        }
-    });
+      markers.current.openTooltip();
 
-    layerList.forEach((layer) => {
-      map.addLayer(layer);
-    });
-  }, [mapNum]);
+      removeAirportMarkers();
+
+      const data = {
+        feature: {
+          properties: {
+            CONTINENT: props.tourContinent,
+          },
+        },
+      };
+
+      setSelectedContinent(data);
+      setCountryLayer(props.tourContinent);
+    }
+  }, [tourItem]);
 
   return null;
 };
+
+const MapBox = styled.div`
+  width: 100%;
+  .leaflet-control-attribution {
+    display: none;
+  }
+`;
 
 export default WorldMap;
