@@ -2,19 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   wayType: "one",
+  criterion: "departure",
   departure: {
-    name: "시엠립",
-    subName: "(앙코르왔뜨)",
-    code: "REP",
+    name: "인천",
+    subName: "",
+    code: "ICN",
   },
   destination: {
-    name: "시엠립",
-    subName: "(앙코르와트)",
-    code: "REP",
+    name: "",
+    subName: "",
+    code: "",
   },
   startDate: new Date().toISOString().substring(0, 10),
   endDate: "",
-  direct: "all",
+  direct: [true, false, false, false],
   leftPrice: 0,
   rightPrice: 2000,
   minPrice: 0,
@@ -28,6 +29,10 @@ const flightSlice = createSlice({
   reducers: {
     setWayType(state, action) {
       state.wayType = action.payload;
+    },
+    setCriterion(state) {
+      state.criterion =
+        state.criterion === "departure" ? "destination" : "departure";
     },
     setDeparture(state, action) {
       state.departure = action.payload;
