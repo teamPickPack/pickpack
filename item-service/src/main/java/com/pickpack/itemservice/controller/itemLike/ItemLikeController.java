@@ -5,10 +5,7 @@ import com.pickpack.itemservice.service.itemLike.ItemLikeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -21,6 +18,16 @@ public class ItemLikeController {
         try{
             return new ResponseEntity<>(itemLikeService.likeItem(itemLikeReq.getItemId(),  itemLikeReq.getMemberId()), HttpStatus.OK);
         }catch (Exception e){
+            return exceptionHandling(e);
+        }
+    }
+
+    @PutMapping("/like")
+    public ResponseEntity<?> unlikeItem(@RequestBody ItemLikeReq itemLikeReq){
+        try{
+            itemLikeService.unlikeItem(itemLikeReq.getItemId(), itemLikeReq.getMemberId());
+            return new ResponseEntity<>(itemLikeReq.getItemId() + " 물품 게시글 찜 취소", HttpStatus.OK);
+        }catch(Exception e){
             return exceptionHandling(e);
         }
     }
