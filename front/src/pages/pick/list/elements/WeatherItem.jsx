@@ -24,14 +24,14 @@ const WeatherBox = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 60px;
+    width: 56px;
     border-radius: 15px;
     margin: 0px 8px;
     padding: 4px 0px;
     box-shadow: 0px 44px 18px rgba(0, 69, 79, 0.01), 0px 25px 15px rgba(0, 69, 79, 0.05), 0px 11px 11px rgba(0, 69, 79, 0.09), 0px 3px 6px rgba(0, 69, 79, 0.1), 0px 0px 0px rgba(0, 69, 79, 0.1);
 `
 const Info = styled.div`
-    font-size: 10px;
+    font-size: 8px;
     font-weight: bold;
     color: #E8FCFF;
 `

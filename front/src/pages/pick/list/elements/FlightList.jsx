@@ -3,7 +3,7 @@ import FlightItem from "./FlightItem";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import styled from "styled-components";
 
-export default function FlightDetailList(){
+export default function FlightList(){
     const FlightDetailAllItemRef = useRef();
     
     const [scrollLeftButtonVisible, setScrollLeftButtonVisible] = useState(false)
