@@ -1,6 +1,7 @@
 package com.pickpack.flightservice.api.request;
 
 import com.pickpack.flightservice.dto.flight.FilterDto;
+import com.pickpack.flightservice.dto.flight.PageableDto;
 import com.pickpack.flightservice.dto.flight.RoundInfoDto;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,5 +15,5 @@ public class RoundTicketReq {
     private long memberId;
     private RoundInfoDto info;
     private FilterDto filter;
-    private String sortType;
+    private PageableDto pageable;
 }
