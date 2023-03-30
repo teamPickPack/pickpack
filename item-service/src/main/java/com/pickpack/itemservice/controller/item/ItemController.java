@@ -31,27 +31,27 @@ public class ItemController {
 
     }
 
-    @GetMapping("/{category}")
-    public ResponseEntity<?> getItemsWithCategory(@PathVariable("category") String category){
+    @GetMapping("/{category}/{page}")
+    public ResponseEntity<?> getItemsWithCategory(@PathVariable("category") String category, @PathVariable("page") Integer page){
         try{
-            return new ResponseEntity<>(new ListRes(itemService.getItemsWithCategory(category)), HttpStatus.OK);
+            return new ResponseEntity<>(new ListRes(itemService.getItemsWithCategory(category, page)), HttpStatus.OK);
         }catch(Exception e){
             return exceptionHandling(e);
         }
     }
 
-    @GetMapping("/{category}/title/{search}")
-    public ResponseEntity<?> getItemsSearchOnTitle(@PathVariable("category") String category, @PathVariable("search") String search){
+    @GetMapping("/{category}/title/{search}/{page}")
+    public ResponseEntity<?> getItemsSearchOnTitle(@PathVariable("category") String category, @PathVariable("search") String search, @PathVariable("page") Integer page){
         try{
-            return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnTitle(category, search)), HttpStatus.OK);
+            return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnTitle(category, search, page)), HttpStatus.OK);
         }catch(Exception e){
             return exceptionHandling(e);
         }
     }
-    @GetMapping("/{category}/city/{cityId}")
-    public ResponseEntity<?> getItemsSearchOnCity(@PathVariable("category") String category, @PathVariable("cityId") Long cityId){
+    @GetMapping("/{category}/city/{cityId}/{page}")
+    public ResponseEntity<?> getItemsSearchOnCity(@PathVariable("category") String category, @PathVariable("cityId") Long cityId, @PathVariable("page") Integer page){
         try{
-            return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnCity(category, cityId)), HttpStatus.OK);
+            return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnCity(category, cityId, page)), HttpStatus.OK);
         }catch (Exception e){
             return exceptionHandling(e);
         }
