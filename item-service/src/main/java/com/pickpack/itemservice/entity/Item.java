@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,8 @@ public class Item {
         this.price = price;
         this.content = content;
         this.itemName = itemName;
-        this.registDate = LocalDateTime.now().toString();
+        LocalDateTime nowDT = LocalDateTime.now();
+        this.registDate = nowDT.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         this.isComplete = false;
         this.isDelete = false;
     }
