@@ -5,7 +5,7 @@ import FlightList from "./FlightList";
 import LineChart from './LineChart';
 import { useSelector, useDispatch } from 'react-redux';
 import { compareAction } from '../../../../store/compareSlice';
-import garudaIndonesia from '../../../../assets/airlines/길상항공.png';
+import garudaIndonesia from '../../../../assets/airlines/대한항공.png';
 export default function OneWayTicket({
     fromCompare,
     isRound, 
@@ -82,11 +82,11 @@ export default function OneWayTicket({
         }
         if(!check){  //Off->On일 때.. 1. 체크 켜기 2. store에 담기
             if(compareList.length !== 0 && compareMode !== 'oneWay'){
-                alert('편도와 왕복을 동시에 담을 순 없어요,,,,');
+                alert('편도와 왕복을 동시에 비교할 수 없습니다.');
                 return;
             }
-            else if(compareList.length >= 5){
-                alert('다섯개 꽉 찼으요...');
+            else if(compareList.length >= 3){
+                alert('최대 3개의 항공권을 비교할 수 있습니다.');
                 return;
             }
             setCheck(true);
@@ -518,4 +518,4 @@ const TicketBackground = styled.div`
     border-radius: 16px;
     background-color: white;
     z-index: -1;
-`
+`;
