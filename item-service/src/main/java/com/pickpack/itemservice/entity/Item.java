@@ -47,7 +47,6 @@ public class Item {
 //    ====== 연관관계 메서드 ======
     public void addItemLikeList(ItemLike itemLike){
         itemLikeList.add(itemLike);
-        itemLike.setItem(this);
     }
 
     public void addChatroomList(Chatroom chatroom){
