@@ -15,7 +15,6 @@ export default function RoundTicket({
 }){
     useEffect(() => {
         const list = document.querySelectorAll('.tickets > .ticket')
-        // console.log(list);
         list.forEach((el, index) => {
             el.style.zIndex = index  
             el.addEventListener('click', function(){
@@ -93,11 +92,11 @@ export default function RoundTicket({
             }
             if(!commonCheck){
                 if(compareList.length !== 0 && compareMode !== 'round'){
-                    alert('편도와 왕복을 동시에 담을 순 없어요,,,,');
+                    alert('편도와 왕복을 동시에 비교할 수 없습니다.');
                     return;
                 }
-                else if(compareList.length >= 5){
-                    alert('다섯개 꽉 찼으요...');
+                else if(compareList.length >= 3){
+                    alert('최대 3개의 항공권을 비교할 수 있습니다.');
                     return;
                 }
                 setCommonCheck(true);
