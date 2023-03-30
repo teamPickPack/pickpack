@@ -66,6 +66,15 @@ public class ItemController {
         }
     }
 
+    @PutMapping("/complete")
+    public ResponseEntity<?> completeItem(@RequestBody Long itemId){
+        try {
+            return new ResponseEntity<>(itemService.completeItem(itemId), HttpStatus.OK);
+        }catch (Exception e){
+            return exceptionHandling(e);
+        }
+    }
+
     private ResponseEntity<String> exceptionHandling(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

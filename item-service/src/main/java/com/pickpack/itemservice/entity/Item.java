@@ -74,6 +74,9 @@ public class Item {
     public void setImage(String imgUrl){
         this.imgUrl = imgUrl;
     }
+    public void complete(){
+        this.isComplete = true;
+    }
 }
 
 
