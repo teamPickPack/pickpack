@@ -96,6 +96,13 @@ public class ItemService {
         return new ItemDetailRes(item, items);
     }
 
+    public Long completeItem(Long itemId){
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new IsNullException(itemId + "에 해당하는 물품 게시글이 없습니다."));
+        item.complete();
+        itemRepository.save(item);
+        return item.getId();
+    }
+
     private Category str2Category(String categoryStr){
         Category category = null;
         switch (categoryStr){
