@@ -11,18 +11,20 @@ import persistReducer from "redux-persist/es/persistReducer";
 import session from "redux-persist/lib/storage/session";
 import flightSlice from "./flightSlice";
 import userSlice from "./userSlice";
+import compareSlice from "./compareSlice";
 
 // reducer 추가하는 부분
 const reducers = combineReducers({
   user: userSlice.reducer,
   flight: flightSlice.reducer,
+  compare: compareSlice.reducer,
 });
 
 // storage에 올려서 사용할 것 추가하는 부분
 const persistConfig = {
   key: "root",
   storage: session,
-  whiteList: ["user", "flight"],
+  whiteList: ["user", "flight", "compare"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
