@@ -2,8 +2,13 @@ import styled from "styled-components";
 import SearchTicket from "./elements/SearchTicket";
 import WorldMap from "./elements/WorldMap";
 import mainBanner from "../../../assets/image/mainBanner.png";
+import TourList from "./elements/TourList";
+import { useState } from "react";
 
 const Main = () => {
+  const [tourItem, setTourItem] = useState(null);
+  const [tourContinent, setTourContinent] = useState("South America");
+
   return (
     <>
       <FistSection>
@@ -15,9 +20,14 @@ const Main = () => {
         </div>
       </FistSection>
       <SecondSection>
-        <WorldMap />
+        <WorldMap tourItem={tourItem} tourContinent={tourContinent} />
       </SecondSection>
-      <ThirdSection>인기관광지</ThirdSection>
+      <ThirdSection>
+        <TourList
+          setTourItem={setTourItem}
+          setTourContinent={setTourContinent}
+        />
+      </ThirdSection>
     </>
   );
 };
@@ -36,7 +46,8 @@ const FistSection = styled.div`
     align-items: center;
 
     > div {
-      width: 1160px;
+      width: 1200px;
+      margin: 0 20px;
       height: 116px;
       color: #ffffff;
       margin-bottom: 44px;
@@ -58,7 +69,8 @@ const SecondSection = styled.div`
 
 const ThirdSection = styled.div`
   display: flex;
-  align-items: center;
+
+  height: 600px;
   justify-content: center;
 `;
 
