@@ -33,11 +33,11 @@ public class Ticket {
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
     private List<OnewayTicketLike> onewayTicketLikeList;
 
-    @OneToMany(mappedBy = "ticketTo", cascade = CascadeType.ALL)
-    private List<RoundTicketLike> toRoundTicketLikeList;
-
-    @OneToMany(mappedBy = "ticketFrom", cascade = CascadeType.ALL)
-    private List<RoundTicketLike> fromRoundTicketLikeList;
+//    @OneToMany(mappedBy = "ticketTo", cascade = CascadeType.ALL)
+//    private List<RoundTicketLike> toRoundTicketLikeList;
+//
+//    @OneToMany(mappedBy = "ticketFrom", cascade = CascadeType.ALL)
+//    private List<RoundTicketLike> fromRoundTicketLikeList;
 
     @Transient
     private String waypoints = wayPointToString();
