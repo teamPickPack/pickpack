@@ -1,7 +1,8 @@
 package com.pickpack.flightservice.controller.ticket;
 
-import com.pickpack.flightservice.api.request.OneWayTicketReq;
+import com.pickpack.flightservice.api.request.OnewayTicketReq;
 import com.pickpack.flightservice.api.request.OnewayTicketLikeReq;
+import com.pickpack.flightservice.api.request.RoundTicketLikeReq;
 import com.pickpack.flightservice.api.request.RoundTicketReq;
 import com.pickpack.flightservice.api.response.OneWayTicketRes;
 import com.pickpack.flightservice.api.response.RoundTicketRes;
@@ -26,7 +27,7 @@ public class TicketController {
     private TicketLikeService ticketLikeService;
 
     @PostMapping("/one")
-    public ResponseEntity<?> oneWayTicketList(@RequestBody OneWayTicketReq ticketReq) {
+    public ResponseEntity<?> oneWayTicketList(@RequestBody OnewayTicketReq ticketReq) {
         try {
             List<OneWayTicketRes> list = ticketService.getOneWayTicketList(ticketReq);
 
@@ -56,7 +57,7 @@ public class TicketController {
         }
     }
 
-    @PostMapping("/like")
+    @PostMapping("/one/like")
     public HttpEntity<?> likeOnewayTicket(@RequestBody OnewayTicketLikeReq onewayTicketLikeReq) {
         try{
             ticketLikeService.likeOnewayTicket(onewayTicketLikeReq);
@@ -66,10 +67,30 @@ public class TicketController {
         }
     }
 
-    @PutMapping("/like")
+    @PutMapping("/one/like")
     public HttpEntity<?> unLikeOnewayTicket(@RequestBody OnewayTicketLikeReq onewayTicketLikeReq) {
         try{
-            ticketLikeService.unLikeOneWayTicket(onewayTicketLikeReq);
+            ticketLikeService.unlikeOnewayTicket(onewayTicketLikeReq);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        }catch(Exception e){
+            return exceptionHandling(e);
+        }
+    }
+
+    @PostMapping("/round/like")
+    public HttpEntity<?> likeRoundTicket(@RequestBody RoundTicketLikeReq roundTicketLikeReq) {
+        try{
+            ticketLikeService.likeRoundTicket(roundTicketLikeReq);
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        }catch(Exception e){
+            return exceptionHandling(e);
+        }
+    }
+
+    @PutMapping("/round/like")
+    public HttpEntity<?> unlikeRoundTicket(@RequestBody RoundTicketLikeReq roundTicketLikeReq) {
+        try{
+            ticketLikeService.unlikeRoundTicket(roundTicketLikeReq);
             return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         }catch(Exception e){
             return exceptionHandling(e);
