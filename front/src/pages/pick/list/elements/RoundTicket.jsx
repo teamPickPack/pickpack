@@ -31,12 +31,20 @@ export default function RoundTicket({
                     el.style.zIndex = zIndexArray[index]
                 })
                 for(let i = 0; i < zIndexArray.length; i+=2){
-                    if(zIndexArray[i] < zIndexArray[i+1]){
-                        list[i].style.opacity = '.7';
-                        list[i+1].style.opacity = '1';
-                    } else{
-                        list[i].style.opacity = '1';
-                        list[i+1].style.opacity = '.7';
+                    if(zIndexArray[i] < zIndexArray[i+1]){ //앞에 있는게 under
+                        if(list[i].classList.contains('over')){
+                            list[i].classList.remove('over');
+                            list[i].classList.add('under');
+                            list[i+1].classList.remove('under');
+                            list[i+1].classList.add('over');
+                        }
+                    } else{ //앞에 있는게 over
+                        if(list[i].classList.contains('under')){
+                            list[i].classList.remove('under');
+                            list[i].classList.add('over');
+                            list[i+1].classList.remove('over');
+                            list[i+1].classList.add('under');
+                        }
                     }
                 }
             })
@@ -44,12 +52,20 @@ export default function RoundTicket({
         let array = [...list]
         let zIndexArray = array.map(arr => Number(arr.style.zIndex))
         for(let i = 0; i < zIndexArray.length; i+=2){
-            if(zIndexArray[i] < zIndexArray[i+1]){
-                list[i].style.opacity = '.5';
-                list[i+1].style.opacity = '1';
-            } else{
-                list[i].style.opacity = '1';
-                list[i+1].style.opacity = '.5';
+            if(zIndexArray[i] < zIndexArray[i+1]){ //앞에 있는게 under
+                if(list[i].classList.contains('over')){
+                    list[i].classList.remove('over');
+                    list[i].classList.add('under');
+                    list[i+1].classList.remove('under');
+                    list[i+1].classList.add('over');
+                }
+            } else{ //앞에 있는게 over
+                if(list[i].classList.contains('under')){
+                    list[i].classList.remove('under');
+                    list[i].classList.add('over');
+                    list[i+1].classList.remove('over');
+                    list[i+1].classList.add('under');
+                }
             }
         }
     }, []);
@@ -140,11 +156,11 @@ export default function RoundTicket({
     return(
         <>
         <Tickets className="tickets">
-            <ReturnTicket className="ticket">
-                <OneWayTicket fromCompare={fromCompare} isRound={true} unifyCommon={unifyCommon} handleLikeData={handleLikeData} isCheck={commonCheck} isLike={commonLike} ticket={returnWay.ticket} flightList={returnWay.flightList}/>
+            <ReturnTicket className="ticket under">
+                <OneWayTicket className="" fromCompare={fromCompare} isRound={true} unifyCommon={unifyCommon} handleLikeData={handleLikeData} isCheck={commonCheck} isLike={commonLike} ticket={returnWay.ticket} flightList={returnWay.flightList}/>
             </ReturnTicket>
-            <GoTicket className="ticket">
-                <OneWayTicket fromCompare={fromCompare} isRound={true} unifyCommon={unifyCommon} handleLikeData={handleLikeData} isCheck={commonCheck} isLike={commonLike} ticket={goWay.ticket} flightList={goWay.flightList}/>
+            <GoTicket className="ticket over">
+                <OneWayTicket className="" fromCompare={fromCompare} isRound={true} unifyCommon={unifyCommon} handleLikeData={handleLikeData} isCheck={commonCheck} isLike={commonLike} ticket={goWay.ticket} flightList={goWay.flightList}/>
             </GoTicket>
             <TotalPrice>총 2,640,000원</TotalPrice>
         </Tickets>
@@ -157,23 +173,29 @@ const Tickets = styled.div`
     height: 320px;
     position: relative;
     margin: 8px 0px;
+
+    .under{
+        opacity: 0.3;
+    }
+    .under:hover{
+        opacity: 0.7;
+        cursor: pointer;
+    }
+
+    .over{
+        opacity: 1;
+    }
 `;
 const GoTicket = styled.div`
     position: absolute;
     bottom: 0px;
     left: 0px;
-    &:hover{
-        cursor: pointer;
-    }
 `;
 
 const ReturnTicket = styled.div`
     position: absolute;
     top: 0px;
     right: 0px;
-    &:hover{
-        cursor: pointer;
-    }
 `;
 
 const TotalPrice = styled.div`
