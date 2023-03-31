@@ -1,6 +1,6 @@
 package com.pickpack.flightservice.service.ticket;
 
-import com.pickpack.flightservice.api.request.OneWayTicketReq;
+import com.pickpack.flightservice.api.request.OnewayTicketReq;
 import com.pickpack.flightservice.api.request.RoundTicketReq;
 import com.pickpack.flightservice.api.response.OneWayTicketRes;
 import com.pickpack.flightservice.api.response.RoundTicketRes;
@@ -21,7 +21,7 @@ public class TicketServiceImpl implements TicketService {
     TicketRepository ticketRepository;
 
     @Override
-    public List<OneWayTicketRes> getOneWayTicketList(OneWayTicketReq ticketReq) {
+    public List<OneWayTicketRes> getOneWayTicketList(OnewayTicketReq ticketReq) {
         long memberId = ticketReq.getMemberId();
 
         String departure = ticketReq.getInfo().getDeparture();
