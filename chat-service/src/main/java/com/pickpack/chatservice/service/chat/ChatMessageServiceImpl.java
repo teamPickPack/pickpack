@@ -29,7 +29,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final RedisChatMessageRepository redisChatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final ChatMessageService chatMessageService;
 
     @Override
     public void createMessage(RedisChatMessage message) {

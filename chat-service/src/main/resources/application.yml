@@ -1,8 +1,8 @@
 spring:
   data:
     redis:
-      host: localhost
-      port: 1234
+      host: 54.180.157.223
+      port: 6379
   application:
     name: chat
   #  datasource:
