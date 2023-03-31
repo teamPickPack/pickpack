@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class OneWayTicketReq {
+public class OnewayTicketReq {
     private long memberId;
     private OneWayInfoDto info;
     private FilterDto filter;
