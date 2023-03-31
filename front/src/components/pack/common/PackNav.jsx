@@ -1,33 +1,22 @@
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
-const NavBar = () => {
+const PackNav = () => {
   return (
     <NavSection>
       <div className="nav-inner">
         <ul className="left-ul">
           <li>
-            <NavLink to="/">Logo</NavLink>
+            <NavLink to="/pack/buy">살게요</NavLink>
           </li>
           <li>
-            <NavLink to="/pick/list">Pick</NavLink>
+            <NavLink to="/pack/sell">팔게요</NavLink>
           </li>
           <li>
-            <NavLink to="/pack">Pack</NavLink>
-          </li>
-        </ul>
-        <ul className="right-ul">
-          <li>
-            <NavLink to="/mypage">마이페이지</NavLink>
+            <NavLink to="/pack/borrow">빌려주세요</NavLink>
           </li>
           <li>
-            <NavLink>로그인</NavLink>
-          </li>
-          <li>
-            <NavLink>로그아웃</NavLink>
-          </li>
-          <li>
-            <NavLink>회원가입</NavLink>
+            <NavLink to="/pack/lend">빌려드려요</NavLink>
           </li>
         </ul>
       </div>
@@ -37,13 +26,10 @@ const NavBar = () => {
 
 const NavSection = styled.div`
   height: 56px;
-  background: #432c7a;
+  background: #80489c;
   display: flex;
   justify-content: center;
   align-items: center;
-  // width: 100%;
-  // position: fixed;
-  // z-index: 10000;
 
   .nav-inner {
     width: 1200px;
@@ -75,13 +61,7 @@ const NavSection = styled.div`
         margin-right: 24px;
       }
     }
-
-    .right-ul {
-      li {
-        margin-left: 24px;
-      }
-    }
   }
 `;
 
-export default NavBar;
+export default PackNav;

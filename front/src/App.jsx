@@ -4,20 +4,44 @@ import Main from "./pages/pick/main/Main";
 import List from "./pages/pick/list/List";
 import NavBar from "./components/common/navbar/NavBar";
 import Footer from "./components/common/footer/Footer";
+import PackMain from "./pages/pack/main/PackMain";
+import styled from "styled-components";
+import Pack from "./pages/pack/Pack";
+import Buy from "./pages/pack/buy/Buy";
+import Sell from "./pages/pack/sell/Sell";
+import Borrow from "./pages/pack/borrow/Borrow";
+import Lend from "./pages/pack/lend/Lend";
+import Detail from "./pages/pack/detail/Detail";
+import Regist from "./pages/pack/regist/Regist";
+import Modify from "./pages/pack/modify/Modify";
 
 function App() {
   return (
     <div className="App">
       <NavBar />
-      <main>
+      <MainContainer>
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/pick/list" element={<List />} />
+          <Route path="/pack" element={<Pack />}>
+            <Route index element={<PackMain />} />
+            <Route path="buy" element={<Buy />} />
+            <Route path="sell" element={<Sell />} />
+            <Route path="borrow" element={<Borrow />} />
+            <Route path="lend" element={<Lend />} />
+            <Route path="detail/:itemNo" element={<Detail />} />
+            <Route path="regist" element={<Regist />} />
+            <Route path="modify/:itemNo" element={<Modify />} />
+          </Route>
         </Routes>
-      </main>
+      </MainContainer>
       <Footer />
     </div>
   );
 }
+
+const MainContainer = styled.div`
+  min-height: calc(100% - 56px - 48px);
+`;
 
 export default App;
