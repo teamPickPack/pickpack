@@ -32,7 +32,7 @@
 //        http.formLogin().disable();
 //        http.httpBasic().disable();
 //        http.authorizeRequests()
-//                .antMatchers("/api/**").authenticated()
+//                .antMatchers("/api/**").permitAll()
 //                .anyRequest().permitAll();
 //
 //        return http.build();
@@ -44,7 +44,8 @@
 //        CorsConfiguration configuration = new CorsConfiguration();
 //        configuration.addAllowedHeader("*");
 //        configuration.addAllowedMethod("*");
-//        configuration.addAllowedOriginPattern("*");
+////        configuration.addAllowedOriginPattern("*");
+//        configuration.addAllowedHeader("http://localhost:5500");
 //        configuration.setAllowCredentials(true);
 //
 //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
