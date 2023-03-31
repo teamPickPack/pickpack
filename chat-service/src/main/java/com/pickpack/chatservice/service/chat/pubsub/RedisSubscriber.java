@@ -18,9 +18,10 @@ public class RedisSubscriber{
     private final SimpMessageSendingOperations messagingTemplate;
     public void sendMessage(String publishMessage) {
         try {
+            System.out.println("publishMessage : "+publishMessage);
             RedisChatMessage roomMessage = objectMapper.readValue(publishMessage, RedisChatMessage.class);
             chatMessageService.createMessage(roomMessage);
-
+            log.info("roommessage:{}",roomMessage);
             // Websocket 구독자에게 채팅 메시지 Send
             messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getRoomId(), roomMessage);
         } catch (Exception e) {

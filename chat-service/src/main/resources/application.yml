@@ -3,8 +3,9 @@ spring:
     redis:
       host: localhost
       port: 1234
-
-#  datasource:
+  application:
+    name: chat
+  #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    # rewriteBatchedStatements=true <- mysql jdbc
 #    url: jdbc:mysql://54.180.157.223:3306/pickpack?serverTimezone=UTC&characterEncoding=UTF-8&rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger

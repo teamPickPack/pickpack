@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @Slf4j
-@RequestMapping("/chat")
+@RequestMapping("api/chat")
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
@@ -30,6 +30,7 @@ public class ChatRoomController {
 
     @GetMapping("/room/{nickname}")
     public ResponseEntity<List<GetRoomDTO>> getChatRoomInfo(@PathVariable String nickname) {
+
         return new ResponseEntity<>(chatRoomService.findRoomById(nickname),HttpStatus.OK);
     }
     @GetMapping("/apitest1")
