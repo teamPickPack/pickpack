@@ -13,6 +13,7 @@ import com.pickpack.chatservice.repo.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,21 +25,24 @@ import java.util.*;
 @Slf4j
 public class ChatRoomServiceImpl implements ChatRoomService{
     private final ItemRepository itemRepository;
-    private final RedisChatRoomRepository RedisChatRoomRepository;
+    private final RedisChatRoomRepository redisChatRoomRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final RedisChatMessageRepository redisChatMessageRepository;
+    private final ChatMessageService chatMessageService;
 
 
     @Override
     public void saveRedisChatRoom(RedisChatRoom redisChatRoom, String nickname) {
         List<RedisChatRoom> redisChatRoomList;
-        if (!RedisChatRoomRepository.isHasKeyOnChatRoom(nickname)) {
+        //TODO optional 처리를 해볼까
+        if (!redisChatRoomRepository.isHasKeyOnChatRoom(nickname)) {
             redisChatRoomList = new ArrayList<>();
         } else {
-            redisChatRoomList = RedisChatRoomRepository.findRoomsByNickname(nickname);
+            redisChatRoomList = redisChatRoomRepository.findRoomsByNickname(nickname);
         }
         redisChatRoomList.add(redisChatRoom);
-        RedisChatRoomRepository.saveRoomList(nickname,redisChatRoomList);
+        log.info("redischatRoom :{}, nickname: {}",redisChatRoom,nickname);
+        redisChatRoomRepository.saveRoomList(nickname,redisChatRoomList);
     }
     @Override
     public RedisChatRoom createChatRoom(CreateRoomDTO createRoomDto) {
@@ -57,7 +61,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
                 .messageSize(0)
                 .lastMessageTime(LocalDateTime.now())
                 .build();
-
+        log.info("RedisChatRoom이다 :{}",redisChatRoom.getRoomId());
         saveRedisChatRoom(redisChatRoom, redisChatRoom.getSeller());
         saveRedisChatRoom(redisChatRoom, redisChatRoom.getBuyer());
 
@@ -72,10 +76,10 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     @Override
     public List<GetRoomDTO> findRoomById(String nickname) {
         List<RedisChatRoom> list;
-        if (RedisChatRoomRepository.findRoomsByNickname(nickname)== null)
+        if (redisChatRoomRepository.findRoomsByNickname(nickname)== null)
             list = new ArrayList<>();
         else
-            list = RedisChatRoomRepository.findRoomsByNickname(nickname);
+            list = redisChatRoomRepository.findRoomsByNickname(nickname);
         log.info("list의 size : {}", list.size());
 
         List<GetRoomDTO> getRoomDTOList = new ArrayList<>();
@@ -87,7 +91,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
             log.info(idx+" update후의 messageSize : {}, lastMessage : {}",cr.getMessageSize(),cr.getLastMessage());
             getRoomDTOList.add(new GetRoomDTO().chatRoomToGetRoomDto(cr, nickname));
         }
-        RedisChatRoomRepository.saveRoomList(nickname,list);
+        redisChatRoomRepository.saveRoomList(nickname,list);
         return getRoomDTOList;
     }
 
@@ -96,12 +100,10 @@ public class ChatRoomServiceImpl implements ChatRoomService{
      * @return int[][]
      */
     @Override
-    //TODO cron 바꿔라
-    @Async
-//    @Scheduled(cron = "0 0/1 * * * *")
+//    @Scheduled(cron = "0 0 3 * * *")
     public void sendRoomToDB() {
         //TODO entries 대신 scan을 사용해보는것
-        Map<String, List<RedisChatRoom>> map = RedisChatRoomRepository.findAllRoomByKey();
+        Map<String, List<RedisChatRoom>> map = redisChatRoomRepository.findAllRoomByKey();
         Iterator<String> mapIter = map.keySet().iterator();
         ;
         List<RedisChatRoom> allRoomList = new ArrayList<>();
@@ -112,13 +114,13 @@ public class ChatRoomServiceImpl implements ChatRoomService{
             if (iterRoomList.isEmpty()) continue;
             Collections.addAll(allRoomList, iterRoomList.toArray(new RedisChatRoom[0]));
         }
-        int[][] batchStatus = RedisChatRoomRepository.writeRoomFromRedisToDB(allRoomList);
-        RedisChatRoomRepository.deleteAllRoom();
+        redisChatRoomRepository.writeRoomFromRedisToDB(allRoomList);
+        redisChatRoomRepository.deleteAllRoom();
+        redisChatRoomWarming();
+        chatMessageService.sendMessageToDB();
     }
 
 
-
-    //TODO 위에거 다음에
     @Override
     public void redisChatRoomWarming() {
         //유효한 room들 다 넣어주자
@@ -157,6 +159,6 @@ public class ChatRoomServiceImpl implements ChatRoomService{
             list.add(redisChatRoom);
             map.put(redisChatRoom.getBuyer(),list);
         }
-        RedisChatRoomRepository.saveRoomsMap(map);
+        redisChatRoomRepository.saveRoomsMap(map);
     }
 }

@@ -3,6 +3,7 @@ package com.pickpack.chatservice.repo.redis;
 import com.pickpack.chatservice.entity.redis.RedisChatRoom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,7 +30,7 @@ public class RedisChatRoomRepository {
 
     @PostConstruct
     private void init() {
-        opsHashChatRoom = redisTemplate.opsForHash();
+        opsHashChatRoom =redisTemplate.opsForHash();
     }
 
     //Redis에 room삽입
@@ -45,6 +46,16 @@ public class RedisChatRoomRepository {
      * @return List - RedisChatRoom
      */
     public List<RedisChatRoom> findRoomsByNickname(String nickname) {
+        log.info("nickname: {}", nickname);
+        List<RedisChatRoom> list = opsHashChatRoom.get(CHAT_ROOMS,nickname);
+        List<RedisChatRoom> nickname1list = opsHashChatRoom.get(CHAT_ROOMS,"nickname1");
+        for(RedisChatRoom redisChatRoom : nickname1list){
+            System.out.println(redisChatRoom.getRoomId());
+        }
+        for(RedisChatRoom redisChatRoom : list){
+            System.out.println(redisChatRoom.getRoomId());
+        }
+        log.info("끝");
         return opsHashChatRoom.get(CHAT_ROOMS, nickname);
     }
 
@@ -88,6 +99,7 @@ public class RedisChatRoomRepository {
     public void updateRoomTime(String nickname, String roomId, LocalDateTime time, boolean flag) {
         List<RedisChatRoom> redisChatRoomList = findRoomsByNickname(nickname);
 
+        System.out.println("^^^^^^^^^^^^^^^^^^?");
         for (RedisChatRoom redisChatRoom : redisChatRoomList) {
             if (redisChatRoom.getRoomId().equals(roomId)) {
                 log.info("flag : {}", flag);
@@ -114,7 +126,6 @@ public class RedisChatRoomRepository {
      * @return
      */
     public int[][] writeRoomFromRedisToDB(List<RedisChatRoom> allRoomList) {
-        //TODO on duplicate key update
         return jdbcTemplate.batchUpdate
                 ("INSERT INTO chat_room(room_id,item_id,seller,buyer,message_size,last_message,is_new,recent_time) VALUES (?,?,?,?,?,?,?,?)" +
                                 "ON DUPLICATE KEY UPDATE message_size=VALUES(message_size) ,last_message=VALUES(last_message),is_new=VALUES(is_new)," +
