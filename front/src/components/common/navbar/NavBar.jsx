@@ -36,11 +36,14 @@ const NavBar = () => {
 };
 
 const NavSection = styled.div`
-  height: 72px;
+  height: 56px;
   background: #432c7a;
   display: flex;
   justify-content: center;
   align-items: center;
+  // width: 100%;
+  // position: fixed;
+  // z-index: 10000;
 
   .nav-inner {
     width: 1200px;
