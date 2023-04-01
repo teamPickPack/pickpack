@@ -2,12 +2,12 @@ package com.pickpack.flightservice.service.ticket;
 
 import com.pickpack.flightservice.api.request.OnewayTicketReq;
 import com.pickpack.flightservice.api.request.RoundTicketReq;
-import com.pickpack.flightservice.api.response.OneWayTicketRes;
-import com.pickpack.flightservice.api.response.RoundTicketRes;
+import com.pickpack.flightservice.api.response.OnewayTicketListRes;
+import com.pickpack.flightservice.api.response.RoundTicketListRes;
 
 import java.util.List;
 
 public interface TicketService {
-    List<OneWayTicketRes> getOneWayTicketList(OnewayTicketReq ticketReq);
-    List<RoundTicketRes> getRoundTicketList(RoundTicketReq ticketReq);
+    OnewayTicketListRes getOneWayTicketList(OnewayTicketReq ticketReq);
+    RoundTicketListRes getRoundTicketList(RoundTicketReq ticketReq);
 }
