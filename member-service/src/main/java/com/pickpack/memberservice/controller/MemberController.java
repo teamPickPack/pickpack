@@ -24,7 +24,6 @@ public class MemberController {
     /**
      * 회원가입
      */
-
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinReqDto joinReqDto){
         JoinRespDto joinRespDto = memberService.join(joinReqDto);
