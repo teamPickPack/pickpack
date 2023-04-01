@@ -1,8 +1,6 @@
 package com.pickpack.flightservice.repository.ticket;
 
-import com.pickpack.flightservice.entity.QFlight;
 import com.pickpack.flightservice.entity.Ticket;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -41,9 +39,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         for (Sort.Order o : pageable.getSort()) {
             if(o.getProperty().equals("updown")) {
-                System.out.println("updown 정렬 실행");
                 PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
-                System.out.println("쿼리 실행 전");
                 query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
                         pathBuilder.get(o.getProperty())));
             } else {
@@ -75,9 +71,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         for (Sort.Order o : pageable.getSort()) {
             if(o.getProperty().equals("updown")) {
-                System.out.println("updown 정렬 실행");
                 PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
-                System.out.println("쿼리 실행 전");
                 query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
                         pathBuilder.get(o.getProperty())));
             } else {
@@ -109,9 +103,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         for (Sort.Order o : pageable.getSort()) {
             if(o.getProperty().equals("updown")) {
-                System.out.println("updown 정렬 실행");
                 PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
-                System.out.println("쿼리 실행 전");
                 query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
                         pathBuilder.get(o.getProperty())));
             } else {
