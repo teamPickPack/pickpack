@@ -79,19 +79,19 @@ public class SecurityConfig {
      * 시큐리티 필터 cors 처리
      * @return
      */
-    public CorsConfigurationSource configurationSource(){
-        log.debug("디버그: CorsConfigurationSource cors 설정이 SecurityFilterChain에 등록됨");
-
-        CorsConfiguration configuration = new CorsConfiguration();
+//    public CorsConfigurationSource configurationSource(){
+//        log.debug("디버그: CorsConfigurationSource cors 설정이 SecurityFilterChain에 등록됨");
+//
+//        CorsConfiguration configuration = new CorsConfiguration();
 //        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedOriginPattern("*");
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
-    }
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedOriginPattern("*");
+//        configuration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//
+//        return source;
+//    }
 
 }
