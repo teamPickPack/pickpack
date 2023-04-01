@@ -49,25 +49,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // 로그인 유저 객체로 만들기
             ObjectMapper om = new ObjectMapper();
             LoginReqDto loginReqDto = om.readValue(request.getInputStream(), LoginReqDto.class);
-            System.out.println(1);
 
             // 강제 로그인
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     loginReqDto.getMid(), loginReqDto.getPwd());
-            System.out.println(2);
 
+                return authenticationManager.authenticate(authenticationToken);
+                //1. DB에서 잘 조회 되었다면, successfulAuthentication 메서드 실행
 
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            System.out.println(3);
+            } catch (Exception e) {
 
-            return authentication;      //1. DB에서 잘 조회 되었다면, successfulAuthentication 메서드 실행
-
-        }catch(Exception e){
-
-            //2. DB에 없는 회원일 경우.
-            // authenticationEntryPoint에 걸림 -> filter이기 때문에 ControllerAdvice로 잡을수가 없음.
-            throw new InternalAuthenticationServiceException(e.getMessage());
-        }
+                //2. DB에 없는 회원일 경우.
+                // authenticationEntryPoint에 걸림 -> filter이기 때문에 ControllerAdvice로 잡을수가 없음.
+                throw new InternalAuthenticationServiceException(e.getMessage());
+            }
 
     }
 
@@ -82,11 +77,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String jwtToken = JwtProcess.create(loginMember);
         response.addHeader(JwtVO.HEADER, jwtToken);
 
-        // 응답 객체 만들기
-        LoginRespDto loginRespDto = new LoginRespDto();
-        loginRespDto.setId(loginMember.getMember().getId());
-        loginRespDto.setMid(loginMember.getMember().getMid());
-        CustomResponseUtil.success(response, loginRespDto);
+        //Todo 응답 객체 만들기 <- jwt에 다 싫어보내는거 어때?
+//        LoginRespDto loginRespDto = new LoginRespDto();
+//        loginRespDto.setId(loginMember.getMember().getId());
+//        loginRespDto.setMid(loginMember.getMember().getMid());
+//
+//        CustomResponseUtil.success(response, loginRespDto);
     }
 
     @Override
