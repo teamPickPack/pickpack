@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class MemberController {
 
     private final MemberService memberService;
@@ -25,7 +24,6 @@ public class MemberController {
     /**
      * 회원가입
      */
-    @CrossOrigin(origins = "*")
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinReqDto joinReqDto){
