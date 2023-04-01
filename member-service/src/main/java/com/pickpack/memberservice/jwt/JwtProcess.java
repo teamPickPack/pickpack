@@ -8,6 +8,7 @@ import com.pickpack.memberservice.auth.LoginUser;
 import com.pickpack.memberservice.entity.Member;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 
@@ -16,11 +17,15 @@ public class JwtProcess {
 
     // 토큰 생성
     public static String create(LoginUser loginUser){
-
+        Member loginMember=loginUser.getMember();
         String jwtToken = JWT.create()
                 .withSubject("PickPackToken")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtVO.EXPIRATION_TIME))
-                .withClaim("id", loginUser.getMember().getId())
+                //TODO "id"는 필요있나? 조회때문?
+                .withClaim("id", loginMember.getId())
+                .withClaim("mid",loginMember.getMid())
+                .withClaim("nickname",loginMember.getNickname())
+                .withClaim("imgUrl",loginMember.getImg_url())
                 .sign(Algorithm.HMAC512(JwtVO.SECRET));
         return JwtVO.TOKEN_PREFIX+jwtToken;
 
@@ -30,6 +35,7 @@ public class JwtProcess {
     public static LoginUser verify(String token){
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(JwtVO.SECRET)).build().verify(token);
 
+        //그리고 유효한지 아닌지 판단해줘야함
         Long id = decodedJWT.getClaim("id").asLong();
         Member member = Member.builder().id(id).build();
         LoginUser loginUser = new LoginUser(member);
