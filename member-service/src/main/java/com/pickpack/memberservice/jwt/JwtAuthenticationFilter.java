@@ -6,7 +6,6 @@ import com.pickpack.memberservice.dto.member.LoginReqDto;
 import com.pickpack.memberservice.dto.member.LoginRespDto;
 import com.pickpack.memberservice.util.CustomResponseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.hash.ObjectHashMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;

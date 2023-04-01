@@ -1,6 +1,6 @@
 package com.pickpack.memberservice.auth;
 
-import com.netflix.discovery.converters.Auto;
+//import com.netflix.discovery.converters.Auto;
 import com.pickpack.memberservice.entity.Member;
 import com.pickpack.memberservice.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
