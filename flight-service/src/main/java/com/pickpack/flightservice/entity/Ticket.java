@@ -1,5 +1,6 @@
 package com.pickpack.flightservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,5 +40,8 @@ public class Ticket {
     @JoinColumn(name = "ticketId", insertable=false, updatable=false)
     private List<Flight> flightList;
 
-
+    @OneToOne
+    @JoinColumn(name = "ticketId", insertable=false, updatable=false)
+    @JsonIgnore
+    private Tendency tendency;
 }
