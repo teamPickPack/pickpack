@@ -3,15 +3,13 @@ package com.pickpack.itemservice.service.item;
 import com.pickpack.itemservice.api.response.ItemDetailRes;
 import com.pickpack.itemservice.dto.item.ItemDetailDto;
 import com.pickpack.itemservice.dto.item.ItemListDto;
-import com.pickpack.itemservice.entity.Category;
-import com.pickpack.itemservice.entity.City;
-import com.pickpack.itemservice.entity.Item;
-import com.pickpack.itemservice.entity.Member;
+import com.pickpack.itemservice.entity.*;
 import com.pickpack.itemservice.exception.CityIsNullException;
 import com.pickpack.itemservice.exception.ListEmptyException;
 import com.pickpack.itemservice.exception.IsNullException;
 import com.pickpack.itemservice.repository.city.CityRepository;
 import com.pickpack.itemservice.repository.item.ItemRepository;
+import com.pickpack.itemservice.repository.itemLike.ItemLikeRepository;
 import com.pickpack.itemservice.repository.member.MemberRepository;
 import com.pickpack.itemservice.s3.AwsS3Uploader;
 import lombok.AllArgsConstructor;
@@ -34,6 +32,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CityRepository cityRepository;
     private final MemberRepository memberRepository;
+    private final ItemLikeRepository itemLikeRepository;
     private final AwsS3Uploader s3Uploader;
     private static String dirName = "item";
     private static Integer itemSize = 12;
@@ -94,15 +93,20 @@ public class ItemService {
         return items;
     }
 
-    public ItemDetailRes getItemById(Long itemId){
+    public ItemDetailRes getItemById(Long itemId, Long memberId){
         ItemDetailDto item = itemRepository.getItemById(itemId);
-
+        List<ItemLike> itemLikeList = itemLikeRepository.findByItemIdAndMemberId(itemId, memberId);
+        Boolean isLike = Boolean.TRUE;
+        if(itemLikeList.isEmpty()){
+           isLike = Boolean.FALSE;
+        }
         if(item == null){
             throw new IsNullException(itemId + "에 해당하는 물품 게시글이 없습니다.");
         }
         List<ItemListDto> items = itemRepository.getItemsByMember(itemId, item.getMemberId(), item.getCategory());
 //        item.setItemList(getOtherItemsOfItemById((List<Item>)  item.getItemList(), item.getMemberId()));
-        return new ItemDetailRes(item, items);
+
+        return new ItemDetailRes(isLike, item, items);
     }
 
     public Long completeItem(Long itemId){
