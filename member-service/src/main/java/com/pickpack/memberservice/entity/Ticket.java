@@ -30,8 +30,8 @@ public class Ticket {
     private int plusDate;
     private int totalTimeNum;
 
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
-    private List<OnewayTicketLike> onewayTicketLikeList;
+//    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+//    private List<OnewayTicketLike> onewayTicketLikeList;
 
 //    @OneToMany(mappedBy = "ticketTo", cascade = CascadeType.ALL)
 //    private List<RoundTicketLike> toRoundTicketLikeList;

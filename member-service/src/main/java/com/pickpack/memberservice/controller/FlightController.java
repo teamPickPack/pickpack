@@ -1,9 +1,7 @@
 package com.pickpack.memberservice.controller;
 
-import com.pickpack.memberservice.api.flightApi.OneLikeTicketListApi;
-import com.pickpack.memberservice.api.flightApi.RoundLiketicketListApi;
-import com.pickpack.memberservice.dto.flight.RoundTicketLikeDto;
-import com.pickpack.memberservice.dto.flight.TicketLikeDto;
+import com.pickpack.memberservice.dto.flight.OnewayDto;
+import com.pickpack.memberservice.dto.flight.TwowayDto;
 import com.pickpack.memberservice.service.FlightService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,24 +27,24 @@ public class FlightController {
         return "this is flightController";
     }
 
+    /**
+     * 편도찜 조회
+     */
     @GetMapping("/{memberId}/one-flight")
     public ResponseEntity<?> findOneFlightLike(@PathVariable Long memberId){
+        List<OnewayDto> onewayDtos = flightService.findlikeTicket(memberId);
 
-        List<TicketLikeDto> likeOnewayTicket = flightService.findlikeTicket(memberId);
-        OneLikeTicketListApi oneLikeTicketListApi =
-                OneLikeTicketListApi.builder().OneLikeTicketList(likeOnewayTicket).build();
-
-        return new ResponseEntity<>(oneLikeTicketListApi, HttpStatus.OK);
+        return new ResponseEntity<>(onewayDtos, HttpStatus.OK);
     }
 
+    /**
+     * 왕복찜 조회
+     */
     @GetMapping("/{memberId}/round-flight")
     public ResponseEntity<?> findTwoFlightLike(@PathVariable Long memberId){
+        List<TwowayDto> twowayDtos = flightService.findLikeRoundTicket(memberId);
 
-        List<RoundTicketLikeDto> likeRoundTicket = flightService.findLikeRoundTicket(memberId);
-        RoundLiketicketListApi roundLiketicketListApi =
-                RoundLiketicketListApi.builder().RoundLiketicketList(likeRoundTicket).build();
-
-        return new ResponseEntity<>(roundLiketicketListApi, HttpStatus.OK);
+        return new ResponseEntity<>(twowayDtos, HttpStatus.OK);
     }
 
 }

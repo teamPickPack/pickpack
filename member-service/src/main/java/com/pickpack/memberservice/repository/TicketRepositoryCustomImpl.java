@@ -1,8 +1,7 @@
 package com.pickpack.memberservice.repository;
 
-import com.pickpack.memberservice.dto.flight.RoundTicketLikeDto;
-import com.pickpack.memberservice.dto.flight.TicketInfoDto;
-import com.pickpack.memberservice.dto.flight.TicketLikeDto;
+import com.pickpack.memberservice.dto.flight.OnewayDto;
+import com.pickpack.memberservice.dto.flight.TwowayDto;
 import com.pickpack.memberservice.entity.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -29,17 +28,18 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
      * @param memberId : 회원 아이디
      * @return
      */
-    public List<TicketLikeDto> findOnewayTicketLike(Long memberId){
+    public List<OnewayDto> findOnewayTicketLike(Long memberId){
 
-        List<TicketLikeDto> list = queryFactory
-                .select(Projections.fields(TicketLikeDto.class,
+        List<OnewayDto> list = queryFactory
+                .select(Projections.fields(OnewayDto.class,
                         onewayTicketLike.isDelete.as("isLike"),
                         onewayTicketLike.wantedPrice,
-                        ticket.id.as("ticketId")
+                        onewayTicketLike.ticket
                         )
-                ).from(ticket)
-                .join(ticket.onewayTicketLikeList, onewayTicketLike)
-                .on(onewayTicketLike.member.id.eq(memberId))
+                ).from(member)
+                .join(member.onewayTicketLikeList, onewayTicketLike)
+                .on(member.id.eq(memberId))
+                .join(onewayTicketLike.ticket, ticket)
                 .fetch();
 
         return list;
@@ -50,51 +50,27 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
      * @param memberId : 회원 아이디
      * @return
      */
-    public List<RoundTicketLikeDto> findRoundwayTicketLike(Long memberId){
-        System.out.println("야호");
-        List<RoundTicketLikeDto> list = queryFactory
-                .select(Projections.fields(RoundTicketLikeDto.class,
+
+    public List<TwowayDto> findTwoWayTicketLike(Long memberId) {
+
+        List<TwowayDto> list = queryFactory
+                .select(Projections.fields(TwowayDto.class,
                         roundTicketLike.isDelete.as("isLike"),
                         roundTicketLike.wantedPrice,
-                        roundTicketLike.ticketTo.id.as("ticket_go"),
-                        roundTicketLike.ticketFrom.id.as("ticket_come")
+                        roundTicketLike.ticketTo.as("goWay"),
+                        roundTicketLike.ticketFrom.as("returnWay")
                         )
-                ).from(roundTicketLike)
-                .join(roundTicketLike.member, member)
-                .on(roundTicketLike.member.id.eq(memberId))
+                ).from(member)
+                .join(member.roundTicketLikeList, roundTicketLike)
+                .on(member.id.eq(memberId))
+                .join(roundTicketLike.ticketTo, ticket)
                 .fetch();
-        System.out.println("미야옹");
+
         return list;
     }
 
-    public TicketInfoDto findTicketInfo(Long ticketId){
 
-        TicketInfoDto ticketInfoDto = queryFactory
-                .select(Projections.fields(TicketInfoDto.class,
-                        ticket.id,
-                        ticket.price,
-                        ticket.waypointNum,
-                        ticket.registDate,
-                        ticket.totalTime,
-                        ticket.codeshare,
-                        ticket.airline,
-                        ticket.depTime,
-                        ticket.depDate,
-                        ticket.depName,
-                        ticket.depCode,
-                        ticket.arrTime,
-                        ticket.arrDate,
-                        ticket.arrName,
-                        ticket.arrCode,
-                        ticket.plusDate,
-                        ticket.totalTimeNum
-                        )
-                ).from(ticket)
-                .where(ticket.id.eq(ticketId))
-                .fetchOne();
 
-        return ticketInfoDto;
-    }
 
     public List<Flight> findTicketLikeAboutFlight(Long ticketId){
 

@@ -1,19 +1,22 @@
 package com.pickpack.memberservice.dto.flight;
 
-import com.pickpack.memberservice.entity.Flight;
+
+import com.pickpack.memberservice.entity.Ticket;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ReturnWayDto {
-    private TicketInfoDto ticket;
-    private List<Flight> flightList;
+public class OnewayDto {
+
+    private Boolean isLike;
+
+    private Integer wantedPrice;
+
+    private Ticket ticket;
 
 }

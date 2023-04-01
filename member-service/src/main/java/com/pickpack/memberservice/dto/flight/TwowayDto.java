@@ -1,21 +1,26 @@
 package com.pickpack.memberservice.dto.flight;
 
+
+import com.pickpack.memberservice.entity.Ticket;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Transient;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class RoundTicketLikeDto {
+public class TwowayDto {
 
     private Boolean isLike;
+
     private Integer wantedPrice;
-    private Long ticket_go;
-    private GowayDto goWay;
-    private Long ticket_come;
-    private ReturnWayDto returnWay;
+
+    private Ticket goWay;
+
+    private Ticket returnWay;
+
+    private Integer totalPrice;
 
 }
