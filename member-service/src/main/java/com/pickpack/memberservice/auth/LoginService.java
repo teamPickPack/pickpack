@@ -19,9 +19,12 @@ public class LoginService implements UserDetailsService {
     // 실제 DB에 존재하는 네임인지 판별 -> 내가 직접 찾는 함수 넣어줘야함.
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println(4);
         Member memberPS = memberRepository.findByMid(username).orElseThrow(
                 () -> new InternalAuthenticationServiceException("인증 실패")
         );
+        System.out.println(5);
+        System.out.println(memberPS.getMid()+" "+memberPS.getPwd());
         return new LoginUser(memberPS);
     }
 }

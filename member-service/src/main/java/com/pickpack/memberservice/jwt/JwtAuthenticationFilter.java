@@ -49,12 +49,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // 로그인 유저 객체로 만들기
             ObjectMapper om = new ObjectMapper();
             LoginReqDto loginReqDto = om.readValue(request.getInputStream(), LoginReqDto.class);
+            System.out.println(1);
 
             // 강제 로그인
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     loginReqDto.getMid(), loginReqDto.getPwd());
+            System.out.println(2);
+
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            System.out.println(3);
+
             return authentication;      //1. DB에서 잘 조회 되었다면, successfulAuthentication 메서드 실행
 
         }catch(Exception e){
