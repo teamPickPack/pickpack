@@ -24,11 +24,11 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     }
 
     @Override
-    public List<Ticket> findAllTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice) {
+    public Page<Ticket> findAllTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice) {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
-                .join(ticket.tendency, tendency)
+//                .join(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -51,11 +51,23 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         List<Ticket> ticketList = query.fetch();
 
-        return ticketList;
+        Long totalCount = queryFactory
+                .select(ticket.count())
+                .from(ticket)
+                .join(ticket.flightList, flight)
+                .join(ticket.tendency, tendency)
+                .where(ticket.depCode.eq(departure),
+                        ticket.arrCode.eq(destination),
+                        ticket.depDate.eq(date),
+                        ticket.price.between(minPrice, maxPrice)
+                )
+                .fetchOne();
+
+        return new PageImpl<>(ticketList, pageable, totalCount);
     }
 
     @Override
-    public List<Ticket> findWaypoint0or1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
+    public Page<Ticket> findWaypoint0or1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
@@ -83,11 +95,23 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         List<Ticket> ticketList = query.fetch();
 
-        return ticketList;
+        Long totalCount = queryFactory
+                .select(ticket.count())
+                .from(ticket)
+                .join(ticket.flightList, flight)
+                .join(ticket.tendency, tendency)
+                .where(ticket.depCode.eq(departure),
+                        ticket.arrCode.eq(destination),
+                        ticket.depDate.eq(date),
+                        ticket.price.between(minPrice, maxPrice)
+                )
+                .fetchOne();
+
+        return new PageImpl<>(ticketList, pageable, totalCount);
     }
 
     @Override
-    public List<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
+    public Page<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
@@ -115,7 +139,19 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         List<Ticket> ticketList = query.fetch();
 
-        return ticketList;
+        Long totalCount = queryFactory
+                .select(ticket.count())
+                .from(ticket)
+                .join(ticket.flightList, flight)
+                .join(ticket.tendency, tendency)
+                .where(ticket.depCode.eq(departure),
+                        ticket.arrCode.eq(destination),
+                        ticket.depDate.eq(date),
+                        ticket.price.between(minPrice, maxPrice)
+                )
+                .fetchOne();
+
+        return new PageImpl<>(ticketList, pageable, totalCount);
     }
 
 }

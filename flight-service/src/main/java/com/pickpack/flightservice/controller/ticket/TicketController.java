@@ -4,8 +4,8 @@ import com.pickpack.flightservice.api.request.OnewayTicketReq;
 import com.pickpack.flightservice.api.request.OnewayTicketLikeReq;
 import com.pickpack.flightservice.api.request.RoundTicketLikeReq;
 import com.pickpack.flightservice.api.request.RoundTicketReq;
-import com.pickpack.flightservice.api.response.OneWayTicketRes;
-import com.pickpack.flightservice.api.response.RoundTicketRes;
+import com.pickpack.flightservice.api.response.OnewayTicketListRes;
+import com.pickpack.flightservice.api.response.RoundTicketListRes;
 import com.pickpack.flightservice.service.ticket.TicketLikeService;
 import com.pickpack.flightservice.service.ticket.TicketService;
 import lombok.AllArgsConstructor;
@@ -13,8 +13,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -29,10 +27,10 @@ public class TicketController {
     @PostMapping("/one")
     public ResponseEntity<?> oneWayTicketList(@RequestBody OnewayTicketReq ticketReq) {
         try {
-            List<OneWayTicketRes> list = ticketService.getOneWayTicketList(ticketReq);
+            OnewayTicketListRes onewayTicketListRes = ticketService.getOneWayTicketList(ticketReq);
 
-            if (list != null && !list.isEmpty()) {
-                return new ResponseEntity<List<OneWayTicketRes>>(list, HttpStatus.OK);
+            if (onewayTicketListRes != null) {
+                return new ResponseEntity<OnewayTicketListRes>(onewayTicketListRes, HttpStatus.OK);
             } else {
                 return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
             }
@@ -45,10 +43,10 @@ public class TicketController {
     public ResponseEntity<?> roundTicketList(@RequestBody RoundTicketReq ticketReq) {
         try {
             System.out.println("ticketService - roundTicketlist 실행");
-            List<RoundTicketRes> list = ticketService.getRoundTicketList(ticketReq);
+            RoundTicketListRes roundTicketListRes = ticketService.getRoundTicketList(ticketReq);
 
-            if (list != null && !list.isEmpty()) {
-                return new ResponseEntity<List<RoundTicketRes>>(list, HttpStatus.OK);
+            if (roundTicketListRes != null) {
+                return new ResponseEntity<RoundTicketListRes>(roundTicketListRes, HttpStatus.OK);
             } else {
                 return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
             }
