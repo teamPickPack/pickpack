@@ -10,6 +10,7 @@ import com.pickpack.memberservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
 public class MemberService {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final MemberRepository memberRepository;
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
     public JoinRespDto join(JoinReqDto joinReqDto){
@@ -31,8 +32,8 @@ public class MemberService {
         }
         
         // 패스워드 인코딩 -> 회원가입
-//        Member memberPS = memberRepository.save(joinReqDto.toEntity(bCryptPasswordEncoder));
-        Member memberPS = memberRepository.save(joinReqDto.toTestEntity());
+        Member memberPS = memberRepository.save(joinReqDto.toEntity(bCryptPasswordEncoder));
+//        Member memberPS = memberRepository.save(joinReqDto.toTestEntity());
         
         // 정상 dto 응답
         return new JoinRespDto(memberPS);
