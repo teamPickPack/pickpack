@@ -3,11 +3,16 @@ package com.pickpack.flightservice.service.ticket;
 import com.pickpack.flightservice.api.request.OnewayTicketReq;
 import com.pickpack.flightservice.api.request.RoundTicketReq;
 import com.pickpack.flightservice.api.response.OneWayTicketRes;
+import com.pickpack.flightservice.api.response.OnewayTicketListRes;
+import com.pickpack.flightservice.api.response.RoundTicketListRes;
 import com.pickpack.flightservice.api.response.RoundTicketRes;
-import com.pickpack.flightservice.entity.Flight;
-import com.pickpack.flightservice.entity.Ticket;
+import com.pickpack.flightservice.entity.*;
+import com.pickpack.flightservice.repository.MemberRepository;
+import com.pickpack.flightservice.repository.ticket.OnewayTicketLikeRepository;
+import com.pickpack.flightservice.repository.ticket.RoundTicketLikeRepository;
 import com.pickpack.flightservice.repository.ticket.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,8 +25,17 @@ public class TicketServiceImpl implements TicketService {
     @Autowired
     TicketRepository ticketRepository;
 
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    OnewayTicketLikeRepository onewayTicketLikeRepository;
+
+    @Autowired
+    RoundTicketLikeRepository roundTicketLikeRepository;
+
     @Override
-    public List<OneWayTicketRes> getOneWayTicketList(OnewayTicketReq ticketReq) {
+    public OnewayTicketListRes getOneWayTicketList(OnewayTicketReq ticketReq) {
         long memberId = ticketReq.getMemberId();
 
         String departure = ticketReq.getInfo().getDeparture();
@@ -39,18 +53,26 @@ public class TicketServiceImpl implements TicketService {
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.Direction.fromString(orderBy), sortType);
 
         //검색
+        long totalCount = 0;
+
         List<Ticket> ticketList = new ArrayList<>();
 
         if(direct[0]) { //경유 필터 : 전체
-            ticketList = ticketRepository.findAllTickets(pageRequest, departure, destination, date, minPrice, maxPrice);
+            Page<Ticket> result = ticketRepository.findAllTickets(pageRequest, departure, destination, date, minPrice, maxPrice);
+            ticketList = result.getContent();
+            totalCount += result.getTotalElements();
         }else { //경유 필터 : 직항, 경유 1회, 경유 2회 이상
             for(int i = 1;  i < direct.length; i++) {
                 List<Ticket> tmp = new ArrayList<>();
 
                 if(direct[i] && (i == 1 || i == 2)) { //직항, 경유 1회
-                    tmp = ticketRepository.findWaypoint0or1Tickets(pageRequest, departure, destination, date, minPrice, maxPrice, i - 1);
+                    Page<Ticket> result = ticketRepository.findWaypoint0or1Tickets(pageRequest, departure, destination, date, minPrice, maxPrice, i - 1);
+                    tmp = result.getContent();
+                    totalCount += result.getTotalElements();
                 } else if(direct[i] && (i == 3)) { //경유 2회 이상
-                    tmp = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, departure, destination, date, minPrice, maxPrice, 1);
+                    Page<Ticket> result = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, departure, destination, date, minPrice, maxPrice, 1);
+                    tmp = result.getContent();
+                    totalCount += result.getTotalElements();
                 }
 
                 if(tmp != null) ticketList.addAll(tmp);
@@ -58,25 +80,36 @@ public class TicketServiceImpl implements TicketService {
         }
 
         //결과값 반환
-        List<OneWayTicketRes> result = new ArrayList<>();
+        Member member = memberRepository.getById(memberId);
+
+        List<OneWayTicketRes> oneWayTicketResList = new ArrayList<>();
         for(Ticket ticket : ticketList) {
             ticket.setWaypoints(wayPointToString(ticket.getFlightList()));
 
+            boolean isLike = false; //항공권 찜여부
+            OnewayTicketLike onewayTicketLike = onewayTicketLikeRepository.findByTicketIdAndMember(ticket.getId(), member);
+            if(onewayTicketLike != null) isLike = true;
+
             OneWayTicketRes ticketRes = OneWayTicketRes.builder().
-                    isLike(false) //TODO : isLike 일단 임시로 false
+                    isLike(isLike)
                     .ticket(ticket)
                     .build();
 
-            result.add(ticketRes);
+            oneWayTicketResList.add(ticketRes);
         }
 
-        return result;
+        OnewayTicketListRes onewayTicketListRes = OnewayTicketListRes.builder()
+                .totalCount(totalCount)
+                .ticketList(oneWayTicketResList)
+                .build();
+
+        return onewayTicketListRes;
     }
 
-    // TODO : TicketServiceImpl - getRoundTicketList
     @Override
-    public List<RoundTicketRes> getRoundTicketList(RoundTicketReq ticketReq) {
+    public RoundTicketListRes getRoundTicketList(RoundTicketReq ticketReq) {
         long memberId = ticketReq.getMemberId();
+        Member member = memberRepository.getById(memberId);
         //티켓 정보
         String departure = ticketReq.getInfo().getDeparture();
         String destination = ticketReq.getInfo().getDestination();
@@ -94,74 +127,112 @@ public class TicketServiceImpl implements TicketService {
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.Direction.fromString(orderBy), sortType);
 
         //검색
-        List<RoundTicketRes> result = new ArrayList<>();
+        long totalCount = 0;
+
+        List<RoundTicketRes> roundTicketList = new ArrayList<>();
 
         List<Ticket> goWayTicketList = new ArrayList<>();
         List<Ticket> returnWayTicketList = new ArrayList<>();
 
         if(direct[0]) { //경유 필터 : 전체
-            goWayTicketList = ticketRepository.findAllTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice);
-            returnWayTicketList = ticketRepository.findAllTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice);
+            Page<Ticket> goWayResult = ticketRepository.findAllTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice);
+            goWayTicketList = goWayResult.getContent();
+
+            Page<Ticket> returnWayResult = ticketRepository.findAllTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice);
+            returnWayTicketList = returnWayResult.getContent();
         }else { //경유 필터 : 직항, 경유 1회, 경유 2회 이상
             for(int i = 1;  i < direct.length; i++) {
-//                List<Ticket> tmpGoWay = new ArrayList<>();
-//                List<Ticket> tmpReturnWay = new ArrayList<>();
-
                 List<RoundTicketRes> tmp = new ArrayList<>();
 
-                //TODO : 조합의 수마다 또 항공권 조합해야함
+                //조합의 수마다 또 항공권 조합해야함
                 if(direct[i] && (i == 1)) { //직항
-                    goWayTicketList = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
-                    returnWayTicketList = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
-                
+                    Page<Ticket> goWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
+                    goWayTicketList = goWayResult.getContent();
+
+                    Page<Ticket> returnWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
+                    returnWayTicketList = returnWayResult.getContent();
+
+                    totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
+
                     //조합하기
-                    tmp = combine(goWayTicketList, returnWayTicketList);
-                    result.addAll(tmp);
+                    tmp = combine(goWayTicketList, returnWayTicketList, member);
+                    roundTicketList.addAll(tmp);
                 } else if(direct[i] && (i == 2)) { //경유 1회
                     //출국편 경유 0회, 귀국편 경유 1회
-                    goWayTicketList = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
-                    returnWayTicketList = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 1);
+                    Page<Ticket> goWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
+                    goWayTicketList = goWayResult.getContent();
 
-                    tmp = combine(goWayTicketList, returnWayTicketList);
-                    result.addAll(tmp);
+                    Page<Ticket> returnWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 1);
+                    returnWayTicketList = returnWayResult.getContent();
+
+                    totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
+
+                    tmp = combine(goWayTicketList, returnWayTicketList, member);
+                    roundTicketList.addAll(tmp);
 
                     //출국편 경유 1회, 귀국편 경유 0회
-                    goWayTicketList = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 1);
-                    returnWayTicketList = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
+                    goWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 1);
+                    goWayTicketList = goWayResult.getContent();
 
-                    tmp = combine(goWayTicketList, returnWayTicketList);
-                    result.addAll(tmp);
+                    returnWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
+                    returnWayTicketList = returnWayResult.getContent();
+
+                    totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
+
+                    tmp = combine(goWayTicketList, returnWayTicketList, member);
+                    roundTicketList.addAll(tmp);
                 }
                 else if(direct[i] && (i == 3)) { //경유 2회 이상
                     //출국편 경유 0회, 귀국편 경유 2회 이상
-                    goWayTicketList = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
-                    returnWayTicketList = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 1);
+                    Page<Ticket> goWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
+                    goWayTicketList = goWayResult.getContent();
 
-                    tmp = combine(goWayTicketList, returnWayTicketList);
-                    result.addAll(tmp);
+                    Page<Ticket> returnWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 1);
+                    returnWayTicketList = returnWayResult.getContent();
+
+                    totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
+
+                    tmp = combine(goWayTicketList, returnWayTicketList, member);
+                    roundTicketList.addAll(tmp);
 
                     //출국편 경유 2회 이상, 귀국편 경유 0회
-                    goWayTicketList = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 1);
-                    returnWayTicketList = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
+                    goWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 1);
+                    goWayTicketList = goWayResult.getContent();
 
-                    tmp = combine(goWayTicketList, returnWayTicketList);
-                    result.addAll(tmp);
+                    returnWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
+                    returnWayTicketList = returnWayResult.getContent();
+
+                    totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
+
+                    tmp = combine(goWayTicketList, returnWayTicketList, member);
+                    roundTicketList.addAll(tmp);
 
                     //출국편 경유 1회 이상, 귀국편 경유 1회
-                    goWayTicketList = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
-                    returnWayTicketList = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
+                    goWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
+                    goWayTicketList = goWayResult.getContent();
 
-                    tmp = combine(goWayTicketList, returnWayTicketList);
-                    result.addAll(tmp);
+                    returnWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
+                    returnWayTicketList = returnWayResult.getContent();
+
+                    totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
+
+                    tmp = combine(goWayTicketList, returnWayTicketList, member);
+                    roundTicketList.addAll(tmp);
                 }
             }
         }
 
-        //결과값 반환
-        return result;
+        //TODO : 결과값 반환
+        //개수 + 조합 리스트
+        RoundTicketListRes roundTicketListRes = RoundTicketListRes.builder()
+                .totalCount(totalCount)
+                .ticketList(roundTicketList)
+                .build();
+
+        return roundTicketListRes;
     }
 
-    private List<RoundTicketRes> combine(List<Ticket> goWayTicketList, List<Ticket> returnWayTicketList) {
+    private List<RoundTicketRes> combine(List<Ticket> goWayTicketList, List<Ticket> returnWayTicketList, Member member) {
         List<RoundTicketRes> result = new ArrayList<>();
 
        for(Ticket goWayTicket : goWayTicketList) {
@@ -170,8 +241,12 @@ public class TicketServiceImpl implements TicketService {
            for(Ticket returnWayTicket : returnWayTicketList) {
                returnWayTicket.setWaypoints(wayPointToString(returnWayTicket.getFlightList()));
 
+               boolean isLike = false; //항공권 찜여부
+               RoundTicketLike roundTicketLike = roundTicketLikeRepository.findByTicketToIdAndTicketFromIdAndMember(goWayTicket.getId(), returnWayTicket.getId(), member);
+               if(roundTicketLike != null) isLike = true;
+
                RoundTicketRes ticketRes = RoundTicketRes.builder().
-                       isLike(false) //TODO : isLike 일단 임시로 false
+                       isLike(isLike)
                        .goWay(goWayTicket)
                        .returnWay(returnWayTicket)
                        .totalPrice(goWayTicket.getPrice() + returnWayTicket.getPrice())
