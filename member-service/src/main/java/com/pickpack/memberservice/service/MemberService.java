@@ -26,10 +26,8 @@ public class MemberService {
     @Transactional
     public JoinRespDto join(JoinReqDto joinReqDto){
         // 동일 닉네임 검사
-        Optional<Member> already_member = memberRepository.findByNickname(joinReqDto.getNickname());
-        if(already_member.isPresent()){
-            throw new AlreadyJoinException("동일한 nickname이 이미 존재합니다.");
-        }
+        memberRepository.findByNickname(joinReqDto.getNickname())
+                .ifPresent(m->new AlreadyJoinException("동일한 nickname이 이미 존재합니다."));
         
         // 패스워드 인코딩 -> 회원가입
         Member memberPS = memberRepository.save(joinReqDto.toEntity(bCryptPasswordEncoder));
@@ -42,11 +40,9 @@ public class MemberService {
     @Transactional(readOnly = true)
     public FindRespDto findMember(Long memberId){
         // 회원이 존재하는지 검사.
-        Optional<Member> findedMember = memberRepository.findById(memberId);
-        if(!findedMember.isPresent()){
-            throw new NotFoundMemberException("존재하지 않는 회원입니다.");
-        }
-        return new FindRespDto(findedMember.get());
+        Member findedMember = memberRepository.findById(memberId)
+                .orElseThrow(()->new NotFoundMemberException("존재하지 않는 회원입니다."));
+        return new FindRespDto(findedMember);
     }
 
 }
