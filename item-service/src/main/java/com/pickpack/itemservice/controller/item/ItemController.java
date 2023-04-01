@@ -1,5 +1,6 @@
 package com.pickpack.itemservice.controller.item;
 
+import com.pickpack.itemservice.api.request.ItemMemberReq;
 import com.pickpack.itemservice.api.response.ListRes;
 import com.pickpack.itemservice.dto.item.ItemCreateDto;
 import com.pickpack.itemservice.dto.item.ItemDetailDto;
@@ -57,10 +58,10 @@ public class ItemController {
         }
     }
 
-    @GetMapping("/{itemId}/detail")
-    public ResponseEntity<?> getItemById(@PathVariable("itemId") Long itemId){
+    @PostMapping("/detail")
+    public ResponseEntity<?> getItemById(@RequestBody ItemMemberReq itemMemberReq){
         try{
-            return new ResponseEntity<>(itemService.getItemById(itemId), HttpStatus.OK);
+            return new ResponseEntity<>(itemService.getItemById(itemMemberReq.getItemId(), itemMemberReq.getMemberId()), HttpStatus.OK);
         }catch (Exception e){
             return exceptionHandling(e);
         }
