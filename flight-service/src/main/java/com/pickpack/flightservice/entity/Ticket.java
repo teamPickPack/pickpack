@@ -39,5 +39,6 @@ public class Ticket {
     @JoinColumn(name = "ticketId", insertable=false, updatable=false)
     private List<Flight> flightList;
 
-
+    @OneToOne
+    private Tendency tendency;
 }

@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.pickpack.flightservice.entity.QFlight.flight;
+import static com.pickpack.flightservice.entity.QTendency.tendency;
 import static com.pickpack.flightservice.entity.QTicket.ticket;
 
 public class TicketRepositoryImpl implements TicketRepositoryCustom {
@@ -29,6 +30,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
+                .join(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -38,9 +40,17 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .limit(pageable.getPageSize());
 
         for (Sort.Order o : pageable.getSort()) {
-            PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
-            query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                    pathBuilder.get(o.getProperty())));
+            if(o.getProperty().equals("updown")) {
+                System.out.println("updown 정렬 실행");
+                PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
+                System.out.println("쿼리 실행 전");
+                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                        pathBuilder.get(o.getProperty())));
+            } else {
+                PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
+                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                        pathBuilder.get(o.getProperty())));
+            }
         }
 
         List<Ticket> ticketList = query.fetch();
@@ -53,6 +63,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
+                .join(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -63,9 +74,17 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .limit(pageable.getPageSize());
 
         for (Sort.Order o : pageable.getSort()) {
-            PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
-            query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                    pathBuilder.get(o.getProperty())));
+            if(o.getProperty().equals("updown")) {
+                System.out.println("updown 정렬 실행");
+                PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
+                System.out.println("쿼리 실행 전");
+                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                        pathBuilder.get(o.getProperty())));
+            } else {
+                PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
+                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                        pathBuilder.get(o.getProperty())));
+            }
         }
 
         List<Ticket> ticketList = query.fetch();
@@ -78,6 +97,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
+                .join(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -88,9 +108,17 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .limit(pageable.getPageSize());
 
         for (Sort.Order o : pageable.getSort()) {
-            PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
-            query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                    pathBuilder.get(o.getProperty())));
+            if(o.getProperty().equals("updown")) {
+                System.out.println("updown 정렬 실행");
+                PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
+                System.out.println("쿼리 실행 전");
+                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                        pathBuilder.get(o.getProperty())));
+            } else {
+                PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
+                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                        pathBuilder.get(o.getProperty())));
+            }
         }
 
         List<Ticket> ticketList = query.fetch();
