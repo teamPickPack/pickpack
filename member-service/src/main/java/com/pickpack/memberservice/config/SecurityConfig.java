@@ -4,6 +4,7 @@ import com.pickpack.memberservice.jwt.JwtAuthenticationFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -63,8 +64,12 @@ public class SecurityConfig {
         http.apply(new CustomSecurityFilterManager());
 
         http.authorizeRequests()
-                .antMatchers("/api/**").permitAll()
-                .anyRequest().permitAll();
+                .antMatchers("/api/member/join").permitAll()
+                .antMatchers("/api/member/login").permitAll()
+                .antMatchers("/api/member/health1").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/flight/one").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/flight/round").permitAll()
+                .anyRequest().authenticated();
 
         return http.build();
     }
