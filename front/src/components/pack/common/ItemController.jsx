@@ -124,7 +124,7 @@ const SearchForm = styled.form`
     align-items: center;
     justify-content: center;
     text-align: center;
-    width: 80px;
+    width: 72px;
     height: 34px;
     background: #ffffff;
     border: 1px solid #626262;
@@ -133,6 +133,7 @@ const SearchForm = styled.form`
     font-weight: 700;
     font-size: 16px;
     cursor: pointer;
+    padding-right: 8px;
 
     > span {
       font-size: 10px;
