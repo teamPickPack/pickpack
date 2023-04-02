@@ -10,7 +10,7 @@ import Pack from "./pages/pack/Pack";
 import Buy from "./pages/pack/buy/Buy";
 import Sell from "./pages/pack/sell/Sell";
 import Borrow from "./pages/pack/borrow/Borrow";
-import Lend from "./pages/pack/lend/Lend";
+import Rent from "./pages/pack/rent/Rent";
 import Detail from "./pages/pack/detail/Detail";
 import Regist from "./pages/pack/regist/Regist";
 import Modify from "./pages/pack/modify/Modify";
@@ -28,7 +28,7 @@ function App() {
             <Route path="buy" element={<Buy />} />
             <Route path="sell" element={<Sell />} />
             <Route path="borrow" element={<Borrow />} />
-            <Route path="lend" element={<Lend />} />
+            <Route path="rent" element={<Rent />} />
             <Route path="detail/:itemNo" element={<Detail />} />
             <Route path="regist" element={<Regist />} />
             <Route path="modify/:itemNo" element={<Modify />} />
