@@ -24,4 +24,12 @@ public class RoundTicketLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Ticket ticketFrom;
+
+    public void changeIsDelete(){
+        this.isDelete = !isDelete;
+    }
+
+    public void changeWishPrice(Integer price){
+        this.wantedPrice = price;
+    }
 }

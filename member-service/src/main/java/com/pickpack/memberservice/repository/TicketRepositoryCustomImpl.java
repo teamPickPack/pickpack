@@ -3,7 +3,11 @@ package com.pickpack.memberservice.repository;
 import com.pickpack.memberservice.dto.flight.OnewayDto;
 import com.pickpack.memberservice.dto.flight.TwowayDto;
 import com.pickpack.memberservice.entity.*;
+import com.querydsl.core.QueryFactory;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
@@ -15,6 +19,9 @@ import static com.pickpack.memberservice.entity.QOnewayTicketLike.onewayTicketLi
 import static com.pickpack.memberservice.entity.QRoundTicketLike.roundTicketLike;
 import static com.pickpack.memberservice.entity.QTicket.ticket;
 import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.set;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
 
@@ -50,7 +57,6 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
      * @param memberId : 회원 아이디
      * @return
      */
-
     public List<TwowayDto> findTwoWayTicketLike(Long memberId) {
 
         List<TwowayDto> list = queryFactory
@@ -68,21 +74,5 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
 
         return list;
     }
-
-
-
-
-    public List<Flight> findTicketLikeAboutFlight(Long ticketId){
-
-        List<Flight> flightList = queryFactory
-                .select(flight)
-                .from(ticket)
-                .join(ticket.flightList, flight)
-                .on(flight.ticketId.eq(ticketId))
-                .fetch();
-
-        return flightList;
-    }
-
 
 }

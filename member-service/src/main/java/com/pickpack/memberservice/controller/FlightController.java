@@ -1,14 +1,13 @@
 package com.pickpack.memberservice.controller;
 
 import com.pickpack.memberservice.dto.flight.OnewayDto;
+import com.pickpack.memberservice.dto.flight.RoundwayWishPriceDto;
 import com.pickpack.memberservice.dto.flight.TwowayDto;
+import com.pickpack.memberservice.dto.flight.OnewayWishPriceDto;
 import com.pickpack.memberservice.service.FlightService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -47,4 +46,44 @@ public class FlightController {
         return new ResponseEntity<>(twowayDtos, HttpStatus.OK);
     }
 
+    /**
+     * onewayWishPrice 수정
+     */
+    @PutMapping("/{memberId}/onewayWish")
+    public ResponseEntity<?> changeOnewayWishPrice(@PathVariable Long memberId,
+                                                   @RequestBody OnewayWishPriceDto onewayWishPriceDto){
+        flightService.changeOnePrice(memberId, onewayWishPriceDto);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    /**
+     * roundwayWishPrice 수정
+     */
+    @PutMapping("/{memberId}/roundwayWish")
+    public ResponseEntity<?> changeRoundwayWishPrice(@PathVariable Long memberId,
+                                                     @RequestBody RoundwayWishPriceDto roundwayWishPriceDto){
+        flightService.changeRoundPrice(memberId, roundwayWishPriceDto);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+
+    /**
+     * 편도찜 취소
+     */
+    @PutMapping("/{memberId}/one-flight/{onewayTicketLikeId}")
+    public ResponseEntity<?> cancelOnewayLike(@PathVariable Long memberId,
+                                              @PathVariable Long onewayTicketLikeId){
+        flightService.cancelOneLike(memberId, onewayTicketLikeId);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    /**
+     * 왕복찜 취소
+     */
+    @PutMapping("/{memberId}/round-flight/{roundwayTicketLikeId}")
+    public ResponseEntity<?> cancelRoundwayLike(@PathVariable Long memberId,
+                                                @PathVariable Long roundwayTicketLikeId){
+        flightService.cancelRoundLike(memberId, roundwayTicketLikeId);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
 }
