@@ -6,6 +6,7 @@ import flightSearchImg from "../../../../assets/image/flight-search-img.png";
 import airplaneImg from "../../../../assets/image/airplane-img.png";
 import { relationOfAirport } from "./data/Relation";
 import { SwitchSVG, CalendarSVG, ConditionSVG, CloseSVG } from "./SVG";
+import { searchFlightOne, searchFlightRound } from "../../../../api/pick/pick";
 
 const SearchTicket = () => {
   const dispatch = useDispatch();
@@ -253,9 +254,42 @@ const SearchTicket = () => {
   }, [direct]);
 
   const SearchTicketList = () => {
-    console.log(
-      "유효성 검사.. 왕복이면 도착일이 있는지... 지역 잘들어 가있는지..."
-    );
+    const request = {
+      memberId: null,
+      filter: {
+        direct: direct,
+        maxPrice: leftPrice,
+        minPrice: rightPrice,
+      },
+      info: {
+        departure: departure.code,
+        destination: destination.code,
+        depDate: startDate,
+        arrDate: endDate,
+      },
+      pageable: {
+        orderBy: "desc",
+        page: 0,
+        sortType: "price",
+      },
+    };
+
+    console.log(wayType);
+
+    if (wayType === "one") {
+      if (!departure.code | !destination.code | !startDate) {
+        console.log(departure, destination, startDate, endDate);
+        return;
+      }
+      searchFlightOne(request);
+    } else {
+      if (!departure.code | !destination.code | !startDate | !endDate) {
+        console.log(departure, destination, startDate, endDate);
+        return;
+      }
+      searchFlightRound(request);
+    }
+
     console.log("항공권 검색하고 싶습니다");
     return;
   };
@@ -998,7 +1032,7 @@ const DateButton = styled.div`
     background: transparent;
     border-radius: 4px;
     border: none;
-    transform: translateY(-52px);
+    transform: translateY(-56px);
     transition: all 0.2s ease;
 
     :hover {
@@ -1168,7 +1202,7 @@ const ConditionBox = styled.div`
         }
 
         span {
-          height: 22px;
+          height: 28px;
         }
       }
     }
