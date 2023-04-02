@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
+import { getItemList } from "../../../api/pack/pack";
 import ItemController from "../../../components/pack/common/ItemController";
 import ItemList from "../../../components/pack/common/ItemList";
 
@@ -293,24 +294,20 @@ const Buy = () => {
   const [page, setPage] = useState(0);
   const [maxPage, setMaxpage] = useState("");
 
-  window.onscroll = function () {
-    if (loading) return;
-    const totalPageHeight = document.body.scrollHeight - 200;
-    const scrollPoint = window.scrollY + window.innerHeight;
+  useEffect(() => {
+    const request = {
+      category: "BUY",
+      page: page,
+    };
 
-    if (scrollPoint >= totalPageHeight) {
-      setLoading(true);
-      console.log("API 호출중...");
-      console.log("현재 가져온 아이템 개수: " + page);
-      if (page === maxPage) return;
-      else if (page + 10 > maxPage) setPage(maxPage);
-      else setPage((page) => page + 10);
-      setTimeout(() => {
-        console.log("호출 완료");
-        setLoading(false);
-      }, 1000);
-    }
-  };
+    getItemList(request);
+
+    setPage(() => {
+      return page + 1;
+    });
+  }, []);
+
+  console.log(page);
 
   return (
     <BuyContainer>

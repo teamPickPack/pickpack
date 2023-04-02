@@ -19,6 +19,7 @@ const ImageInput = (props) => {
   const [imagePreviewState, setImagePreviewState] = useState([]);
   const [imageState, setImageState] = useState([]);
   const [loadedImages, setLoadedImages] = useState(props.loadedImages);
+  const [emptyImage, setEmptyImage] = useState([]);
 
   const ImageChangeEventHandler = async (data) => {
     const images = [...data.target.files];
@@ -163,6 +164,16 @@ const ImageInput = (props) => {
     setImageData();
   };
 
+  useEffect(() => {
+    let empty = [];
+
+    for (let index = 0; index < 10 - imageState.length; index++) {
+      empty.push(index);
+    }
+
+    setEmptyImage([...empty]);
+  }, [imageState]);
+
   return (
     <ImageInputContainer>
       <InputBox>
@@ -186,6 +197,7 @@ const ImageInput = (props) => {
           {imagePreviewState.map((data) => {
             const image = data.image;
             const imageURL = data.url;
+            console.log(imagePreviewState.length);
             return (
               <ImagePreview key={image.name}>
                 <img src={imageURL} alt={image.name} id={image.name} />
@@ -216,11 +228,27 @@ const ImageInput = (props) => {
                 </ImagePreview>
               );
             })}
+          {emptyImage.map((i) => {
+            return <EmptyPreview key={i} />;
+          })}
         </div>
       )}
     </ImageInputContainer>
   );
 };
+
+const EmptyPreview = styled.div`
+  width: 84px;
+  height: 84px;
+  background: #d9d9d9;
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-left: 12px;
+`;
 
 const ImageInputContainer = styled.div`
   display: flex;
@@ -228,6 +256,7 @@ const ImageInputContainer = styled.div`
   .preview-container {
     display: flex;
     flex-wrap: wrap;
+    align-content: space-between;
   }
 `;
 
@@ -240,7 +269,6 @@ const ImagePreview = styled.div`
   border: none;
   border-radius: 4px;
   display: flex;
-  flex-direction: row-reverse;
   position: relative;
   margin-left: 12px;
 
@@ -260,7 +288,7 @@ const ImagePreview = styled.div`
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 10px;
-    transform: translate(-1px, 0);
+    right: 1px;
   }
 
   button:hover {
