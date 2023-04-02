@@ -18,4 +18,12 @@ public class OnewayTicketLike {
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
+    public void changeIsDelete(){
+        this.isDelete = !isDelete;
+    }
+
+    public void changeWishPrice(Integer price){
+        this.wantedPrice = price;
+    }
+
 }
