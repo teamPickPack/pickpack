@@ -20,7 +20,6 @@ const initialState = {
   rightPrice: 2000,
   minPrice: 0,
   maxPrice: 2000,
-  sortType: "",
 };
 
 const flightSlice = createSlice({
