@@ -10,16 +10,16 @@ export const member = {
   //   );
   //   return response;
   // },
-  // // 고객 회원가입
-  // signup: async (data) => {
-  //   const response = await Send.post(`${memberURL}/member/join/`, data);
-  //   return response;
-  // },
-  // // 고객 로그인
-  // login: async (data) => {
-  //   const response = await Send.post(`${memberURL}/member/login/`, data);
-  //   return response;
-  // },
+  // 고객 회원가입
+  signup: async (data) => {
+    const response = await Send.post(`${memberURL}/member/join`, data);
+    return response;
+  },
+  // 고객 로그인
+  login: async (data) => {
+    const response = await Send.post(`${memberURL}/member/login`, data);
+    return response;
+  },
 
 };
 //사용범: api 사용할 곳에서 
