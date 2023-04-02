@@ -14,6 +14,7 @@ import korean from '../../../assets/airlines/대한항공.png';
 import delta from '../../../assets/airlines/델타항공.png';
 import { FaChevronUp } from "react-icons/fa";
 import styled from 'styled-components';
+import { createPortal } from 'react-dom';
 
 export default function List(){
     const airlineData = [
@@ -137,9 +138,9 @@ export default function List(){
             }, 1000);
         }
     }
-    const scrollUp = () => {
-        window.scrollTo({top:0, left:0, behavior: 'smooth'});
-    }
+    // const scrollUp = () => {
+    //     window.scrollTo({top:0, left:0, behavior: 'smooth'});
+    // }
     const checkHeight = () => {
         if(window.scrollY > 160){
             setCompareBoxTop(0);
@@ -153,8 +154,8 @@ export default function List(){
 
     return(
         <>
-            {compareModalVisible ? <><CompareModal handleCompareModalVisible={handleCompareModalVisible}/><Background /></> : null}
-            
+            {compareModalVisible && <CompareModal handleCompareModalVisible={handleCompareModalVisible}/>}
+           {compareModalVisible && createPortal(<Background />, document.getElementById("background"))}
             <div onClick={() => handleCompareModalVisible('body')} style={{minWidth: '1200px'}}>
                 <FistSection>
                     <SearchTicket />
@@ -221,23 +222,16 @@ export default function List(){
                         </TicketList>
                     </div>
                     {(compareBoxVisible && ticketListWidth > 880) || (compareBoxVisible && ticketListWidth > 1200)}
-                    <UpBtn onClick={scrollUp}>
+                    {/* <UpBtn onClick={scrollUp}>
                         <FaChevronUp />
                         <span>TOP</span>
-                    </UpBtn>
+                    </UpBtn> */}
                 </Content>
             </div>
         </>
     )
 }
-const Background = styled.div`
-    position: fixed;
-    z-index: 50;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.6);
-`
+
 const FistSection = styled.div`
   text-align: center;
   height: 200px;
@@ -349,4 +343,13 @@ const UpBtn = styled.div`
         color: white;
         cursor: pointer;
     }
+`;
+const Background = styled.div`
+    position: fixed;
+    z-index: 50;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
 `;

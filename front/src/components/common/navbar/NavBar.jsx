@@ -1,7 +1,34 @@
 import { NavLink } from "react-router-dom";
+import {useState} from 'react';
 import styled from "styled-components";
-
+import { createPortal } from "react-dom";
+import UserModal from "./elements/UserModal";
 const NavBar = () => {
+  const [userModalState, setUserModalState] = useState({visible: false, loginMode: null});
+  const handleUserModalState = (type, mode) => {
+    if(type === 'button'){
+      console.log('button');
+      if(mode === 'login'){
+        setUserModalState((userModalState) => ({
+          visible: !userModalState.visible,
+          loginMode: true,
+        }));
+      } else{
+        setUserModalState((userModalState) => ({
+          visible: !userModalState.visible,
+          loginMode: false,
+        }));
+      }
+    }
+    else{
+      if(userModalState){
+        setUserModalState({
+          visible: false,
+          loginMode: null,
+        });
+      }
+    }
+  }
   return (
     <NavSection>
       <div className="nav-inner">
@@ -21,14 +48,16 @@ const NavBar = () => {
             <NavLink to="/mypage">마이페이지</NavLink>
           </li>
           <li>
-            <NavLink>로그인</NavLink>
+            <NavLink onClick={() => handleUserModalState('button', 'login')}>로그인</NavLink>
+            {userModalState.visible && <UserModal initialLoginMode={userModalState.loginMode} handleUserModalState={handleUserModalState}/>}
           </li>
           <li>
             <NavLink>로그아웃</NavLink>
           </li>
           <li>
-            <NavLink>회원가입</NavLink>
+            <NavLink onClick={() => handleUserModalState('button', 'signup')}>회원가입</NavLink>
           </li>
+          {userModalState.visible && createPortal(<Background />, document.getElementById("background"))}
         </ul>
       </div>
     </NavSection>
@@ -82,6 +111,15 @@ const NavSection = styled.div`
       }
     }
   }
+`;
+const Background = styled.div`
+    position: fixed;
+    z-index: 50;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
 `;
 
 export default NavBar;
