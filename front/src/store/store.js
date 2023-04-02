@@ -12,12 +12,14 @@ import session from "redux-persist/lib/storage/session";
 import flightSlice from "./flightSlice";
 import userSlice from "./userSlice";
 import compareSlice from "./compareSlice";
+import chatSlice from "./chatSlice";
 
 // reducer 추가하는 부분
 const reducers = combineReducers({
   user: userSlice.reducer,
   flight: flightSlice.reducer,
   compare: compareSlice.reducer,
+  chat: chatSlice.reducer,
 });
 
 // storage에 올려서 사용할 것 추가하는 부분

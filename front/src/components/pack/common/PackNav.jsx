@@ -16,7 +16,7 @@ const PackNav = () => {
             <NavLink to="/pack/borrow">빌려주세요</NavLink>
           </li>
           <li>
-            <NavLink to="/pack/lend">빌려드려요</NavLink>
+            <NavLink to="/pack/rent">빌려드려요</NavLink>
           </li>
         </ul>
       </div>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import borrowImg from "../../../assets/image/borrow.jpg";
-import lendImg from "../../../assets/image/lend.jpg";
+import rentImg from "../../../assets/image/rent.jpg";
 import buyImg from "../../../assets/image/buy.jpg";
 import sellImg from "../../../assets/image/sell.jpg";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ const PackMain = () => {
       <Greetings>
         <div className="greeting-top">
           당신의 소중한 여행,
-          <br /> <span>아맞다</span>를 통해 준비해보세요 !
+          <br /> <span>Packer</span>를 통해 준비해보세요 !
         </div>
         <div className="greeting-bottom">
           필요한 여행 물품을 <span>구매/대여</span>하여, 나만의 완벽한 여행을
@@ -37,8 +37,8 @@ const PackMain = () => {
             <span>빌려주세요</span>
           </MenuItem>
         </Link>
-        <Link to="/pack/lend">
-          <MenuItem img={lendImg}>
+        <Link to="/pack/rent">
+          <MenuItem img={rentImg}>
             <span>빌려드려요</span>
           </MenuItem>
         </Link>
@@ -96,6 +96,7 @@ const MenuContainer = styled.div`
   align-content: space-between;
   width: 508px;
   height: 508px;
+  margin: 48px 0;
 `;
 
 const MenuItem = styled.div`

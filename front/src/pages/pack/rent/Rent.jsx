@@ -287,7 +287,7 @@ const DUMMY_DATA = [
   },
 ];
 
-const Lend = () => {
+const Rent = () => {
   const [itemList, setItemList] = useState();
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -313,15 +313,15 @@ const Lend = () => {
   };
 
   return (
-    <LendContainer>
+    <RentContainer>
       <h1>빌려드려요</h1>
       <ItemController menuType />
       <ItemList itemList={DUMMY_DATA} />
-    </LendContainer>
+    </RentContainer>
   );
 };
 
-const LendContainer = styled.div`
+const RentContainer = styled.div`
   margin: 36px 70px;
   display: flex;
   flex-direction: column;
@@ -334,4 +334,4 @@ const LendContainer = styled.div`
   }
 `;
 
-export default Lend;
+export default Rent;
