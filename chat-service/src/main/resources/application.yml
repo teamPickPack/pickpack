@@ -1,3 +1,4 @@
+
 spring:
   data:
     redis:
@@ -51,5 +52,6 @@ eureka:
 #    credentials:
 #      accessKey: AKIAXDB4L5CHN5CQPZHG
 #      secretKey: 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
-
+server:
+  port: 8888
 
