@@ -2,9 +2,138 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { chatAction } from "../../../store/chatSlice";
+import borrow from "../../../assets/image/borrow.jpg";
+import { useEffect } from "react";
+import axios from "axios";
+import { useRef } from "react";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
 
-const ChatRoom = () => {
+const ChatRoom = (props) => {
   const [isFold, setIsFold] = useState(true);
+  const [textCheck, setTextCheck] = useState(false);
+  const [images, setImages] = useState([]);
+  const [preview, setPreview] = useState([]);
+
+  const [roomId, setRoomId] = useState(props.roomId);
+
+  const [messages, setMessages] = useState([]);
+  const [token, setToken] = useState();
+
+  const message = useRef();
+
+  const stompClient = useRef();
+
+  const reconnectTimeout = 5000;
+
+  console.log(roomId);
+
+  //   useEffect(() => {
+  //     const connect = async () => {
+  //       try {
+  //         const response = await axios.get(
+  //           "http://192.168.80.246:8080/chat/user"
+  //         );
+  //         const token = response.data.token;
+  //         setToken(token);
+
+  //         const socket = new SockJS("http://192.168.80.246:8080/ws-stomp");
+  //         stompClient.current = Stomp.over(socket);
+  //         stompClient.current.connect(
+  //           { token: token },
+  //           (frame) => {
+  //             // 연결 성공 시 필요한 작업 수행
+  //             console.log(stompClient.current);
+  //             try {
+  //               stompClient.current.subscribe(
+  //                 `/sub/chat/room/${roomId}`,
+  //                 function (message) {
+  //                   let recv = JSON.parse(message.body);
+  //                   recvMessage(recv);
+  //                 }
+  //               );
+  //               //   sendMessage("ENTER");
+  //             } catch (err) {
+  //               console.log(err);
+  //             }
+  //           },
+  //           (error) => {
+  //             console.log(`STOMP error: ${error}`);
+  //             setTimeout(connect, reconnectTimeout);
+  //           }
+  //         );
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     };
+
+  //     connect();
+
+  //     return async () => {
+  //       if (stompClient !== null) {
+  //         stompClient.current.disconnect();
+  //       }
+  //     };
+  //   }, [roomId]);
+
+  const sendMessage = (type) => {
+    // if (stompClient == null) {
+    //   return;
+    // }
+    console.log(stompClient);
+    try {
+      stompClient.current.send(
+        `/pub/chat/message`,
+        { token: token },
+        JSON.stringify({
+          type: type,
+          roomId: roomId,
+          message: message.current.value,
+        })
+      );
+    } catch (err) {
+      console.log(err);
+    }
+    message.current.value = "";
+  };
+
+  const recvMessage = (recv) => {
+    const msg = {
+      type: recv.type,
+      sender: recv.sender,
+      message: recv.message,
+    };
+    setMessages((messages) => [...messages, msg]);
+  };
+  console.log(messages);
+
+  useEffect(() => {
+    let imagePreview = [];
+
+    if (images.length === 0) {
+      setPreview([]);
+      return;
+    }
+
+    const setPreviewImages = async () => {
+      images.forEach(async (image) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(image);
+
+        reader.onload = () => {
+          imagePreview = [
+            ...imagePreview,
+            { image: image, url: reader.result },
+          ];
+          setPreview(imagePreview);
+        };
+      });
+    };
+
+    setPreviewImages();
+  }, [images]);
+
+  console.log(images, preview);
 
   const dispatch = useDispatch();
 
@@ -12,8 +141,61 @@ const ChatRoom = () => {
     dispatch(chatAction.setRoomId(null));
   };
 
+  const ImageChangeEventHandler = async (data) => {
+    const input = [...data.target.files];
+    data.target.value = "";
+
+    const removeDupl = [...images, ...input];
+
+    const nonDuplImages = removeDupl.filter((item) => {
+      let idx;
+
+      for (let i = 0; i < removeDupl.length; i++) {
+        if (item.name === removeDupl[i].name) {
+          idx = i;
+        }
+      }
+
+      return idx === removeDupl.indexOf(item);
+    });
+
+    if (nonDuplImages.length > 5) {
+      alert(`이미지 전송은 최대 5개까지만 가능합니다.`);
+      return;
+    }
+
+    let imageTypeValid = false;
+    let imageSizeValid = false;
+
+    nonDuplImages.forEach((image) => {
+      if (!image.type.includes("image")) {
+        imageTypeValid = true;
+      }
+
+      if (image.size > 5 * 1024 * 1024) {
+        imageSizeValid = true;
+      }
+    });
+
+    if (imageTypeValid) {
+      alert(
+        "등록하실 사진을 확인해주세요!\n이미지 형식의 파일만 등록이 가능합니다."
+      );
+      return;
+    }
+
+    if (imageSizeValid) {
+      alert(
+        `등록이 가능한 사진의 최대 크기는 1장당 10MB입니다.\n업로드 파일의 크기를 확인바랍니다.`
+      );
+      return;
+    }
+
+    setImages([...nonDuplImages]);
+  };
+
   return (
-    <>
+    <RoomContainer>
       <RoomHeader>
         <ReturnSVG clickHandler={openChatRoom} />
         <div>닉네임</div>
@@ -33,7 +215,109 @@ const ChatRoom = () => {
           />
         )}
       </RoomHeader>
-    </>
+      {!isFold && (
+        <RoomInfo>
+          <div className="left-info">
+            <p>닉네임</p>
+            <p>
+              작성일ㆍ5일전 <span>세부</span>
+            </p>
+            <p>게시글 제목입니다</p>
+          </div>
+          <div className="right-info">
+            <img src={borrow} />
+          </div>
+        </RoomInfo>
+      )}
+      <RoomBody>
+        {messages.map((message) => {
+          return <div>{message}</div>;
+        })}
+      </RoomBody>
+      {/* <ImagePreview></ImagePreview>
+       */}
+      <div>
+        {preview.map((image) => {
+          return (
+            <img
+              src={image.url}
+              alt="123"
+              onClick={() => {
+                console.log(image);
+                setImages(
+                  images.filter((item) => {
+                    return item !== image.image;
+                  })
+                );
+              }}
+            />
+          );
+        })}
+      </div>
+      <RoomFooter textCheck={textCheck}>
+        <div>
+          <input
+            type="file"
+            id="Image"
+            accept="image/*"
+            multiple
+            onChange={ImageChangeEventHandler}
+            style={{ display: "none" }}
+          />
+          <label htmlFor="Image">
+            <InputImageSVG />
+          </label>
+        </div>
+        <div>
+          <textarea
+            onChange={(e) => {
+              if (e.target.value) {
+                setTextCheck(true);
+              } else {
+                setTextCheck(false);
+              }
+            }}
+            ref={message}
+          />
+        </div>
+        <div>
+          <button type="button" onClick={sendMessage}>
+            전송
+          </button>
+        </div>
+      </RoomFooter>
+    </RoomContainer>
+  );
+};
+
+const InputImageSVG = (props) => {
+  return (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ cursor: "pointer" }}
+    >
+      <rect
+        x="1"
+        y="1"
+        width="30"
+        height="30"
+        rx="7"
+        fill="white"
+        strokeWidth="2"
+      />
+      <path
+        d="M9.99844 13.6004C10.7105 13.6004 11.4065 13.3893 11.9985 12.9937C12.5905 12.5981 13.0519 12.0359 13.3244 11.3781C13.5969 10.7202 13.6682 9.9964 13.5293 9.29807C13.3904 8.59974 13.0475 7.95828 12.544 7.45481C12.0406 6.95134 11.3991 6.60847 10.7008 6.46957C10.0024 6.33066 9.27859 6.40195 8.62078 6.67443C7.96296 6.9469 7.40072 7.40832 7.00515 8.00034C6.60957 8.59236 6.39844 9.28838 6.39844 10.0004C6.39844 10.9552 6.77772 11.8708 7.45285 12.546C8.12798 13.2211 9.04366 13.6004 9.99844 13.6004ZM9.99844 8.80039C10.2358 8.80039 10.4678 8.87077 10.6651 9.00263C10.8625 9.13449 11.0163 9.3219 11.1071 9.54117C11.1979 9.76044 11.2217 10.0017 11.1754 10.2345C11.1291 10.4673 11.0148 10.6811 10.847 10.8489C10.6791 11.0167 10.4653 11.131 10.2325 11.1773C9.99977 11.2236 9.75849 11.1999 9.53922 11.109C9.31995 11.0182 9.13253 10.8644 9.00067 10.6671C8.86882 10.4697 8.79844 10.2377 8.79844 10.0004C8.79844 9.68213 8.92487 9.37691 9.14991 9.15186C9.37495 8.92682 9.68018 8.80039 9.99844 8.80039Z"
+        fill="#EC5B5B"
+      />
+      <path
+        d="M21.6479 13.9528C21.5338 13.8338 21.3955 13.7408 21.2422 13.6802C21.089 13.6195 20.9245 13.5926 20.7599 13.6012C20.5956 13.607 20.4342 13.6462 20.2857 13.7166C20.1371 13.787 20.0045 13.8869 19.8959 14.0104L16.2599 18.1612L13.2479 15.148C13.0229 14.923 12.7177 14.7966 12.3995 14.7966C12.0813 14.7966 11.7761 14.923 11.5511 15.148L6.75111 19.948C6.6365 20.0587 6.54508 20.1911 6.48219 20.3375C6.4193 20.4839 6.3862 20.6414 6.38481 20.8007C6.38343 20.96 6.41379 21.118 6.47413 21.2655C6.53446 21.413 6.62357 21.547 6.73624 21.6597C6.84891 21.7723 6.98289 21.8614 7.13037 21.9218C7.27784 21.9821 7.43586 22.0125 7.59519 22.0111C7.75453 22.0097 7.91199 21.9766 8.0584 21.9137C8.2048 21.8508 8.33722 21.7594 8.44791 21.6448L12.3995 17.698L14.6795 19.978L11.4959 23.6104C11.2862 23.85 11.1802 24.1632 11.2014 24.4809C11.2225 24.7987 11.3691 25.095 11.6087 25.3048C11.8484 25.5145 12.1615 25.6205 12.4793 25.5993C12.797 25.5781 13.0934 25.4316 13.3031 25.192L17.1647 20.7784H17.1719L17.1803 20.7652L20.8583 16.5652L23.5511 19.258C23.7774 19.4766 24.0806 19.5975 24.3952 19.5948C24.7098 19.5921 25.0108 19.4659 25.2333 19.2434C25.4558 19.0209 25.582 18.7199 25.5847 18.4053C25.5875 18.0906 25.4665 17.7875 25.2479 17.5612L21.6479 13.9528Z"
+        fill="#1CC500"
+      />
+    </svg>
   );
 };
 
@@ -94,6 +378,118 @@ const FoldSVG = (props) => {
     </svg>
   );
 };
+
+const RoomContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const RoomFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: #432c7a;
+  border-radius: 0 0 6px 6px;
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    textarea {
+      outline: none;
+      border: none;
+      resize: none;
+      font-weight: 600;
+      font-size: 14px;
+      color: #000000;
+      width: 448px;
+      height: ${(props) => {
+        return props.textCheck ? 80 : 24;
+      }}px;
+      border-radius: 8px;
+      line-height: 22px;
+      overflow-y: scroll; /* 세로 스크롤바는 항상 표시 */
+      scrollbar-width: none; /* 스크롤바 너비 제거 */
+      -ms-overflow-style: none; /* IE/Edge 용 스크롤바 제거 */
+    }
+
+    textarea::-webkit-scrollbar {
+      display: none; /* Chrome/Safari 용 스크롤바 제거 */
+    }
+
+    textarea:focus {
+      height: 80px;
+      border-color: #333;
+      box-shadow: 0 0 10px #333;
+    }
+
+    button {
+      display: flex;
+
+      padding: 4px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  }
+`;
+
+const RoomBody = styled.div``;
+
+const RoomInfo = styled.div`
+  height: 80px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d9d9d9;
+  border-width: 0 0 1px 0;
+  position: absolute;
+  background: #ffffff;
+  width: 512px;
+  top: 56px;
+
+  .left-info {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 16px;
+    font-weight: 600;
+
+    p {
+      margin: 0;
+      display: flex;
+      align-items: center;
+
+      span {
+        background: #ff8fb1;
+        padding: 2px 8px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #ffffff;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .right-info {
+    display: flex;
+    align-items: center;
+    img {
+      width: 80px;
+      height: 80px;
+      border-radius: 4px;
+    }
+  }
+`;
 
 const RoomHeader = styled.div`
   background: #432c7a;
