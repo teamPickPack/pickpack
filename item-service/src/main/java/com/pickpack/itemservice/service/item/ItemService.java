@@ -36,7 +36,7 @@ public class ItemService {
     private final ItemLikeRepository itemLikeRepository;
     private final AwsS3Uploader s3Uploader;
     private static String dirName = "item";
-    private static Integer itemSize = 2;
+    private static Integer itemSize = 12;
 
     public Long createItem(Long memberId, String title, String categoryStr, Integer price, String content, String itemName, Long cityId, MultipartFile img){
         // city get
