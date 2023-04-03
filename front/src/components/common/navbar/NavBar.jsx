@@ -7,7 +7,6 @@ const NavBar = () => {
   const [userModalState, setUserModalState] = useState({visible: false, loginMode: null});
   const handleUserModalState = (type, mode) => {
     if(type === 'button'){
-      console.log('button');
       if(mode === 'login'){
         setUserModalState((userModalState) => ({
           visible: !userModalState.visible,
