@@ -1,6 +1,7 @@
 package com.pickpack.itemservice.controller.item;
 
 import com.pickpack.itemservice.api.request.ItemMemberReq;
+import com.pickpack.itemservice.api.request.ItemSearchTitleReq;
 import com.pickpack.itemservice.api.response.ListRes;
 import com.pickpack.itemservice.dto.item.ItemCreateDto;
 import com.pickpack.itemservice.dto.item.ItemDetailDto;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 
 @RestController
@@ -41,10 +44,10 @@ public class ItemController {
         }
     }
 
-    @GetMapping("/{category}/title/{search}/{page}")
-    public ResponseEntity<?> getItemsSearchOnTitle(@PathVariable("category") String category, @PathVariable("search") String search, @PathVariable("page") Integer page){
+    @PostMapping("/{category}/title/{page}")
+    public ResponseEntity<?> getItemsSearchOnTitle(@PathVariable("category") String category, @PathVariable("page") Integer page, @RequestBody ItemSearchTitleReq itemSearchTitleReq){
         try{
-            return new ResponseEntity<>(itemService.getItemsSearchOnTitle(category, search, page), HttpStatus.OK);
+            return new ResponseEntity<>(itemService.getItemsSearchOnTitle(category, itemSearchTitleReq.getSearch(), page), HttpStatus.OK);
         }catch(Exception e){
             return exceptionHandling(e);
         }
