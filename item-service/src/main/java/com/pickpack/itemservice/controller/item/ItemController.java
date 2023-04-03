@@ -7,6 +7,7 @@ import com.pickpack.itemservice.dto.item.ItemCreateDto;
 import com.pickpack.itemservice.dto.item.ItemDetailDto;
 import com.pickpack.itemservice.service.item.ItemService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +17,22 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/item")
+@Slf4j
 public class ItemController {
 
     private final ItemService itemService;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> createItem(@RequestPart ItemCreateDto item, @RequestPart MultipartFile img){
+    public ResponseEntity<?> createItem(@RequestPart ItemCreateDto item, @RequestPart(value = "imgs", required = false) List<MultipartFile> imgs){
+        log.info("----------------createItem-----------------");
+        
         try {
-            Long id = itemService.createItem(item.getMemberId(), item.getTitle(), item.getCategory(), item.getPrice(), item.getContent(), item.getItemName(), item.getCityId(), img);
+            Long id = itemService.createItem(item.getMemberId(), item.getTitle(), item.getCategory(), item.getPrice(), item.getContent(), item.getItemName(), item.getCityId(), imgs);
             return new ResponseEntity<>(id, HttpStatus.OK);
         }catch (Exception e){
             return exceptionHandling(e);
