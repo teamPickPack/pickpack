@@ -8,10 +8,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 @Data
+@Builder
 @NoArgsConstructor
-public class TwowayDto {
+@AllArgsConstructor
+public class TwowayDto  implements Serializable {
 
     private Boolean isLike;
 
