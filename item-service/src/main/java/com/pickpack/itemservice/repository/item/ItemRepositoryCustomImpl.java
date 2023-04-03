@@ -36,6 +36,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                         .join(item.city, city)
                         .where(item.category.eq(Category.valueOf(categoryStr)))
                         .where(item.isDelete.eq(Boolean.FALSE))
+                        .orderBy(item.registDate.desc(), item.price.asc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize() + 1)
                         .fetch();
@@ -61,6 +62,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                         .where(item.category.eq(Category.valueOf(categoryStr)))
                         .where(item.isDelete.eq(Boolean.FALSE))
                         .where(item.title.contains(search))
+                        .orderBy(item.registDate.desc(), item.price.asc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize() + 1)
                         .fetch();
@@ -86,6 +88,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                 .join(item.city, city).on(city.id.eq(cityId))
                 .where(item.category.eq(Category.valueOf(categoryStr)))
                 .where(item.isDelete.eq(Boolean.FALSE))
+                        .orderBy(item.registDate.desc(), item.price.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -128,6 +131,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                        .where(item.isDelete.eq(Boolean.FALSE))
                        .where((item.isComplete.eq(Boolean.FALSE)))
                        .where(item.id.ne(itemId))
+                       .orderBy(item.registDate.desc())
                        .fetch();
        return itemsByMember;
     }
