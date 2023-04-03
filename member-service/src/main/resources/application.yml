@@ -22,6 +22,15 @@ spring:
         format_sql: true
         show_sql: true
 
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      cache-null-values: true
+  redis:
+    host: 54.180.157.223
+    port: 6370
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
