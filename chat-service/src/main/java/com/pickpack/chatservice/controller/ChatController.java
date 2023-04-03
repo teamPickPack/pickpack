@@ -20,6 +20,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin("*")
 //@RequestMapping("/api/chat")
 public class ChatController {
     private final RedisPublisher redisPublisher;
