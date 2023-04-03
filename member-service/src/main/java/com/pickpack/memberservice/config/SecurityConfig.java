@@ -54,7 +54,7 @@ public class SecurityConfig {
         log.info("🥽 시큐리티 필터 생성");
         http.headers().frameOptions().disable();
         http.csrf().disable();
-//        http.cors().configurationSource(configurationSource());
+        http.cors().configurationSource(configurationSource());
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.formLogin().disable();
@@ -79,19 +79,19 @@ public class SecurityConfig {
      * 시큐리티 필터 cors 처리
      * @return
      */
-//    public CorsConfigurationSource configurationSource(){
-//        log.debug("디버그: CorsConfigurationSource cors 설정이 SecurityFilterChain에 등록됨");
-//
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedHeader("*");
+    public CorsConfigurationSource configurationSource(){
+        log.debug("디버그: CorsConfigurationSource cors 설정이 SecurityFilterChain에 등록됨");
+
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedHeader("*");
 //        configuration.addAllowedMethod("*");
 //        configuration.addAllowedOriginPattern("*");
 //        configuration.setAllowCredentials(true);
 //
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 //        source.registerCorsConfiguration("/**", configuration);
-//
-//        return source;
-//    }
+
+        return source;
+    }
 
 }
