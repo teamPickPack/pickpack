@@ -20,8 +20,7 @@ public class RedisSubscriber{
         try {
             RedisChatMessage roomMessage = objectMapper.readValue(publishMessage, RedisChatMessage.class);
             chatMessageService.createMessage(roomMessage);
-            log.info("roommessage:{}",roomMessage);
-            // Websocket 구독자에게 채팅 메시지 Send
+
             messagingTemplate.convertAndSend("/chat/sub/room/" + roomMessage.getRoomId(), roomMessage);
         } catch (Exception e) {
             log.error(e.getMessage());

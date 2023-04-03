@@ -5,6 +5,7 @@ import com.pickpack.chatservice.dto.GetRoomDto;
 import com.pickpack.chatservice.dto.IsNewDto;
 import com.pickpack.chatservice.entity.ChatRoom;
 import com.pickpack.chatservice.entity.Item;
+import com.pickpack.chatservice.entity.Member;
 import com.pickpack.chatservice.entity.redis.RedisChatRoom;
 import com.pickpack.chatservice.repo.redis.RedisChatMessageRepository;
 import com.pickpack.chatservice.repo.redis.RedisChatRoomRepository;
@@ -31,13 +32,8 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
     @Override
     public void saveRedisChatRoom(RedisChatRoom redisChatRoom, String nickname) {
-        List<RedisChatRoom> redisChatRoomList;
-        //TODO optional 처리를 해볼까
-        if (!redisChatRoomRepository.isHasKeyOnChatRoom(nickname)) {
-            redisChatRoomList = new ArrayList<>();
-        } else {
-            redisChatRoomList = redisChatRoomRepository.findRoomsByNickname(nickname);
-        }
+        List<RedisChatRoom> redisChatRoomList = redisChatRoomRepository.findRoomsByNickname(nickname)
+                .orElseGet(ArrayList::new);
         redisChatRoomList.add(redisChatRoom);
         log.info("redischatRoom :{}, nickname: {}",redisChatRoom,nickname);
         redisChatRoomRepository.saveRoomList(nickname,redisChatRoomList);
@@ -49,7 +45,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         RedisChatRoom redisChatRoom = RedisChatRoom.builder()
                 //db에 roomid로 정렬이됨
                 .roomId(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
-                        + UUID.randomUUID().toString())
+                        + UUID.randomUUID())
                 .buyer(createRoomReqDto.getBuyer())
                 .imgUrl(item.getImgUrl())
                 .itemId(createRoomReqDto.getItemId())
@@ -73,13 +69,9 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
     @Override
     public List<GetRoomDto> findRoomById(String nickname) {
-        List<RedisChatRoom> list;
-        if (redisChatRoomRepository.findRoomsByNickname(nickname)== null)
-            list = new ArrayList<>();
-        else
-            list = redisChatRoomRepository.findRoomsByNickname(nickname);
+        List<RedisChatRoom> list =redisChatRoomRepository.findRoomsByNickname(nickname)
+                        .orElseGet(ArrayList::new);
         log.info("list의 size : {}", list.size());
-
         List<GetRoomDto> getRoomDtoList = new ArrayList<>();
         int idx=0;
         //너가 채팅방을 들어선다면 last message 줄거고, 그게 너가 알고있는게 아니면? 최신인거야
@@ -93,15 +85,12 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         return getRoomDtoList;
     }
 
-    /**
-     * RedisChatRoom을 Scheduleling(Redis->MySQL)
-     * @return int[][]
-     */
     @Override
 //    @Scheduled(cron = "0 0 3 * * *")
     public void sendRoomToDB() {
         //TODO entries 대신 scan을 사용해보는것
-        Map<String, List<RedisChatRoom>> map = redisChatRoomRepository.findAllRoomByKey();
+        Map<String, List<RedisChatRoom>> map = redisChatRoomRepository.findAllRoomByKey()
+                .orElseThrow(()-> new NoSuchElementException("채팅방이 하나도 없습니다."));
         Iterator<String> mapIter = map.keySet().iterator();
         ;
         List<RedisChatRoom> allRoomList = new ArrayList<>();
@@ -121,10 +110,13 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     @Override
     public void redisChatRoomWarming() {
         //유효한 room들 다 넣어주자
-        List<ChatRoom> chatRoomList = chatRoomRepository.findAllValidRooms();
+        Optional<List<ChatRoom>> chatRoomList = chatRoomRepository.findAllValidRooms();
+        if(!chatRoomList.isPresent()) return;
+
         Map<String, List<RedisChatRoom>> map = new HashMap<>();
-        for (ChatRoom chatRoom : chatRoomList) {
+        for (ChatRoom chatRoom : chatRoomList.get()) {
             Item item = chatRoom.getItem();
+
             RedisChatRoom redisChatRoom = RedisChatRoom.builder()
                     .roomId(chatRoom.getRoomId())
                     .itemId(item.getId())
@@ -137,24 +129,16 @@ public class ChatRoomServiceImpl implements ChatRoomService{
                     .lastMessageTime(chatRoom.getLastMessageTime().toLocalDateTime())
                     .isNew(chatRoom.isNew())
                     .build();
+
             //seller꺼
-            List<RedisChatRoom>list;
-            if(map.get(redisChatRoom.getSeller())==null){
-                list = new ArrayList<>();
-            }else{
-                list = map.get(redisChatRoom.getSeller());
-            }
-            list.add(redisChatRoom);
-            map.put(redisChatRoom.getSeller(),list);
+            List<RedisChatRoom>sellerList = map.getOrDefault(redisChatRoom.getSeller(),new ArrayList<>());
+            sellerList.add(redisChatRoom);
+            map.put(redisChatRoom.getSeller(),sellerList);
 
             //buyer꺼
-            if(map.get(redisChatRoom.getBuyer())==null){
-                list = new ArrayList<>();
-            }else{
-                list = map.get(redisChatRoom.getBuyer());
-            }
-            list.add(redisChatRoom);
-            map.put(redisChatRoom.getBuyer(),list);
+            List<RedisChatRoom>buyerList = map.getOrDefault(redisChatRoom.getBuyer(),new ArrayList<>());
+            buyerList.add(redisChatRoom);
+            map.put(redisChatRoom.getBuyer(),buyerList);
         }
         redisChatRoomRepository.saveRoomsMap(map);
     }

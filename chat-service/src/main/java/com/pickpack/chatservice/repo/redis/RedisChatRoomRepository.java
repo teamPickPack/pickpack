@@ -33,61 +33,35 @@ public class RedisChatRoomRepository {
         opsHashChatRoom =redisTemplate.opsForHash();
     }
 
-    //Redis에 room삽입
+    //optional 처리로 필요없을듯
+//
+//    public boolean isHasKeyOnChatRoom(String nickname) {
+//        return opsHashChatRoom.hasKey(CHAT_ROOMS, nickname);
+//    }
 
-    public boolean isHasKeyOnChatRoom(String nickname) {
-        return opsHashChatRoom.hasKey(CHAT_ROOMS, nickname);
+    public Optional<List<RedisChatRoom>> findRoomsByNickname(String nickname) {
+        return Optional.ofNullable(opsHashChatRoom.get(CHAT_ROOMS, nickname));
     }
-
-    /**
-     * 이 닉네임이 참여한 채팅방들 가져오기
-     *
-     * @param nickname
-     * @return List - RedisChatRoom
-     */
-    public List<RedisChatRoom> findRoomsByNickname(String nickname) {
-        return opsHashChatRoom.get(CHAT_ROOMS, nickname);
-    }
-
-
-    /**
-     * 이 닉네임의 채팅방 리스트들을 저장하기
-     *
-     * @param nickname
-     * @param redisChatRoomList
-     */
 
     public void saveRoomList(String nickname, List<RedisChatRoom> redisChatRoomList) {
         opsHashChatRoom.put(CHAT_ROOMS, nickname, redisChatRoomList);
     }
 
-    /**
-     * Map<닉네임,채팅방 리스트>를 저장하기
-     *
-     * @param redisChatRoomMap
-     */
     public void saveRoomsMap(Map<String, List<RedisChatRoom>> redisChatRoomMap) {
         opsHashChatRoom.putAll(CHAT_ROOMS, redisChatRoomMap);
     }
 
-    /**
-     * 모든 Map<닉네임,채팅방 리스트> 가져오기
-     *
-     * @return
-     */
-    public Map<String, List<RedisChatRoom>> findAllRoomByKey() {
-        return opsHashChatRoom.entries(CHAT_ROOMS);
+    public Optional<Map<String, List<RedisChatRoom>>> findAllRoomByKey() {
+        return Optional.of(opsHashChatRoom.entries(CHAT_ROOMS));
     }
 
-    /**
-     * 모든 RedisChatRoom 삭제하기
-     */
     public void deleteAllRoom() {
         redisTemplate.delete(CHAT_ROOMS);
     }
 
     public void updateRoomTime(String nickname, String roomId, LocalDateTime time, boolean flag) {
-        List<RedisChatRoom> redisChatRoomList = findRoomsByNickname(nickname);
+        List<RedisChatRoom> redisChatRoomList = findRoomsByNickname(nickname)
+                .orElseGet(ArrayList::new);
 
         for (RedisChatRoom redisChatRoom : redisChatRoomList) {
             if (redisChatRoom.getRoomId().equals(roomId)) {
@@ -108,12 +82,6 @@ public class RedisChatRoomRepository {
         saveRoomList(nickname, redisChatRoomList);
     }
 
-    /**
-     * RedisChatRoom(Redis) -> ChatRoom(MySQL)
-     *
-     * @param allRoomList
-     * @return
-     */
     public int[][] writeRoomFromRedisToDB(List<RedisChatRoom> allRoomList) {
         return jdbcTemplate.batchUpdate
                 ("INSERT INTO chat_room(room_id,item_id,seller,buyer,message_size,last_message,is_new,recent_time) VALUES (?,?,?,?,?,?,?,?)" +

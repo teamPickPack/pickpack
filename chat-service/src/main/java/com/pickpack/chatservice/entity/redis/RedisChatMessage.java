@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class RedisChatMessage implements Serializable {
@@ -45,5 +44,4 @@ public class RedisChatMessage implements Serializable {
         redisChatMessage.time=chatMessage.getTime().toLocalDateTime();
         return redisChatMessage;
     }
-
 }
