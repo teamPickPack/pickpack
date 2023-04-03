@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.pickpack.chatservice.dto.IsNewDTO;
+import com.pickpack.chatservice.dto.IsNewDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,7 +33,7 @@ public class RedisChatRoom implements Serializable {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime lastMessageTime;
 
-    public void change(IsNewDTO isNewDto) {
+    public void change(IsNewDto isNewDto) {
         this.isNew= (!Objects.equals(this.messageSize, isNewDto.getSize()));
         this.lastMessage= isNewDto.getLastMessage();
         this.messageSize= isNewDto.getSize();

@@ -15,28 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-RedisChatMessage implements Serializable {
+public class RedisChatMessage implements Serializable {
 
     private static final long serialVersionUID = -3377559815188666211L;
 

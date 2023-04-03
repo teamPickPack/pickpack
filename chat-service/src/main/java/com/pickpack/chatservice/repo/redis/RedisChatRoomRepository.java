@@ -46,16 +46,6 @@ public class RedisChatRoomRepository {
      * @return List - RedisChatRoom
      */
     public List<RedisChatRoom> findRoomsByNickname(String nickname) {
-        log.info("nickname: {}", nickname);
-        List<RedisChatRoom> list = opsHashChatRoom.get(CHAT_ROOMS,nickname);
-        List<RedisChatRoom> nickname1list = opsHashChatRoom.get(CHAT_ROOMS,"nickname1");
-        for(RedisChatRoom redisChatRoom : nickname1list){
-            System.out.println(redisChatRoom.getRoomId());
-        }
-        for(RedisChatRoom redisChatRoom : list){
-            System.out.println(redisChatRoom.getRoomId());
-        }
-        log.info("끝");
         return opsHashChatRoom.get(CHAT_ROOMS, nickname);
     }
 
@@ -99,7 +89,6 @@ public class RedisChatRoomRepository {
     public void updateRoomTime(String nickname, String roomId, LocalDateTime time, boolean flag) {
         List<RedisChatRoom> redisChatRoomList = findRoomsByNickname(nickname);
 
-        System.out.println("^^^^^^^^^^^^^^^^^^?");
         for (RedisChatRoom redisChatRoom : redisChatRoomList) {
             if (redisChatRoom.getRoomId().equals(roomId)) {
                 log.info("flag : {}", flag);

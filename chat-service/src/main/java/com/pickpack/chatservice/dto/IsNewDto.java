@@ -6,12 +6,12 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class IsNewDTO {
+public class IsNewDto {
     private String lastMessage;
     private int size;
 
-    public static IsNewDTO create(List<RedisChatMessage> list){
-        IsNewDTO isNewDto = new IsNewDTO();
+    public static IsNewDto create(List<RedisChatMessage> list){
+        IsNewDto isNewDto = new IsNewDto();
         isNewDto.lastMessage =list.isEmpty()? null:list.get(list.size()-1).getMessage();
         isNewDto.size=list.size();
         return isNewDto;

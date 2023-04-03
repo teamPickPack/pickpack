@@ -1,6 +1,6 @@
 package com.pickpack.chatservice.service.chat;
 
-import com.pickpack.chatservice.dto.ChatPagingResDTO;
+import com.pickpack.chatservice.dto.ChatPagingResDto;
 import com.pickpack.chatservice.entity.ChatMessage;
 import com.pickpack.chatservice.entity.ChatRoom;
 import com.pickpack.chatservice.entity.redis.RedisChatMessage;
@@ -10,7 +10,6 @@ import com.pickpack.chatservice.repo.ChatMessageRepository;
 import com.pickpack.chatservice.repo.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -46,45 +45,62 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         }
         list.add(message);
         redisChatMessageRepository.saveMessageList(message.getRoomId(), list);
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
     }
 
 
-    public List<ChatMessage> fillRedisChatMessage(String roomId, LocalDate page, int day){
-        LocalDateTime startDate = LocalDateTime.of(page.minusDays(day),LocalTime.MIDNIGHT);
-        LocalDateTime endDate = LocalDateTime.of(page,LocalTime.MIDNIGHT);
+    public List<ChatMessage> fillRedisChatMessage(String roomId, LocalDate page, int day) {
+        if(chatMessageRepository.findTop1ById(roomId).getTime()
+                .after(Timestamp.valueOf(LocalDateTime.of(page, LocalTime.MIDNIGHT)))) return null;
+
+        LocalDateTime startDate = LocalDateTime.of(page.minusDays(day), LocalTime.MIDNIGHT);
+        LocalDate date = (page.equals(LocalDate.now()))?page.plusDays(1):page;
+        LocalDateTime endDate = LocalDateTime.of(date, LocalTime.MIDNIGHT);
 
         Timestamp start = Timestamp.valueOf(startDate);
         Timestamp end = Timestamp.valueOf(endDate);
 
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow();
-        List<ChatMessage> chatMessageList = chatMessageRepository.findChatMessagesByTimeBetweenAndChatRoomOrderByTime(start,end, chatRoom)
-                .orElseGet(()->fillRedisChatMessage(roomId,page,day+1));
+
+//        Timestamp firstTime = chatMessageRepository.findTop1ById(roomId).getTime();
+//        log.info("firstTime:{}",firstTime);
+
+        //TODO 계속들어갈까?
+        List<ChatMessage> chatMessageList = chatMessageRepository.findChatMessagesByTimeBetweenAndChatRoomOrderByTime(start, end, chatRoom)
+                .orElseGet(() -> fillRedisChatMessage(roomId, page, day + 1));
+
+        if (chatMessageList == null) return null;
 
         List<RedisChatMessage> newChatMessageList = new ArrayList<>();
 
         for (ChatMessage chatMessage : chatMessageList) {
             newChatMessageList.add(RedisChatMessage.convertToRedisChatMessage(chatMessage));
         }
-        redisChatMessageRepository.saveMessageList(roomId,newChatMessageList);
-        //필요없는딩
+        redisChatMessageRepository.saveMessageList(roomId, newChatMessageList);
+        //TODO 필요없는딩
         return chatMessageList;
     }
 
 
     //TODO 먹는지 확인 하자
     @Override
-    public ChatPagingResDTO getMessages(String roomId, LocalDate page) {
-        //slice는 필요가 없는 것 같다. 캐시를 쓰는데 뭘..
-        List<RedisChatMessage> redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
-        if(redisChatMessageList==null) return null;
-        if(!redisChatMessageList.get(0).getTime().toLocalDate().equals(page)){
-            fillRedisChatMessage(roomId,page,1);
-        }
-        ChatPagingResDTO chatPagingResDTO = ChatPagingResDTO.messageListToDto(redisChatMessageList);
-        return chatPagingResDTO;
-    }
+    public ChatPagingResDto getMessages(String roomId, LocalDate date) {
 
+        List<RedisChatMessage> redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
+        if (redisChatMessageList == null) {
+            fillRedisChatMessage(roomId, date, 1);
+            redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
+        }
+        return ChatPagingResDto.messageListToDto(redisChatMessageList);
+
+        //slice는 필요가 없는 것 같다. 캐시를 쓰는데 뭘..
+
+        //date가 오늘날짜면 초출이다
+        //그게 아니라면 새로달라고 찡찡.
+        //만약에 오늘이 4월 4일이고, 4월 3일 00시부터 메시지가 없었다면, null이다.
+        //4월 3일 00시부터 메시지가 하나라도 있었다면 그대로 보내주기!
+        //근데 없다? 더 가져와. 근데 진짜 없는거랑 새로 가져올거랑 어떻게 판단을 할까?
+        // 진짜 없는거 -> null이고 날짜는 오늘 날짜, 새로 가져올거는? 현재 가지고 있는 메시지 리스튿르의 get(0)의 날짜보다 하나 더 적게!
+    }
 
 
     @Override
@@ -113,7 +129,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         //유효한 room들
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllValidRooms();
 //        LocalDateTime cursorDate = LocalDateTime.of(2023, 3, 29, 21, 56);
-        LocalDateTime cursorDate = LocalDateTime.of(LocalDate.now().minusDays(1),LocalTime.MIDNIGHT);
+        //4월 4일에 돌았다면 4월 3일 00시부터의 메시지들을 담는다.
+        LocalDateTime cursorDate = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.MIDNIGHT);
         Timestamp cursor = Timestamp.valueOf(cursorDate);
 
         log.info("cursordate(7일전) ;{}", cursorDate);

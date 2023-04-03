@@ -1,21 +1,16 @@
 package com.pickpack.chatservice.controller;
 
-import com.pickpack.chatservice.dto.ChatPagingReqDTO;
-import com.pickpack.chatservice.dto.ChatPagingResDTO;
+import com.pickpack.chatservice.dto.ChatPagingReqDto;
+import com.pickpack.chatservice.dto.ChatPagingResDto;
 import com.pickpack.chatservice.entity.redis.RedisChatMessage;
 import com.pickpack.chatservice.service.chat.ChatMessageService;
 import com.pickpack.chatservice.service.chat.pubsub.RedisPublisher;
-import com.pickpack.chatservice.repo.redis.RedisChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,26 +24,22 @@ public class ChatController {
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @CrossOrigin("*")
-    @MessageMapping("/chat/message")
+    @MessageMapping("/message")
+    //chat/pub/message
     public void message(RedisChatMessage message) {
         log.info("메시지 성공, 메시지 보낸 사람:{}",message.getSender());;
         redisPublisher.publishMessage(message);
     }
 
     @GetMapping("/api/chat/message")
-    public ResponseEntity<ChatPagingResDTO> getMessages(@RequestBody ChatPagingReqDTO page) {
-        log.info("roomId:{}, page(date):{}",page.getRoomId(),page.getDate());
-        return new ResponseEntity<>(chatMessageService.getMessages(page.getRoomId(),page.getDate()), HttpStatus.OK);
+    public ResponseEntity<ChatPagingResDto> getMessages(@RequestBody ChatPagingReqDto chatPagingReqDTO) {
+        log.info("roomId:{}, page(date):{}",chatPagingReqDTO.getRoomId(),chatPagingReqDTO.getDate());
+        return new ResponseEntity<>(chatMessageService.getMessages(chatPagingReqDTO.getRoomId(),chatPagingReqDTO.getDate()), HttpStatus.OK);
     }
-//        @GetMapping("/api/chat/message/{roomId}")
-//    public ResponseEntity<ChatPagingResDTO> getMessages(@PathVariable String roomId) {
-//        log.info("roomId:{}", roomId);
-//        return new ResponseEntity<>(chatMessageService.getMessages(roomId), HttpStatus.OK);
-//    }
+    //TODO 페이징처리!!!!!!!!!!!!!!!
 
     @GetMapping("/chat/check")
     public String check(){
         return("check 성공이어유");
     }
-    //TODO 페이징처리!!!!!!!!!!!!!!!
 }

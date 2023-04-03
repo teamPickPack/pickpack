@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class GetRoomDTO {
+public class GetRoomDto {
     private String chatRoomId;
     private Long itemId;
     private String imgUrl;
@@ -17,8 +17,8 @@ public class GetRoomDTO {
     private String nickName;
     private boolean isNew;
 
-    public GetRoomDTO chatRoomToGetRoomDto(RedisChatRoom redisChatRoom, String memberId){
-        GetRoomDTO getRoomDto = new GetRoomDTO();
+    public GetRoomDto chatRoomToGetRoomDto(RedisChatRoom redisChatRoom, String memberId){
+        GetRoomDto getRoomDto = new GetRoomDto();
         getRoomDto.chatRoomId= redisChatRoom.getRoomId();
         getRoomDto.itemId= redisChatRoom.getItemId();
         getRoomDto.imgUrl= redisChatRoom.getImgUrl();

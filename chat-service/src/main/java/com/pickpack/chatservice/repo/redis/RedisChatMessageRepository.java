@@ -1,7 +1,6 @@
 package com.pickpack.chatservice.repo.redis;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.pickpack.chatservice.dto.IsNewDTO;
+import com.pickpack.chatservice.dto.IsNewDto;
 import com.pickpack.chatservice.entity.redis.RedisChatMessage;
 import com.pickpack.chatservice.repo.ChatMessageRepository;
 import com.pickpack.chatservice.repo.ChatRoomRepository;
@@ -11,7 +10,6 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -64,9 +62,9 @@ public class RedisChatMessageRepository implements Serializable {
     }
 
     //마지막 메시지 주기
-    public IsNewDTO findSizeAndLastMessage(String roomId) {
+    public IsNewDto findSizeAndLastMessage(String roomId) {
         if (isHasKeyOnChatMessage(roomId)) {
-            return IsNewDTO.create(findMessagesByRoomId(roomId));
+            return IsNewDto.create(findMessagesByRoomId(roomId));
         } else {
             return null;
         }
