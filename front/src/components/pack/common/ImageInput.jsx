@@ -167,7 +167,7 @@ const ImageInput = (props) => {
   useEffect(() => {
     let empty = [];
 
-    for (let index = 0; index < 10 - imageState.length; index++) {
+    for (let index = 0; index < props.maxFileNum - imageState.length; index++) {
       empty.push(index);
     }
 
@@ -179,13 +179,13 @@ const ImageInput = (props) => {
       <InputBox>
         <input
           type="file"
-          id="houseImage"
+          id="Image"
           accept="image/*"
           multiple={props.maxFileNum === 1 || !props.maxFileNum ? false : true}
           onChange={ImageChangeEventHandler}
           style={{ display: "none" }}
         />
-        <label htmlFor="houseImage">
+        <label htmlFor="Image" style={{ display: "flex" }}>
           {props.addButton ? props.addButton : <p>사진 업로드하기</p>}
         </label>
       </InputBox>
