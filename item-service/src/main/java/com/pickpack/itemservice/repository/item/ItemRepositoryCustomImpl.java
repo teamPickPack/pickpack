@@ -1,5 +1,6 @@
 package com.pickpack.itemservice.repository.item;
 
+import com.pickpack.itemservice.api.response.ListRes;
 import com.pickpack.itemservice.dto.item.ItemDetailDto;
 import com.pickpack.itemservice.dto.item.ItemListDto;
 import com.pickpack.itemservice.entity.Category;
@@ -22,7 +23,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
     public ItemRepositoryCustomImpl(EntityManager em){
         this.queryFactory = new JPAQueryFactory(em);
     }
-    public List<ItemListDto> getItemsWithCategory(Pageable pageable, String categoryStr) {
+    public ListRes getItemsWithCategory(Pageable pageable, String categoryStr) {
         List<ItemListDto> itemsWithCategory =
                 queryFactory.select(Projections.fields(ItemListDto.class,
                         item.id.as("itemId"),
@@ -36,13 +37,17 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                         .where(item.category.eq(Category.valueOf(categoryStr)))
                         .where(item.isDelete.eq(Boolean.FALSE))
                         .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
+                        .limit(pageable.getPageSize() + 1)
                         .fetch();
-        return itemsWithCategory;
+        Boolean hasNext = true;
+        if(itemsWithCategory.size() <= pageable.getPageSize()){
+            hasNext = false;
+        }
+        return new ListRes(itemsWithCategory, hasNext);
     }
 
     @Override
-    public List<ItemListDto> getItemsSearchOnTitle(Pageable pageable, String categoryStr, String search) {
+    public ListRes getItemsSearchOnTitle(Pageable pageable, String categoryStr, String search) {
         List<ItemListDto> itemsSearchOntitle =
                 queryFactory.select(Projections.fields(ItemListDto.class,
                         item.id.as("itemId"),
@@ -57,13 +62,18 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                         .where(item.isDelete.eq(Boolean.FALSE))
                         .where(item.title.contains(search))
                         .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
+                        .limit(pageable.getPageSize() + 1)
                         .fetch();
-        return itemsSearchOntitle;
+
+        Boolean hasNext = true;
+        if(itemsSearchOntitle.size() <= pageable.getPageSize()){
+            hasNext = false;
+        }
+        return new ListRes(itemsSearchOntitle, hasNext);
     }
 
     @Override
-    public List<ItemListDto> getItemsSearchOnCity(Pageable pageable, String categoryStr, Long cityId) {
+    public ListRes getItemsSearchOnCity(Pageable pageable, String categoryStr, Long cityId) {
         List<ItemListDto> itemsSearchOnCity =
                 queryFactory.select(Projections.fields(ItemListDto.class,
                 item.id.as("itemId"),
@@ -77,9 +87,13 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                 .where(item.category.eq(Category.valueOf(categoryStr)))
                 .where(item.isDelete.eq(Boolean.FALSE))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
-        return itemsSearchOnCity;
+        Boolean hasNext = true;
+        if(itemsSearchOnCity.size() <= pageable.getPageSize()){
+            hasNext = false;
+        }
+        return new ListRes(itemsSearchOnCity, hasNext);
     }
 
     @Override
