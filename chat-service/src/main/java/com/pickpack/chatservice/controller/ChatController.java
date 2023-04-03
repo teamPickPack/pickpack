@@ -39,5 +39,10 @@ public class ChatController {
         log.info("roomId:{}, page(date):{}",roomId,page.getDate());
         return new ResponseEntity<>(chatMessageService.getMessages(roomId,page.getDate()), HttpStatus.OK);
     }
+
+    @GetMapping("/chat/check")
+    public String check(){
+        return("check 성공이어유");
+    }
     //TODO 페이징처리!!!!!!!!!!!!!!!
 }
