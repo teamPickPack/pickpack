@@ -28,7 +28,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
-                .join(ticket.tendency, tendency)
+                .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -41,11 +41,13 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         List<Ticket> ticketList = query.fetch();
 
+        System.out.println(ticketList);
+
         Long totalCount = queryFactory
                 .select(ticket.count())
                 .from(ticket)
                 .join(ticket.flightList, flight)
-                .join(ticket.tendency, tendency)
+                .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -61,7 +63,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
-                .join(ticket.tendency, tendency)
+                .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -79,7 +81,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .select(ticket.count())
                 .from(ticket)
                 .join(ticket.flightList, flight)
-                .join(ticket.tendency, tendency)
+                .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -96,7 +98,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
-                .join(ticket.tendency, tendency)
+                .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -114,7 +116,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .select(ticket.count())
                 .from(ticket)
                 .join(ticket.flightList, flight)
-                .join(ticket.tendency, tendency)
+                .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
