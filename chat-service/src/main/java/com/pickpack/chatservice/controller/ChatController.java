@@ -35,11 +35,17 @@ public class ChatController {
         redisPublisher.publishMessage(message);
     }
 
-    @GetMapping("/api/chat/message/{roomId}")
-    public ResponseEntity<ChatPagingResDTO> getMessages(@PathVariable String roomId, @RequestBody ChatPagingReqDTO page) {
-        log.info("roomId:{}, page(date):{}",roomId,page.getDate());
-        return new ResponseEntity<>(chatMessageService.getMessages(roomId,page.getDate()), HttpStatus.OK);
+    @GetMapping("/api/chat/message")
+    public ResponseEntity<ChatPagingResDTO> getMessages(@RequestBody ChatPagingReqDTO page) {
+        log.info("roomId:{}, page(date):{}",page.getRoomId(),page.getDate());
+        return new ResponseEntity<>(chatMessageService.getMessages(page.getRoomId(),page.getDate()), HttpStatus.OK);
     }
+//        @GetMapping("/api/chat/message/{roomId}")
+//    public ResponseEntity<ChatPagingResDTO> getMessages(@PathVariable String roomId) {
+//        log.info("roomId:{}", roomId);
+//        return new ResponseEntity<>(chatMessageService.getMessages(roomId), HttpStatus.OK);
+//    }
+
     @GetMapping("/chat/check")
     public String check(){
         return("check 성공이어유");
