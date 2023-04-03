@@ -21,13 +21,13 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/api/chat/sub");
-        config.setApplicationDestinationPrefixes("/api/chat/pub");
+        config.enableSimpleBroker("/chat/sub");
+        config.setApplicationDestinationPrefixes("/chat/pub");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/chat/ws-stomp").setAllowedOriginPatterns("*");
+        registry.addEndpoint("/chat/ws-stomp").setAllowedOriginPatterns("*");
 //                .withSockJS();
     }
 
