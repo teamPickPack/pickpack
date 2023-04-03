@@ -1,6 +1,7 @@
 package com.pickpack.itemservice.service.item;
 
 import com.pickpack.itemservice.api.response.ItemDetailRes;
+import com.pickpack.itemservice.api.response.ListRes;
 import com.pickpack.itemservice.dto.item.ItemDetailDto;
 import com.pickpack.itemservice.dto.item.ItemListDto;
 import com.pickpack.itemservice.entity.*;
@@ -63,33 +64,41 @@ public class ItemService {
         return item.getId();
     }
 
-    public List<ItemListDto> getItemsWithCategory(String categoryStr, Integer page){
-        PageRequest pageRequest = PageRequest.of(page, itemSize,
-                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
-        List<ItemListDto> items = itemRepository.getItemsWithCategory( pageRequest, categoryStr);
-        if(items.isEmpty()){
+    public ListRes getItemsWithCategory(String categoryStr, Integer page){
+        PageRequest pageRequest = PageRequest.of(page, itemSize);
+
+        ListRes items = itemRepository.getItemsWithCategory( pageRequest, categoryStr);
+
+        List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
+        if(lists.isEmpty()){
             throw new ListEmptyException("item 목록이 없습니다.");
         }
+
         return items;
     }
 
-    public List<ItemListDto> getItemsSearchOnTitle(String categoryStr, String search, Integer page){
-        PageRequest pageRequest = PageRequest.of(page, itemSize,
-                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
-        List<ItemListDto> items = itemRepository.getItemsSearchOnTitle(pageRequest, categoryStr, search);
-        if(items.isEmpty()){
+    public ListRes getItemsSearchOnTitle(String categoryStr, String search, Integer page){
+        PageRequest pageRequest = PageRequest.of(page, itemSize);
+        ListRes items = itemRepository.getItemsSearchOnTitle(pageRequest, categoryStr, search);
+
+        List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
+        if(lists.isEmpty()){
             throw new ListEmptyException(search + "에 대한 검색 결과가 없습니다.");
         }
+
         return items;
     }
 
-    public List<ItemListDto> getItemsSearchOnCity(String categoryStr, Long cityId, Integer page){
-        PageRequest pageRequest = PageRequest.of(page, itemSize,
-                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
-        List<ItemListDto> items = itemRepository.getItemsSearchOnCity(pageRequest, categoryStr, cityId);
-        if(items.isEmpty()) {
-            throw new ListEmptyException(cityId + "에 대한 검색 결과가 없습니다.");
+    public ListRes getItemsSearchOnCity(String categoryStr, Long cityId, Integer page){
+        PageRequest pageRequest = PageRequest.of(page, itemSize);
+        ListRes items = itemRepository.getItemsSearchOnCity(pageRequest, categoryStr, cityId);
+
+
+        List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
+        if(lists.isEmpty()){
+            throw new ListEmptyException(cityId + "번 도시에 대한 검색 결과가 없습니다.");
         }
+
         return items;
     }
 
