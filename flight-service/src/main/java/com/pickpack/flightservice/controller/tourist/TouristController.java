@@ -19,7 +19,7 @@ import java.util.List;
 public class TouristController {
     private final TouristService touristService;
 
-    @GetMapping("/tourist/{continent}")
+    @GetMapping(value ="/tourist/{continent}", produces="application/json;charset=UTF-8")
     public ResponseEntity<?> getTouristsByContinent(@PathVariable("continent") String continent){
         List<Tourist> touristList = touristService.getTouristsByContinent(continent);
         if(touristList.isEmpty()){
