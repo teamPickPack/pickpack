@@ -77,6 +77,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public ChatPagingResDTO getMessages(String roomId, LocalDate page) {
         //slice는 필요가 없는 것 같다. 캐시를 쓰는데 뭘..
         List<RedisChatMessage> redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
+        if(redisChatMessageList==null) return null;
         if(!redisChatMessageList.get(0).getTime().toLocalDate().equals(page)){
             fillRedisChatMessage(roomId,page,1);
         }
