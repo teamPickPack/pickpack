@@ -79,11 +79,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.addHeader(JwtVO.HEADER, jwtToken);
 
         //Todo 응답 객체 만들기 <- jwt에 다 싫어보내는거 어때?
-//        LoginRespDto loginRespDto = new LoginRespDto();
-//        loginRespDto.setId(loginMember.getMember().getId());
-//        loginRespDto.setMid(loginMember.getMember().getMid());
-//
-//        CustomResponseUtil.success(response, loginRespDto);
+        LoginRespDto loginRespDto = new LoginRespDto();
+        loginRespDto.setId(loginMember.getMember().getId());
+        loginRespDto.setMid(loginMember.getMember().getMid());
+        CustomResponseUtil.success(response, loginRespDto);
     }
 
     @Override
