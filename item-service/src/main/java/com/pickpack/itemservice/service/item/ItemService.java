@@ -35,7 +35,7 @@ public class ItemService {
     private static String dirName = "item";
     private static Integer itemSize = 12;
 
-    public Long createItem(Long memberId, String title, String categoryStr, Integer price, String content, String itemName, Long cityId, MultipartFile img){
+    public Long createItem(Long memberId, String title, String categoryStr, Integer price, String content, String itemName, Long cityId, List<MultipartFile> imgs){
         // city get
         Optional<City> cityOptional = cityRepository.findById(cityId);
         if(cityOptional.isEmpty()){
@@ -50,13 +50,16 @@ public class ItemService {
         Member member = memberOptional.get();
         Item item = Item.createItem(title, str2Category(categoryStr), price, content, itemName, city, member);
 
-        String imgUrl = null;
+        StringBuilder sb = new StringBuilder();
+//        String imgUrl = null;
         try {
-            imgUrl = s3Uploader.upload(img, dirName);
+            for(int i = 0; i < imgs.size(); i++){
+                sb.append(s3Uploader.upload(imgs.get(i), dirName)).append("|");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        item.setImage(imgUrl);
+        item.setImage(sb.toString());
         itemRepository.save(item);
         return item.getId();
     }
