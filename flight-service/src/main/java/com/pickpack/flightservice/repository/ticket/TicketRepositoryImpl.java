@@ -28,7 +28,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
                 .join(ticket.flightList, flight)
-//                .join(ticket.tendency, tendency)
+                .join(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
@@ -37,17 +37,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
-        for (Sort.Order o : pageable.getSort()) {
-            if(o.getProperty().equals("updown")) {
-                PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
-                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
-            } else {
-                PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
-                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
-            }
-        }
+        sortAndOrder(query, pageable);
 
         List<Ticket> ticketList = query.fetch();
 
@@ -81,17 +71,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
-        for (Sort.Order o : pageable.getSort()) {
-            if(o.getProperty().equals("updown")) {
-                PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
-                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
-            } else {
-                PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
-                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
-            }
-        }
+        sortAndOrder(query, pageable);
 
         List<Ticket> ticketList = query.fetch();
 
@@ -103,7 +83,8 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
-                        ticket.price.between(minPrice, maxPrice)
+                        ticket.price.between(minPrice, maxPrice),
+                        ticket.waypointNum.eq(waypointNum)
                 )
                 .fetchOne();
 
@@ -125,17 +106,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
-        for (Sort.Order o : pageable.getSort()) {
-            if(o.getProperty().equals("updown")) {
-                PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
-                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
-            } else {
-                PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
-                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
-            }
-        }
+        sortAndOrder(query, pageable);
 
         List<Ticket> ticketList = query.fetch();
 
@@ -147,11 +118,26 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
-                        ticket.price.between(minPrice, maxPrice)
+                        ticket.price.between(minPrice, maxPrice),
+                        ticket.waypointNum.eq(waypointNum)
                 )
                 .fetchOne();
 
         return new PageImpl<>(ticketList, pageable, totalCount);
+    }
+
+    private void sortAndOrder(JPAQuery<Ticket> query, Pageable pageable) {
+        for (Sort.Order o : pageable.getSort()) {
+            if(o.getProperty().equals("updown")) {
+                PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
+                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                        pathBuilder.get(o.getProperty())));
+            } else {
+                PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
+                query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                        pathBuilder.get(o.getProperty())));
+            }
+        }
     }
 
 }
