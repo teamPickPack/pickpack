@@ -4,6 +4,7 @@ package com.pickpack.memberservice.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 @Getter
 @ToString
-public class Member {
+public class Member implements Serializable {
 
     @Column(name = "member_id")
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

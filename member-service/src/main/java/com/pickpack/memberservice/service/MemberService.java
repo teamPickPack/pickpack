@@ -11,6 +11,7 @@ import com.pickpack.memberservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,7 @@ public class MemberService {
         return new JoinRespDto(memberPS);
     }
 
+//    @Cacheable(value = "FindRespDto", key = "#memberId")
     @Transactional(readOnly = true)
     public FindRespDto findMember(Long memberId){
         // 회원이 존재하는지 검사.
