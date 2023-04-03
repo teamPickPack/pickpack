@@ -20,7 +20,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin("*")
 //@RequestMapping("/api/chat")
 public class ChatController {
     private final RedisPublisher redisPublisher;
@@ -29,6 +28,7 @@ public class ChatController {
     /**
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
+    @CrossOrigin("*")
     @MessageMapping("/chat/message")
     public void message(RedisChatMessage message) {
         log.info("메시지 성공, 메시지 보낸 사람:{}",message.getSender());;
