@@ -18,12 +18,12 @@ public class TouristService {
     }
     public Continent getContinent(String str){
         switch (str){
-            case "남아메리카": return Continent.SAMERICA;
-            case "북아메리카": return Continent.NAMERICA;
-            case "아프리카": return Continent.AFRICA;
-            case "아시아": return Continent.ASIA;
-            case "유럽": return Continent.EUROPE;
-            case "오세아니아": return Continent.OCEANIA;
+            case "samerica": return Continent.SAMERICA;
+            case "namerica": return Continent.NAMERICA;
+            case "africa": return Continent.AFRICA;
+            case "asia": return Continent.ASIA;
+            case "europe": return Continent.EUROPE;
+            case "oceania": return Continent.OCEANIA;
             default:
                 return null;
         }
