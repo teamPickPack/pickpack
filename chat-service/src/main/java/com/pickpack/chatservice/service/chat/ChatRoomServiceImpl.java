@@ -1,8 +1,8 @@
 package com.pickpack.chatservice.service.chat;
 
-import com.pickpack.chatservice.dto.CreateRoomDTO;
-import com.pickpack.chatservice.dto.GetRoomDTO;
-import com.pickpack.chatservice.dto.IsNewDTO;
+import com.pickpack.chatservice.dto.CreateRoomReqDto;
+import com.pickpack.chatservice.dto.GetRoomDto;
+import com.pickpack.chatservice.dto.IsNewDto;
 import com.pickpack.chatservice.entity.ChatRoom;
 import com.pickpack.chatservice.entity.Item;
 import com.pickpack.chatservice.entity.redis.RedisChatRoom;
@@ -12,8 +12,6 @@ import com.pickpack.chatservice.repo.ChatRoomRepository;
 import com.pickpack.chatservice.repo.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -45,18 +43,18 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         redisChatRoomRepository.saveRoomList(nickname,redisChatRoomList);
     }
     @Override
-    public RedisChatRoom createChatRoom(CreateRoomDTO createRoomDto) {
-        Item item = itemRepository.findItemById(createRoomDto.getItemId());
+    public RedisChatRoom createChatRoom(CreateRoomReqDto createRoomReqDto) {
+        Item item = itemRepository.findItemById(createRoomReqDto.getItemId());
 
         RedisChatRoom redisChatRoom = RedisChatRoom.builder()
                 //db에 roomid로 정렬이됨
                 .roomId(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
                         + UUID.randomUUID().toString())
-                .buyer(createRoomDto.getBuyer())
+                .buyer(createRoomReqDto.getBuyer())
                 .imgUrl(item.getImgUrl())
-                .itemId(createRoomDto.getItemId())
+                .itemId(createRoomReqDto.getItemId())
                 .itemName(item.getItemName())
-                .seller(createRoomDto.getSeller())
+                .seller(createRoomReqDto.getSeller())
                 .lastMessage("채팅을 해보세요!")
                 .messageSize(0)
                 .lastMessageTime(LocalDateTime.now())
@@ -69,12 +67,12 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     }
     @Override
     public void updateRoomStatus(RedisChatRoom redisChatRoom) {
-        IsNewDTO isNewDto = redisChatMessageRepository.findSizeAndLastMessage(redisChatRoom.getRoomId());
+        IsNewDto isNewDto = redisChatMessageRepository.findSizeAndLastMessage(redisChatRoom.getRoomId());
         if (isNewDto != null) redisChatRoom.change(isNewDto);
     }
 
     @Override
-    public List<GetRoomDTO> findRoomById(String nickname) {
+    public List<GetRoomDto> findRoomById(String nickname) {
         List<RedisChatRoom> list;
         if (redisChatRoomRepository.findRoomsByNickname(nickname)== null)
             list = new ArrayList<>();
@@ -82,17 +80,17 @@ public class ChatRoomServiceImpl implements ChatRoomService{
             list = redisChatRoomRepository.findRoomsByNickname(nickname);
         log.info("list의 size : {}", list.size());
 
-        List<GetRoomDTO> getRoomDTOList = new ArrayList<>();
+        List<GetRoomDto> getRoomDtoList = new ArrayList<>();
         int idx=0;
         //너가 채팅방을 들어선다면 last message 줄거고, 그게 너가 알고있는게 아니면? 최신인거야
         for (RedisChatRoom cr : list) {
             log.info(idx+" update전의 messageSize : {}, lastMessage : {}",cr.getMessageSize(),cr.getLastMessage());
             updateRoomStatus(cr);
             log.info(idx+" update후의 messageSize : {}, lastMessage : {}",cr.getMessageSize(),cr.getLastMessage());
-            getRoomDTOList.add(new GetRoomDTO().chatRoomToGetRoomDto(cr, nickname));
+            getRoomDtoList.add(new GetRoomDto().chatRoomToGetRoomDto(cr, nickname));
         }
         redisChatRoomRepository.saveRoomList(nickname,list);
-        return getRoomDTOList;
+        return getRoomDtoList;
     }
 
     /**
@@ -109,7 +107,6 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         List<RedisChatRoom> allRoomList = new ArrayList<>();
         while (mapIter.hasNext()) {
             String key = mapIter.next();
-            System.out.println(key);
             List<RedisChatRoom> iterRoomList = map.get(key);
             if (iterRoomList.isEmpty()) continue;
             Collections.addAll(allRoomList, iterRoomList.toArray(new RedisChatRoom[0]));
