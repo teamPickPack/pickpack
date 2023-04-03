@@ -40,8 +40,7 @@ public class Ticket {
     @JoinColumn(name = "ticketId", insertable=false, updatable=false)
     private List<Flight> flightList;
 
-    @OneToOne
-    @JoinColumn(name = "ticketId", insertable=false, updatable=false)
+    @OneToOne(mappedBy = "ticket")
     @JsonIgnore
     private Tendency tendency;
 }
