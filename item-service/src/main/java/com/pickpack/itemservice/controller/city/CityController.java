@@ -1,5 +1,6 @@
 package com.pickpack.itemservice.controller.city;
 
+import com.pickpack.itemservice.api.response.CityListRes;
 import com.pickpack.itemservice.api.response.ListRes;
 import com.pickpack.itemservice.entity.City;
 import com.pickpack.itemservice.exception.ListEmptyException;
@@ -30,7 +31,7 @@ public class CityController {
             exceptionHandling(new ListEmptyException(errMsg));
             return new ResponseEntity<String>("Error : " + errMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(new ListRes(cityList), HttpStatus.OK);
+        return new ResponseEntity<>(new CityListRes(cityList), HttpStatus.OK);
     }
 
     private void exceptionHandling(Exception e) {

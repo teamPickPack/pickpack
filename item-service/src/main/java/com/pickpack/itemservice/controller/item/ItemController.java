@@ -35,7 +35,7 @@ public class ItemController {
     @GetMapping("/{category}/{page}")
     public ResponseEntity<?> getItemsWithCategory(@PathVariable("category") String category, @PathVariable("page") Integer page){
         try{
-            return new ResponseEntity<>(new ListRes(itemService.getItemsWithCategory(category, page)), HttpStatus.OK);
+            return new ResponseEntity<>(itemService.getItemsWithCategory(category, page), HttpStatus.OK);
         }catch(Exception e){
             return exceptionHandling(e);
         }
@@ -44,7 +44,7 @@ public class ItemController {
     @GetMapping("/{category}/title/{search}/{page}")
     public ResponseEntity<?> getItemsSearchOnTitle(@PathVariable("category") String category, @PathVariable("search") String search, @PathVariable("page") Integer page){
         try{
-            return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnTitle(category, search, page)), HttpStatus.OK);
+            return new ResponseEntity<>(itemService.getItemsSearchOnTitle(category, search, page), HttpStatus.OK);
         }catch(Exception e){
             return exceptionHandling(e);
         }
@@ -52,7 +52,7 @@ public class ItemController {
     @GetMapping("/{category}/city/{cityId}/{page}")
     public ResponseEntity<?> getItemsSearchOnCity(@PathVariable("category") String category, @PathVariable("cityId") Long cityId, @PathVariable("page") Integer page){
         try{
-            return new ResponseEntity<>(new ListRes(itemService.getItemsSearchOnCity(category, cityId, page)), HttpStatus.OK);
+            return new ResponseEntity<>(itemService.getItemsSearchOnCity(category, cityId, page), HttpStatus.OK);
         }catch (Exception e){
             return exceptionHandling(e);
         }
