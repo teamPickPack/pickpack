@@ -12,6 +12,7 @@ import java.util.List;
 
 @Getter
 public class ChatPagingReqDTO {
+    private String roomId;
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate date;
