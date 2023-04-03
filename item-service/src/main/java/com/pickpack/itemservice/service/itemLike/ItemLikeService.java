@@ -45,7 +45,7 @@ public class ItemLikeService {
     }
 
     public void unlikeItem(Long itemId, Long memberId){
-        List<ItemLike> itemLikeList = itemLikeRepository.findByItemIdAndMemberId(itemId, memberId);
+        List<ItemLike> itemLikeList = itemLikeRepository.findByItemIdAndMemberIdAndIsDelete(itemId, memberId, false) ;
         if(itemLikeList.isEmpty()){
             throw new NotLikeException(itemId + " 물품 게시글을 찜 하지 않았습니다.");
         }
