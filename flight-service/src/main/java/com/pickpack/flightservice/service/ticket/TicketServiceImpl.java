@@ -70,7 +70,7 @@ public class TicketServiceImpl implements TicketService {
                     tmp = result.getContent();
                     totalCount += result.getTotalElements();
                 } else if(direct[i] && (i == 3)) { //경유 2회 이상
-                    Page<Ticket> result = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, departure, destination, date, minPrice, maxPrice, 1);
+                    Page<Ticket> result = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, departure, destination, date, minPrice, maxPrice, 2);
                     tmp = result.getContent();
                     totalCount += result.getTotalElements();
                 }
@@ -187,7 +187,7 @@ public class TicketServiceImpl implements TicketService {
                     Page<Ticket> goWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
                     goWayTicketList = goWayResult.getContent();
 
-                    Page<Ticket> returnWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 1);
+                    Page<Ticket> returnWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 2);
                     returnWayTicketList = returnWayResult.getContent();
 
                     totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
@@ -196,7 +196,7 @@ public class TicketServiceImpl implements TicketService {
                     roundTicketList.addAll(tmp);
 
                     //출국편 경유 2회 이상, 귀국편 경유 0회
-                    goWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 1);
+                    goWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 2);
                     goWayTicketList = goWayResult.getContent();
 
                     returnWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
@@ -208,10 +208,10 @@ public class TicketServiceImpl implements TicketService {
                     roundTicketList.addAll(tmp);
 
                     //출국편 경유 1회 이상, 귀국편 경유 1회
-                    goWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
+                    goWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 1);
                     goWayTicketList = goWayResult.getContent();
 
-                    returnWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
+                    returnWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 1);
                     returnWayTicketList = returnWayResult.getContent();
 
                     totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
@@ -222,8 +222,7 @@ public class TicketServiceImpl implements TicketService {
             }
         }
 
-        //TODO : 결과값 반환
-        //개수 + 조합 리스트
+        //결과 반환
         RoundTicketListRes roundTicketListRes = RoundTicketListRes.builder()
                 .totalCount(totalCount)
                 .ticketList(roundTicketList)
