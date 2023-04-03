@@ -14,11 +14,6 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
-//    @Bean
-//    public  AgentWebSocketHandlerDecoratorFactory agentWebSocketHandlerDecoratorFactory() {
-//        return new AgentWebSocketHandlerDecoratorFactory();
-//    }
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/chat/sub");
@@ -29,7 +24,6 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat/ws-stomp").setAllowedOriginPatterns("*")
                 .withSockJS();
-        //주석
     }
 
     @Override
@@ -37,7 +31,6 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
         registration.setMessageSizeLimit(50 * 1024 * 1024);
         registration.setSendTimeLimit(20 * 10000);
         registration.setSendBufferSizeLimit(50 * 1024 * 1024);
-//        registration.setDecoratorFactories(agentWebSocketHandlerDecoratorFactory());
     }
 
 }

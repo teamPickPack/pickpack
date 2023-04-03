@@ -36,13 +36,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
         redisChatRoomRepository.updateRoomTime(message.getSender(), message.getRoomId(), message.getTime(), false);
 
-        log.info("updateRoomTime(sender:{},roomid:{},time:{}", message.getSender(), message.getRoomId(), message.getTime());
-        List<RedisChatMessage> list;
-        if (!redisChatMessageRepository.isHasKeyOnChatMessage(message.getRoomId())) {
-            list = new ArrayList<>();
-        } else {
-            list = redisChatMessageRepository.findMessagesByRoomId(message.getRoomId());
-        }
+        List<RedisChatMessage> list = redisChatMessageRepository.findMessagesByRoomId(message.getRoomId())
+                .orElseGet(ArrayList::new);
         list.add(message);
         redisChatMessageRepository.saveMessageList(message.getRoomId(), list);
     }
@@ -85,12 +80,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public ChatPagingResDto getMessages(String roomId, LocalDate date) {
 
-        List<RedisChatMessage> redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
-        if (redisChatMessageList == null) {
+            Optional<List<RedisChatMessage>> redisChatMessageList
+                    = redisChatMessageRepository.findMessagesByRoomId(roomId);
+        if (redisChatMessageList.isEmpty()) {
             fillRedisChatMessage(roomId, date, 1);
             redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
         }
-        return ChatPagingResDto.messageListToDto(redisChatMessageList);
+        return ChatPagingResDto.messageListToDto(redisChatMessageList.orElseGet(null));
 
         //slice는 필요가 없는 것 같다. 캐시를 쓰는데 뭘..
 
@@ -107,7 +103,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Async
     @Scheduled(cron = "0 0 * * * *")
     public void sendMessageToDB() {
-        Map<String, List<RedisChatMessage>> map = redisChatMessageRepository.findAllMessagesByKey();
+        Map<String, List<RedisChatMessage>> map = redisChatMessageRepository.findAllMessagesByKey()
+                .orElseThrow(()->new NoSuchElementException("message가 단 하나도 없습니다."));
         Iterator<String> mapIter = map.keySet().iterator();
 
         List<RedisChatMessage> allMessageList = new ArrayList<>();
@@ -127,7 +124,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public void redisChatMessageWarming() {
         //유효한 room들
-        List<ChatRoom> chatRoomList = chatRoomRepository.findAllValidRooms();
+        Optional<List<ChatRoom>> chatRoomList = chatRoomRepository.findAllValidRooms();
+        if(chatRoomList.isEmpty()) return;
 //        LocalDateTime cursorDate = LocalDateTime.of(2023, 3, 29, 21, 56);
         //4월 4일에 돌았다면 4월 3일 00시부터의 메시지들을 담는다.
         LocalDateTime cursorDate = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.MIDNIGHT);
@@ -135,8 +133,10 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
         log.info("cursordate(7일전) ;{}", cursorDate);
         Map<String, List<RedisChatMessage>> map = new HashMap<>();
-        for (ChatRoom chatRoom : chatRoomList) {
-            List<ChatMessage> chatMessageList = chatMessageRepository.findChatMessagesByTimeAfterAndChatRoomOrderByTime(cursor, chatRoom);
+        for (ChatRoom chatRoom : chatRoomList.get()) {
+            List<ChatMessage> chatMessageList =
+                    chatMessageRepository.findChatMessagesByTimeAfterAndChatRoomOrderByTime(cursor, chatRoom)
+                            .orElseGet(ArrayList::new);
             List<RedisChatMessage> redisChatMessageList = new ArrayList<>();
             for (ChatMessage chatMessage : chatMessageList) {
                 redisChatMessageList.add(RedisChatMessage.convertToRedisChatMessage(chatMessage));

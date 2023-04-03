@@ -17,15 +17,9 @@ public class RedisPublisher {
 
     public void publishMessage(RedisChatMessage message) {
         if (RedisChatMessage.MessageType.ENTER.equals(message.getType())) {
-            //TODO Setter를 써도 되는지에 대한 토의
             message.setMessage(message.getSender() + "님이 입장하셨습니다.");
         }
         message.setTime(LocalDateTime.now());
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);
     }
-//    public void publishImg(FileDto fileDto) {
-//        String imgUrl = fileUploadService.fileUpLoad(fileDto);
-//        RedisChatMessage message = RedisChatMessage.convertFileToMessage(fileDto,imgUrl);
-//        redisTemplate.convertAndSend(channelTopic.getTopic(), message);
-//    }
 }

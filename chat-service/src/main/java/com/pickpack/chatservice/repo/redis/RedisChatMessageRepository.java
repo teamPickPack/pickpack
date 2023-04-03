@@ -27,22 +27,20 @@ public class RedisChatMessageRepository implements Serializable {
     private final String CHAT_MESSAGES = "CHAT_MESSAGES";
     private final RedisTemplate<String, Object> redisTemplate;
     private final JdbcTemplate jdbcTemplate;
-    private final ChatRoomRepository chatRoomRepository;
-    private final ChatMessageRepository chatMessageRepository;
     private HashOperations<String, String, List<RedisChatMessage>> opsHashChatMessage;
-    private final RedisChatRoomRepository RedisChatRoomRepository;
 
     @PostConstruct
     private void init() {
         opsHashChatMessage = redisTemplate.opsForHash();
     }
 
-    public boolean isHasKeyOnChatMessage(String roomId) {
-        return opsHashChatMessage.hasKey(CHAT_MESSAGES, roomId);
-    }
+    //optional처리로 필요없을듯
+//    public boolean isHasKeyOnChatMessage(String roomId) {
+//        return opsHashChatMessage.hasKey(CHAT_MESSAGES, roomId);
+//    }
 
-    public List<RedisChatMessage> findMessagesByRoomId(String roomId) {
-        return opsHashChatMessage.get(CHAT_MESSAGES, roomId);
+    public Optional<List<RedisChatMessage>> findMessagesByRoomId(String roomId) {
+        return Optional.ofNullable(opsHashChatMessage.get(CHAT_MESSAGES, roomId));
     }
 
     public void saveMessageList(String roomId, List<RedisChatMessage> redisChatMessageList) {
@@ -53,8 +51,8 @@ public class RedisChatMessageRepository implements Serializable {
         opsHashChatMessage.putAll(CHAT_MESSAGES, redisChatMessageMap);
     }
 
-    public Map<String, List<RedisChatMessage>> findAllMessagesByKey() {
-        return opsHashChatMessage.entries(CHAT_MESSAGES);
+    public Optional<Map<String, List<RedisChatMessage>>> findAllMessagesByKey() {
+        return Optional.of(opsHashChatMessage.entries(CHAT_MESSAGES));
     }
 
     public void deleteAllMessage() {
@@ -63,20 +61,15 @@ public class RedisChatMessageRepository implements Serializable {
 
     //마지막 메시지 주기
     public IsNewDto findSizeAndLastMessage(String roomId) {
-        if (isHasKeyOnChatMessage(roomId)) {
-            return IsNewDto.create(findMessagesByRoomId(roomId));
-        } else {
-            return null;
-        }
+        return IsNewDto.create(findMessagesByRoomId(roomId).orElseGet(null));
     }
-
 
     public int[][] writeMessageFromRedisToDB(List<RedisChatMessage> allMessageList) {
         return jdbcTemplate.batchUpdate
                 ("INSERT IGNORE INTO chat_message(chat_id,room_id,type,sender,message,time) VALUES (?,?,?,?,?,?);",
                         allMessageList,
                         allMessageList.size(),
-                        new ParameterizedPreparedStatementSetter<RedisChatMessage>() {
+                        new ParameterizedPreparedStatementSetter<>() {
                             @Override
                             public void setValues(PreparedStatement ps, RedisChatMessage chatMessage) throws SQLException {
                                 //?
