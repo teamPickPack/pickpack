@@ -16,15 +16,12 @@ import com.pickpack.itemservice.s3.AwsS3Uploader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -104,7 +101,7 @@ public class ItemService {
 
     public ItemDetailRes getItemById(Long itemId, Long memberId){
         ItemDetailDto item = itemRepository.getItemById(itemId);
-        List<ItemLike> itemLikeList = itemLikeRepository.findByItemIdAndMemberId(itemId, memberId);
+        List<ItemLike> itemLikeList = itemLikeRepository.findByItemIdAndMemberIdAndIsDelete(itemId, memberId, false);
         Boolean isLike = Boolean.TRUE;
         if(itemLikeList.isEmpty()){
            isLike = Boolean.FALSE;
