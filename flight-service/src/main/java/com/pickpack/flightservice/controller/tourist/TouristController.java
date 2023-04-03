@@ -22,6 +22,7 @@ public class TouristController {
     @GetMapping(value ="/tourist/{continent}", produces="application/json;charset=UTF-8")
     public ResponseEntity<?> getTouristsByContinent(@PathVariable("continent") String continent){
         List<Tourist> touristList = touristService.getTouristsByContinent(continent);
+        
         if(touristList.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
