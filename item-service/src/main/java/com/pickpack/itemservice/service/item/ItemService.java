@@ -65,8 +65,8 @@ public class ItemService {
     }
 
     public ListRes getItemsWithCategory(String categoryStr, Integer page){
-        PageRequest pageRequest = PageRequest.of(page, itemSize,
-                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
+        PageRequest pageRequest = PageRequest.of(page, itemSize);
+
         ListRes items = itemRepository.getItemsWithCategory( pageRequest, categoryStr);
 
         List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
@@ -78,8 +78,7 @@ public class ItemService {
     }
 
     public ListRes getItemsSearchOnTitle(String categoryStr, String search, Integer page){
-        PageRequest pageRequest = PageRequest.of(page, itemSize,
-                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
+        PageRequest pageRequest = PageRequest.of(page, itemSize);
         ListRes items = itemRepository.getItemsSearchOnTitle(pageRequest, categoryStr, search);
 
         List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
@@ -91,8 +90,7 @@ public class ItemService {
     }
 
     public ListRes getItemsSearchOnCity(String categoryStr, Long cityId, Integer page){
-        PageRequest pageRequest = PageRequest.of(page, itemSize,
-                Sort.by(Sort.Direction.DESC, "registDate").and(Sort.by(Sort.Direction.ASC, "price")));
+        PageRequest pageRequest = PageRequest.of(page, itemSize);
         ListRes items = itemRepository.getItemsSearchOnCity(pageRequest, categoryStr, cityId);
 
 
