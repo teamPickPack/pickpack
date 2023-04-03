@@ -6,6 +6,7 @@ import com.pickpack.memberservice.api.itemApi.ItemLikeListApi;
 import com.pickpack.memberservice.dto.item.ItemDto;
 import com.pickpack.memberservice.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-
+//    @Cacheable(value = "BuySellItemListApi", key = "#memberId")
     @Transactional(readOnly = true)
     public BuySellItemListApi findBuySellItems(Long memberId) {
         List<ItemDto> buyItemList = itemRepository.findItemList(memberId, "BUY");
