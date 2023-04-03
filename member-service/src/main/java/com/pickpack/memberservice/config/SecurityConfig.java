@@ -83,11 +83,12 @@ public class SecurityConfig {
         log.debug("디버그: CorsConfigurationSource cors 설정이 SecurityFilterChain에 등록됨");
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedHeader("*");
+//        configuration.addAllowedHeader("*");
+        configuration.addExposedHeader("X-AUTH-TOKEN");
 //        configuration.addAllowedMethod("*");
 //        configuration.addAllowedOriginPattern("*");
 //        configuration.setAllowCredentials(true);
-//
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 //        source.registerCorsConfiguration("/**", configuration);
 
