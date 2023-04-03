@@ -73,7 +73,7 @@ public class ItemService {
         if(lists.isEmpty()){
             throw new ListEmptyException("item 목록이 없습니다.");
         }
-
+        items.setResults(getThumbnail(lists));
         return items;
     }
 
@@ -85,7 +85,7 @@ public class ItemService {
         if(lists.isEmpty()){
             throw new ListEmptyException(search + "에 대한 검색 결과가 없습니다.");
         }
-
+        items.setResults(getThumbnail(lists));
         return items;
     }
 
@@ -98,7 +98,7 @@ public class ItemService {
         if(lists.isEmpty()){
             throw new ListEmptyException(cityId + "번 도시에 대한 검색 결과가 없습니다.");
         }
-
+        items.setResults(getThumbnail(lists));
         return items;
     }
 
@@ -114,7 +114,7 @@ public class ItemService {
         }
         List<ItemListDto> items = itemRepository.getItemsByMember(itemId, item.getMemberId(), item.getCategory());
 //        item.setItemList(getOtherItemsOfItemById((List<Item>)  item.getItemList(), item.getMemberId()));
-
+        items = getThumbnail(items);
         return new ItemDetailRes(isLike, item, items);
     }
 
@@ -144,5 +144,13 @@ public class ItemService {
         return category;
     }
 
-
+    private List<ItemListDto> getThumbnail(List<ItemListDto> list){
+        for (ItemListDto itemListDto : list) {
+            String oldImgUrl = itemListDto.getImgUrl();
+            String[] inArr = oldImgUrl.split("\\|");
+            itemListDto.setImgUrl(inArr[0]);
+        }
+        return list;
+    }
+    
 }
