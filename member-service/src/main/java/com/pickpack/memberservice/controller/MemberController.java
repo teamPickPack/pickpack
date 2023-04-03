@@ -3,6 +3,8 @@ package com.pickpack.memberservice.controller;
 import com.pickpack.memberservice.dto.member.FindRespDto;
 import com.pickpack.memberservice.dto.member.JoinReqDto;
 import com.pickpack.memberservice.dto.member.JoinRespDto;
+import com.pickpack.memberservice.exception.custom.NotExistMIdException;
+import com.pickpack.memberservice.exception.custom.NotExistNicknameException;
 import com.pickpack.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,10 @@ public class MemberController {
      */
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinReqDto joinReqDto){
+
+        if(joinReqDto.getNickname().length() == 0) throw new NotExistNicknameException("닉네임를 입력하지 않음");
+        if(joinReqDto.getMid().length() == 0) throw new NotExistMIdException("아이디을 입력하지 않음");
+
         JoinRespDto joinRespDto = memberService.join(joinReqDto);
         return new ResponseEntity<>(joinRespDto, HttpStatus.CREATED);
     }

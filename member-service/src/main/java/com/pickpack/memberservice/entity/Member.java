@@ -16,10 +16,10 @@ import java.util.List;
 public class Member {
 
     @Column(name = "member_id")
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String mid;
+    @Column(nullable = false, length = 20)
     private String pwd;
     private String nickname;
     private String img_url;
