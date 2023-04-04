@@ -10,6 +10,7 @@ import org.springframework.data.domain.*;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.pickpack.flightservice.entity.QFlight.flight;
 import static com.pickpack.flightservice.entity.QTendency.tendency;
@@ -74,11 +75,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.waypointNum.eq(waypointNum)
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .distinct();
 
         sortAndOrder(query, pageable);
 
         List<Ticket> ticketList = query.fetch();
+
+        System.out.println(ticketList.size());
 
         Long totalCount = queryFactory
                 .select(ticket.countDistinct())
@@ -109,11 +113,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.waypointNum.gt(waypointNum)
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .distinct();
 
         sortAndOrder(query, pageable);
 
         List<Ticket> ticketList = query.fetch();
+
+        System.out.println(ticketList.size());
 
         Long totalCount = queryFactory
                 .select(ticket.countDistinct())
@@ -124,7 +131,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
                         ticket.price.between(minPrice, maxPrice),
-                        ticket.waypointNum.eq(waypointNum)
+                        ticket.waypointNum.gt(waypointNum)
                 )
                 .fetchOne();
 
