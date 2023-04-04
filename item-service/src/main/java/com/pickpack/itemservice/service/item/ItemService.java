@@ -50,6 +50,11 @@ public class ItemService {
         Member member = memberOptional.get();
         Item item = Item.createItem(title, str2Category(categoryStr), price, content, itemName, city, member);
 
+        if(imgs.isEmpty()){
+            item.setImage("Null");
+            itemRepository.save(item);
+            return item.getId();
+        }
         StringBuilder sb = new StringBuilder();
 //        String imgUrl = null;
         try {
@@ -70,10 +75,10 @@ public class ItemService {
         ListRes items = itemRepository.getItemsWithCategory( pageRequest, categoryStr);
 
         List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
-        if(lists.isEmpty()){
-            throw new ListEmptyException("item 목록이 없습니다.");
+        if(!lists.isEmpty()){
+            items.setResults(getThumbnail(lists));
         }
-        items.setResults(getThumbnail(lists));
+
         return items;
     }
 
@@ -82,10 +87,10 @@ public class ItemService {
         ListRes items = itemRepository.getItemsSearchOnTitle(pageRequest, categoryStr, search);
 
         List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
-        if(lists.isEmpty()){
-            throw new ListEmptyException(search + "에 대한 검색 결과가 없습니다.");
+        if(!lists.isEmpty()){
+            items.setResults(getThumbnail(lists));
         }
-        items.setResults(getThumbnail(lists));
+
         return items;
     }
 
@@ -95,10 +100,10 @@ public class ItemService {
 
 
         List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
-        if(lists.isEmpty()){
-            throw new ListEmptyException(cityId + "번 도시에 대한 검색 결과가 없습니다.");
+        if(!lists.isEmpty()){
+            items.setResults(getThumbnail(lists));
         }
-        items.setResults(getThumbnail(lists));
+
         return items;
     }
 
