@@ -24,7 +24,7 @@ public class LoginUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return member.getPwd();
+        return member.getPassword();
     }
 
     @Override

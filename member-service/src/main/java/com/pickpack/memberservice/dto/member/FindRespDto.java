@@ -21,7 +21,7 @@ public class FindRespDto implements Serializable {
     public FindRespDto(Member member){
         this.memberId = member.getId();
         this.mid = member.getMid();
-        this.pwd = member.getPwd();
+        this.pwd = member.getPassword();
         this.nickname = member.getNickname();
         this.img_url = member.getImg_url();
     }
