@@ -9,9 +9,8 @@ const NavBar = () => {
     loginMode: null,
   });
   const handleUserModalState = (type, mode) => {
-    if (type === "button") {
-      console.log("button");
-      if (mode === "login") {
+    if(type === 'button'){
+      if(mode === 'login'){
         setUserModalState((userModalState) => ({
           visible: !userModalState.visible,
           loginMode: true,
