@@ -29,9 +29,8 @@ const flightSlice = createSlice({
     setWayType(state, action) {
       state.wayType = action.payload;
     },
-    setCriterion(state) {
-      state.criterion =
-        state.criterion === "departure" ? "destination" : "departure";
+    setCriterion(state, action) {
+      state.criterion = state.criterion = action.payload;
     },
     setDeparture(state, action) {
       state.departure = action.payload;
