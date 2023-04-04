@@ -14,6 +14,7 @@ import Rent from "./pages/pack/rent/Rent";
 import Detail from "./pages/pack/detail/Detail";
 import Regist from "./pages/pack/regist/Regist";
 import Modify from "./pages/pack/modify/Modify";
+import Mypage from "./pages/mypage/Mypage";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="regist" element={<Regist />} />
             <Route path="modify/:itemNo" element={<Modify />} />
           </Route>
+          <Route path="/mypage" element={<Mypage />} />
         </Routes>
       </MainContainer>
       <Footer />
