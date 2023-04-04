@@ -49,7 +49,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
             System.out.println(3);
             for(RedisChatRoom redisChatRoom:list.get()){
                 System.out.println(4);
-                if(redisChatRoom.getItemId()==createRoomReqDto.getItemId()){
+                if(Objects.equals(redisChatRoom.getItemId(), createRoomReqDto.getItemId())){
                     System.out.println(5);
                     return redisChatRoom;
                 }
