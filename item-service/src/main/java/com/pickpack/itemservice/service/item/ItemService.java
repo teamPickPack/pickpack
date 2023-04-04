@@ -68,6 +68,48 @@ public class ItemService {
         itemRepository.save(item);
         return item.getId();
     }
+    public Long modifyItem(Long itemId, Long memberId, String title, String categoryStr, Integer price,
+                           String content, String itemName, Long cityId, String imgUrl, List<MultipartFile> imgs){
+        // city get
+        Optional<City> cityOptional = cityRepository.findById(cityId);
+        if(cityOptional.isEmpty()){
+            throw new CityIsNullException("도시 ID가 적절하지 않습니다.");
+        }
+        City city = cityOptional.get();
+        // member get
+        Optional<Member> memberOptional = memberRepository.findById(memberId);
+        if(memberOptional.isEmpty()){
+            throw new IsNullException("회원 ID가 적절하지 않습니다.");
+        }
+        Member member = memberOptional.get();
+        // item get
+        Optional<Item> itemOptional = itemRepository.findById(itemId);
+        if(itemOptional.isEmpty()){
+            throw new IsNullException("아이템 ID가 적절하지 않습니다.");
+        }
+        Item item = itemOptional.get();
+        item.modifyItem(title, str2Category(categoryStr), price, content, itemName, city, member);
+
+        if(imgs == null || imgs.isEmpty()){
+            itemRepository.save(item);
+            return item.getId();
+        }
+        StringBuilder sb = new StringBuilder();
+        if(!imgUrl.equals("Null")) {
+            sb.append(imgUrl);
+        }
+//        String imgUrl = null;
+        try {
+            for(int i = 0; i < imgs.size(); i++){
+                sb.append(s3Uploader.upload(imgs.get(i), dirName)).append("|");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        item.setImage(sb.toString());
+        itemRepository.save(item);
+        return item.getId();
+    }
 
     public ListRes getItemsWithCategory(String categoryStr, Integer page){
         PageRequest pageRequest = PageRequest.of(page, itemSize);
