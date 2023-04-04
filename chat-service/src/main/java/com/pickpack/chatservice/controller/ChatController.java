@@ -39,7 +39,7 @@ public class ChatController {
         log.info("roomId:{}, page(date):{}",chatPagingReqDTO.getRoomId(),chatPagingReqDTO.getDate());
         return new ResponseEntity<>(chatMessageService.getMessages(chatPagingReqDTO.getRoomId(),chatPagingReqDTO.getDate()), HttpStatus.OK);
     }
-    //TODO 페이징처리!!!!!!!!!!!!!!!
+    //TODO 페이징처리!!!!!!!!!!!!!!!1
 
     @GetMapping("/chat/check")
     public String check(){
