@@ -65,7 +65,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     @Override
     public Page<Ticket> findWaypoint0or1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
-                .selectFrom(ticket).distinct()
+                .selectFrom(ticket)
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
@@ -75,11 +75,12 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.waypointNum.eq(waypointNum)
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .distinct();
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query.fetch().stream().collect(Collectors.toList());
+        List<Ticket> ticketList = query.fetch();
 
         System.out.println(ticketList.size());
 
@@ -102,7 +103,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     @Override
     public Page<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
-                .selectFrom(ticket).distinct()
+                .selectFrom(ticket)
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
@@ -112,11 +113,12 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.waypointNum.gt(waypointNum)
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .distinct();
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query.fetch().stream().collect(Collectors.toList());
+        List<Ticket> ticketList = query.fetch();
 
         System.out.println(ticketList.size());
 
@@ -129,7 +131,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.arrCode.eq(destination),
                         ticket.depDate.eq(date),
                         ticket.price.between(minPrice, maxPrice),
-                        ticket.waypointNum.eq(waypointNum)
+                        ticket.waypointNum.gt(waypointNum)
                 )
                 .fetchOne();
 
