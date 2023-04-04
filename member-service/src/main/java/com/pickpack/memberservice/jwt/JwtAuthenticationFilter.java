@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             // 강제 로그인
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    loginReqDto.getMid(), loginReqDto.getPwd());
+                    loginReqDto.getMid(), loginReqDto.getPassword());
 
             return authenticationManager.authenticate(authenticationToken);
             //1. DB에서 잘 조회 되었다면, successfulAuthentication 메서드 실행
@@ -64,7 +64,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // authenticationEntryPoint에 걸림 -> filter이기 때문에 ControllerAdvice로 잡을수가 없음.
             throw new InternalAuthenticationServiceException(e.getMessage());
         }
-
     }
 
     @Override

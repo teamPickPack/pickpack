@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class LoginReqDto {
     private String mid;
-    private String pwd;
+    private String password;
 
 }
