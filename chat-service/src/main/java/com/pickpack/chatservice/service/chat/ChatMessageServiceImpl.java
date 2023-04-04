@@ -82,7 +82,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     //TODO 먹는지 확인 하자
     @Override
     public ChatPagingResDto getMessages(String roomId, LocalDate date) {
-
             Optional<List<RedisChatMessage>> redisChatMessageList
                     = redisChatMessageRepository.findMessagesByRoomId(roomId);
         if (redisChatMessageList.isEmpty()) {
