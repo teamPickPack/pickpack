@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
     Optional<List<ChatMessage>> findChatMessagesByTimeBetweenAndChatRoomOrderByTime(Timestamp start, Timestamp end, ChatRoom chatRoom);
     Optional<List<ChatMessage>> findChatMessagesByTimeAfterAndChatRoomOrderByTime(Timestamp time, ChatRoom chatRoom);
-    ChatMessage findTop1ById(String roomId);
+    Optional<ChatMessage> findTop1ById(String roomId);
 }
