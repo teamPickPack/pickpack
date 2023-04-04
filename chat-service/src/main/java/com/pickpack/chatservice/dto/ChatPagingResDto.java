@@ -15,7 +15,10 @@ public class ChatPagingResDto {
 
     public static ChatPagingResDto messageListToDto(List<RedisChatMessage> redisChatMessageList){
         ChatPagingResDto chatPagingResDTO = new ChatPagingResDto();
-        chatPagingResDTO.date = redisChatMessageList.get(0).getTime().toLocalDate();
+        if(!redisChatMessageList.isEmpty())
+            chatPagingResDTO.date = redisChatMessageList.get(0).getTime().toLocalDate();
+        else
+            chatPagingResDTO.date = LocalDate.now();
         chatPagingResDTO.pageSize=redisChatMessageList.size();
         chatPagingResDTO.chatMessages=redisChatMessageList;
         return chatPagingResDTO;
