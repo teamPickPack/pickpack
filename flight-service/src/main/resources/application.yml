@@ -5,13 +5,12 @@ server:
       enabled: true
 
 spring:
-  application:
-    name: flight
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://54.180.157.223:3306/pickpack?
-    username: root # MySQL DB Username
-    password: ssafy # MySQL DB password
+  config:
+    import: "optional:configserver:http://54.180.157.223:7777/"
+  cloud:
+    config:
+      name: flight
+      profile: default
 
   jpa:
     hibernate:
@@ -44,3 +43,10 @@ management:
     web:
       exposure:
         include: "*"
+
+
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://54.180.157.223:3306/pickpack?
+#    username: encrypt
+#    password: encrypt
