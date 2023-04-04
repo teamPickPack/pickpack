@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -21,7 +24,7 @@ public class RedisSubscriber{
             RedisChatMessage roomMessage = objectMapper.readValue(publishMessage, RedisChatMessage.class);
             chatMessageService.createMessage(roomMessage);
 
-            messagingTemplate.convertAndSend("/chat/sub/room/" + roomMessage.getRoomId(), roomMessage);
+            messagingTemplate.convertAndSend("/chat/sub/room/" + URLDecoder.decode(roomMessage.getRoomId(), StandardCharsets.UTF_8), roomMessage);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
