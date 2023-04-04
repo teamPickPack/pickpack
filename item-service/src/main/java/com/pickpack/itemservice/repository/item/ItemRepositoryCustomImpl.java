@@ -43,6 +43,8 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
         Boolean hasNext = true;
         if(itemsWithCategory.size() <= pageable.getPageSize()){
             hasNext = false;
+        }else{
+            itemsWithCategory.remove(12);
         }
         return new ListRes(itemsWithCategory, hasNext);
     }
@@ -70,6 +72,8 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
         Boolean hasNext = true;
         if(itemsSearchOntitle.size() <= pageable.getPageSize()){
             hasNext = false;
+        }else{
+            itemsSearchOntitle.remove(12);
         }
         return new ListRes(itemsSearchOntitle, hasNext);
     }
@@ -95,6 +99,8 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
         Boolean hasNext = true;
         if(itemsSearchOnCity.size() <= pageable.getPageSize()){
             hasNext = false;
+        }else{
+            itemsSearchOnCity.remove(12);
         }
         return new ListRes(itemsSearchOnCity, hasNext);
     }
