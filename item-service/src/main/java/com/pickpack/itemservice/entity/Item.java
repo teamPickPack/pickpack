@@ -73,6 +73,17 @@ public class Item {
         item.member = member;
         return item;
     }
+
+    public void modifyItem(String title, Category category, Integer price, String content, String itemName, City city, Member member){
+        this.title = title;
+        this.category = category;
+        this.price = price;
+        this.content = content;
+        this.itemName = itemName;
+        this.city = city;
+        this.member = member;
+    }
+
     public void setImage(String imgUrl){
         this.imgUrl = imgUrl;
     }
