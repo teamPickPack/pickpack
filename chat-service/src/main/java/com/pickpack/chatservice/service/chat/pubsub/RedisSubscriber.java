@@ -22,7 +22,6 @@ public class RedisSubscriber{
     public void sendMessage(String publishMessage) {
         try {
             RedisChatMessage roomMessage = objectMapper.readValue(publishMessage, RedisChatMessage.class);
-            chatMessageService.createMessage(roomMessage);
 
             messagingTemplate.convertAndSend("/chat/sub/room/" + URLDecoder.decode(roomMessage.getRoomId(), StandardCharsets.UTF_8), roomMessage);
         } catch (Exception e) {
