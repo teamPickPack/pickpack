@@ -1,114 +1,84 @@
-import Send from './send';
+import store from "../store/store";
+import Send from "./send";
 
-const itemURL = '/api/item';
+const itemURL = "/api/item";
 
 export const item = {
   get: {
-    // schedule: async (id) => {
-    //   const response = await Send.get(`${masterURL}/reservation/list/${id}`);
-    //   return response;
-    // },
-    // myPage: async (id) => {
-    //   const response = await Send.get(`${masterURL}/mypage/intro/${id}`);
-    //   return response;
-    // },
-    // example: async (id) => {
-    //   const response = await Send.get(`${masterURL}/mypage/history/${id}`);
-    //   return response;
-    // },
-    // review: async (id) => {
-    //   const response = await Send.get(`${masterURL}/mypage/review/${id}`);
-    //   return response;
-    // },
-    // history: async (id, day) => {
-    //   const response = await Send.get(
-    //     `${masterURL}/reservation/calendar/${id}/${day}`,
-    //   );
-    //   return response;
-    // },
-    // booktime: async (id) => {
-    //   const response = await Send.get(`${masterURL}/mypage/booktime/${id}`);
-    //   return response;
-    // },
-    // endservice: async (id) => {
-    //   const response = await Send.get(`${masterURL}/reservation/end/${id}`);
-    //   return response;
-    // },
-    // locate: async (id) => {
-    //   const response = await Send.get(`${masterURL}/reservation/address/${id}`);
-    //   return response;
-    // },
+    category: async (category, page) => {
+      const response = await Send.get(`${itemURL}/${category}/${page}`);
+      return response;
+    },
+
+    city: async (category, cityId, page) => {
+      const response = await Send.get(
+        `${itemURL}/${category}/city/${cityId}/${page}`
+      );
+      return response;
+    },
+    tag: async () => {
+      const response = await Send.get(`${itemURL}`);
+      return response;
+    },
   },
   post: {
-    // reservation: async (data) => {
-    //   const response = await Send.post(
-    //     `${masterURL}/reservation/normal/regist`,
-    //     data,
-    //   );
-    //   return response;
-    // },
-    // example: async (data) => {
-    //   const response = await Send.post(`${masterURL}/mypage/history/`, data);
-    //   return response;
-    // },
-    // review: async (data) => {
-    //   const response = await Send.post(`${masterURL}/mypage/comment`, data);
-    //   return response;
-    // },
+    item: async (data) => {
+      console.log(data);
+      const response = await Send.post(`${itemURL}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response;
+    },
+    title: async (category, search, page) => {
+      const response = await Send.post(`${itemURL}/${category}/title/${page}`, {
+        search: search,
+      });
+      return response;
+    },
+    detail: async (itemId, memberId) => {
+      const response = await Send.post(`${itemURL}/detail`, {
+        itemId: itemId,
+        memberId: memberId,
+      });
+      return response;
+    },
+    like: async (itemId, memberId) => {
+      const response = await Send.post(
+        `${itemURL}/like`,
+        {
+          itemId: itemId,
+          memberId: memberId,
+        },
+        {
+          headers: {
+            Authorization: store.getState().user.accessToken,
+          },
+        }
+      );
+      return response;
+    },
   },
   put: {
+    like: async (itemId, memberId) => {
+      const response = await Send.put(
+        `${itemURL}/like`,
+        {
+          itemId: itemId,
+          memberId: memberId,
+        },
+        {
+          headers: {
+            Authorization: store.getState().user.accessToken,
+          },
+        }
+      );
+      return response;
+    },
     // schedule: async (reservationIdx, acceptFlag) => {
     //   const response = await Send.put(
     //     `${masterURL}/reservation/accept/${reservationIdx}/${acceptFlag}`,
-    //   );
-    //   return response;
-    // },
-    // profile: async (data, idx) => {
-    //   const response = await Send.put(
-    //     `${masterURL}/mypage/profile/${idx}`,
-    //     data,
-    //   );
-    //   return response;
-    // },
-    // description: async (data, idx) => {
-    //   const response = await Send.put(
-    //     `${masterURL}/mypage/intro/description/${idx}`,
-    //     data,
-    //   );
-    //   return response;
-    // },
-    // example: async (data, idx) => {
-    //   const response = await Send.put(
-    //     `${masterURL}/mypage/history/${idx}`,
-    //     data,
-    //   );
-    //   return response;
-    // },
-    // businessHour: async (data, idx) => {
-    //   const response = await Send.put(
-    //     `${masterURL}/mypage/intro/time/${idx}`,
-    //     data,
-    //   );
-    //   return response;
-    // },
-    // review: async (data, idx) => {
-    //   const response = await Send.put(
-    //     `${masterURL}/mypage/comment/${idx}`,
-    //     data,
-    //   );
-    //   return response;
-    // },
-    // booktime: async (data, id) => {
-    //   const response = await Send.put(
-    //     `${masterURL}/mypage/booktime/${id}`,
-    //     data,
-    //   );
-    //   return response;
-    // },
-    // point: async (data, idx) => {
-    //   const response = await Send.put(
-    //     `${masterURL}/mypage/exchange/${idx}`,
-    //     data,
     //   );
     //   return response;
     // },
@@ -116,10 +86,6 @@ export const item = {
   delete: {
     // example: async (idx) => {
     //   const response = await Send.delete(`${masterURL}/mypage/history/${idx}`);
-    //   return response;
-    // },
-    // review: async (idx) => {
-    //   const response = await Send.delete(`${masterURL}/mypage/comment/${idx}`);
     //   return response;
     // },
   },

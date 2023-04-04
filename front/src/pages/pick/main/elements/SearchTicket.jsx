@@ -6,7 +6,9 @@ import flightSearchImg from "../../../../assets/image/flight-search-img.png";
 import airplaneImg from "../../../../assets/image/airplane-img.png";
 import { relationOfAirport } from "./data/Relation";
 import { SwitchSVG, CalendarSVG, ConditionSVG, CloseSVG } from "./SVG";
-import { searchFlightOne, searchFlightRound } from "../../../../api/pick/pick";
+import { flight } from "../../../../apis/flight";
+import { useLocation, useNavigate } from "react-router";
+import store from "../../../../store/store";
 
 const SearchTicket = () => {
   const dispatch = useDispatch();
@@ -21,21 +23,19 @@ const SearchTicket = () => {
   const [selectedContinent, setSelectedContinent] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
 
-  const {
-    wayType,
-    criterion,
-    departure,
-    destination,
-    startDate,
-    endDate,
-    direct,
-    leftPrice,
-    rightPrice,
-    minPrice,
-    maxPrice,
-  } = useSelector((state) => {
-    return state.flight;
-  });
+  const flight = store.getState().flight;
+
+  const [wayType, setWayType] = useState(flight.wayType);
+  const [criterion, setCriterion] = useState(flight.criterion);
+  const [departure, setDeparture] = useState(flight.departure);
+  const [destination, setDestination] = useState(flight.destination);
+  const [startDate, setStartDate] = useState(flight.startDate);
+  const [endDate, setEndDate] = useState(flight.endDate);
+  const [direct, setDirect] = useState(flight.direct);
+  const [leftPrice, setLeftPrice] = useState(flight.leftPrice);
+  const [rightPrice, setRightPrice] = useState(flight.rightPrice);
+  const [minPrice, setMinPrice] = useState(flight.minPrice);
+  const [maxPrice, setMaxPrice] = useState(flight.maxPrice);
 
   const resetCondition = () => {
     setDirect([true, false, false, false]);
@@ -43,38 +43,6 @@ const SearchTicket = () => {
     setLeftPrice(0);
     setMaxPrice(2000);
     setRightPrice(2000);
-  };
-
-  const setWayType = (data) => {
-    resetCondition();
-    dispatch(flightAction.setWayType(data));
-  };
-  const setDeparture = (data) => {
-    dispatch(flightAction.setDeparture(data));
-  };
-  const setDestination = (data) => {
-    dispatch(flightAction.setDestination(data));
-  };
-  const setStartDate = (data) => {
-    dispatch(flightAction.setStartDate(data));
-  };
-  const setEndDate = (data) => {
-    dispatch(flightAction.setEndDate(data));
-  };
-  const setDirect = (data) => {
-    dispatch(flightAction.setDirect(data));
-  };
-  const setLeftPrice = (data) => {
-    dispatch(flightAction.setLeftPrice(data));
-  };
-  const setRightPrice = (data) => {
-    dispatch(flightAction.setRightPrice(data));
-  };
-  const setMinPrice = (data) => {
-    dispatch(flightAction.setMinPrice(data));
-  };
-  const setMaxPrice = (data) => {
-    dispatch(flightAction.setMaxPrice(data));
   };
 
   const range = useRef();
@@ -226,10 +194,10 @@ const SearchTicket = () => {
   }, [wayType]);
 
   const changePlace = () => {
-    if (criterion === "depatrue") {
-      dispatch(flightAction.setCriterion("destination"));
+    if (criterion === "departure") {
+      setCriterion("destination");
     } else {
-      dispatch(flightAction.setCriterion("departure"));
+      setCriterion("departure");
     }
 
     const _temp = departure;
@@ -253,46 +221,42 @@ const SearchTicket = () => {
     setDirectLength(length);
   }, [direct]);
 
-  const SearchTicketList = () => {
-    const request = {
-      memberId: null,
-      filter: {
-        direct: direct,
-        maxPrice: leftPrice,
-        minPrice: rightPrice,
-      },
-      info: {
-        departure: departure.code,
-        destination: destination.code,
-        depDate: startDate,
-        arrDate: endDate,
-      },
-      pageable: {
-        orderBy: "desc",
-        page: 0,
-        sortType: "price",
-      },
-    };
+  const navigator = useNavigate();
+  const location = useLocation();
 
-    console.log(wayType);
-
+  const SearchTicketList = async () => {
     if (wayType === "one") {
       if (!departure.code | !destination.code | !startDate) {
-        console.log(departure, destination, startDate, endDate);
+        alert("출발지, 도착지, 출발일자를 선택해주세요");
         return;
       }
-      searchFlightOne(request);
     } else {
       if (!departure.code | !destination.code | !startDate | !endDate) {
-        console.log(departure, destination, startDate, endDate);
+        alert("출발지, 도착지, 출발일자 ,도착일자를 선택해주세요");
         return;
       }
-      searchFlightRound(request);
     }
 
-    console.log("항공권 검색하고 싶습니다");
-    return;
+    dispatch(flightAction.setWayType(wayType));
+    dispatch(flightAction.setCriterion(criterion));
+    dispatch(flightAction.setDeparture(departure));
+    dispatch(flightAction.setDestination(destination));
+    dispatch(flightAction.setStartDate(startDate));
+    dispatch(flightAction.setEndDate(endDate));
+    dispatch(flightAction.setDirect(direct));
+    dispatch(flightAction.setLeftPrice(leftPrice));
+    dispatch(flightAction.setRightPrice(rightPrice));
+    dispatch(flightAction.setMinPrice(minPrice));
+    dispatch(flightAction.setMaxPrice(maxPrice));
+
+    if (location.pathname === "/pick/list") {
+      window.location.reload();
+    } else {
+      navigator("/pick/list");
+    }
   };
+
+  console.log(criterion);
 
   return (
     <>
@@ -305,6 +269,7 @@ const SearchTicket = () => {
               type="radio"
               value="one"
               onClick={(e) => {
+                resetCondition();
                 setWayType(e.target.value);
               }}
             />
@@ -315,6 +280,7 @@ const SearchTicket = () => {
               type="radio"
               value="round"
               onClick={(e) => {
+                resetCondition();
                 setWayType(e.target.value);
               }}
             />
