@@ -90,12 +90,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             Optional<List<RedisChatMessage>> redisChatMessageList
                     = redisChatMessageRepository.findMessagesByRoomId(roomId);
         System.out.println(11);
-        if (redisChatMessageList.isEmpty()) {
-            System.out.println(22);
-            fillRedisChatMessage(roomId, date, 1);
-
-            redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
-        }
+//        if (redisChatMessageList.isEmpty()) {
+//            System.out.println(22);
+////            fillRedisChatMessage(roomId, date, 1);
+//
+//            redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
+//        }
         System.out.println(33);
         if(redisChatMessageList.isEmpty())return null;
         System.out.println(44);
