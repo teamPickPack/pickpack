@@ -101,7 +101,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     @Async
-    @Scheduled(cron = "0 0 * * * *")
+//    @Scheduled(cron = "0 0 * * * *")
     public void sendMessageToDB() {
         Map<String, List<RedisChatMessage>> map = redisChatMessageRepository.findAllMessagesByKey()
                 .orElseThrow(()->new NoSuchElementException("message가 단 하나도 없습니다."));
