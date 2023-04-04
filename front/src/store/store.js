@@ -13,6 +13,7 @@ import flightSlice from "./flightSlice";
 import userSlice from "./userSlice";
 import compareSlice from "./compareSlice";
 import chatSlice from "./chatSlice";
+import packSlice from "./packSlice";
 
 // reducer 추가하는 부분
 const reducers = combineReducers({
@@ -20,6 +21,7 @@ const reducers = combineReducers({
   flight: flightSlice.reducer,
   compare: compareSlice.reducer,
   chat: chatSlice.reducer,
+  pack: packSlice.reducer,
 });
 
 // storage에 올려서 사용할 것 추가하는 부분

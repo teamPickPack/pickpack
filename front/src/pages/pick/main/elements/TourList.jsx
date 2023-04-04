@@ -1,182 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import tempImg from "../../../../assets/image/mainBanner.png";
-
-const tourSpot = [
-  {
-    id: 1,
-    touristName: "살라르 데 우유니",
-    lat: "32.5",
-    lng: "24.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 2,
-    touristName: "살라르 데 우유니",
-    lat: "18.5",
-    lng: "0.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 111,
-    touristName: "살라르 데 우유니",
-    lat: "32.5",
-    lng: "24.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 222,
-    touristName: "살라르 데 우유니",
-    lat: "18.5",
-    lng: "0.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 3,
-    touristName: "살라르 데 우유니",
-    lat: "-18.5",
-    lng: "2.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 4,
-    touristName: "살라르 데 우유니",
-    lat: "-46.5",
-    lng: "88.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 5,
-    touristName: "살라르 데 우유니",
-    lat: "67.5",
-    lng: "-22.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 6,
-    touristName: "살라르 데 우유니",
-    lat: "32.5",
-    lng: "24.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 7,
-    touristName: "살라르 데 우유니",
-    lat: "18.5",
-    lng: "0.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 8,
-    touristName: "살라르 데 우유니",
-    lat: "-18.5",
-    lng: "2.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 9,
-    touristName: "살라르 데 우유니",
-    lat: "-46.5",
-    lng: "88.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 10,
-    touristName: "살라르 데 우유니",
-    lat: "67.5",
-    lng: "-22.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-
-  {
-    id: 33,
-    touristName: "살라르 데 우유니1",
-    lat: "-18.5",
-    lng: "2.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 46,
-    touristName: "살라르 데 우유니1",
-    lat: "-46.5",
-    lng: "88.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 56,
-    touristName: "살라르 데 우유니1",
-    lat: "67.5",
-    lng: "-22.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 66,
-    touristName: "살라르 데 우유니1",
-    lat: "32.5",
-    lng: "24.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 77,
-    touristName: "살라르 데 바나나우유니",
-    lat: "18.5",
-    lng: "0.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 85,
-    touristName: "살라르 데 우유니1",
-    lat: "-18.5",
-    lng: "2.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 94,
-    touristName: "살라르 데 우유니1",
-    lat: "-46.5",
-    lng: "88.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 102,
-    touristName: "살라르 데 우유니1",
-    lat: "67.5",
-    lng: "-22.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-  {
-    id: 1022,
-    touristName: "살라르 데 우유니1",
-    lat: "67.5",
-    lng: "-22.7",
-    imgUrl: tempImg,
-    continent: "남 아메리카",
-  },
-];
+import { flight } from "../../../../apis/flight";
 
 const TourList = (props) => {
   const [pageNum, setPageNum] = useState(0);
+  const [tourList, setTourList] = useState([]);
+
+  useEffect(() => {
+    const data = props.tourContinent;
+
+    const continentName =
+      data === "South America"
+        ? "samerica"
+        : data === "North America"
+        ? "namerica"
+        : data === "Asia"
+        ? "asia"
+        : data === "Africa"
+        ? "africa"
+        : data === "Oceania"
+        ? "oceania"
+        : "europe";
+
+    const getTourList = async (data) => {
+      const res = await flight.get.tourist(data);
+      setPageNum(0);
+      setTourList(res.results);
+    };
+
+    getTourList(continentName);
+  }, [props.tourContinent]);
 
   const pageHandler = (type) => {
     if (type === "prev") {
@@ -185,8 +40,8 @@ const TourList = (props) => {
       }
       setPageNum(pageNum - 1);
     } else {
-      console.log(pageNum, tourSpot.length);
-      if (+pageNum === +parseInt((tourSpot.length - 1) / 10)) {
+      console.log(pageNum, tourList.length);
+      if (+pageNum === +parseInt((tourList.length - 1) / 10)) {
         return;
       }
       setPageNum(pageNum + 1);
@@ -206,13 +61,25 @@ const TourList = (props) => {
             <li>
               <input
                 type="radio"
+                id="europe"
+                name="tour-continent"
+                value="Europe"
+                onChange={(e) => {
+                  props.setTourContinent(e.target.value);
+                }}
+                defaultChecked
+              />
+              <label htmlFor="europe">유럽</label>
+            </li>
+            <li>
+              <input
+                type="radio"
                 id="south-america"
                 name="tour-continent"
                 value="South America"
                 onChange={(e) => {
                   props.setTourContinent(e.target.value);
                 }}
-                defaultChecked
               />
               <label htmlFor="south-america">남 아메리카</label>
             </li>
@@ -264,18 +131,6 @@ const TourList = (props) => {
               />
               <label htmlFor="oceania">오세아니아</label>
             </li>
-            <li>
-              <input
-                type="radio"
-                id="europe"
-                name="tour-continent"
-                value="Europe"
-                onChange={(e) => {
-                  props.setTourContinent(e.target.value);
-                }}
-              />
-              <label htmlFor="europe">유럽</label>
-            </li>
           </ul>
         </div>
         <div className="list-body">
@@ -285,7 +140,7 @@ const TourList = (props) => {
             </button>
           )}
           <ul>
-            {tourSpot.slice(pageNum * 10, pageNum * 10 + 10).map((spot) => {
+            {tourList.slice(pageNum * 10, pageNum * 10 + 10).map((spot) => {
               return (
                 <li
                   className="tour-item"
@@ -298,7 +153,7 @@ const TourList = (props) => {
               );
             })}
           </ul>
-          {pageNum !== parseInt((tourSpot.length - 1) / 10) && (
+          {pageNum !== parseInt((tourList.length - 1) / 10) && (
             <button className="right-arrow" onClick={() => pageHandler("next")}>
               <FaChevronRight />
             </button>
@@ -379,7 +234,8 @@ const TourListBox = styled.div`
     }
 
     .tour-item {
-      display: block;
+      display: flex;
+      flex-direction: column;
       width: 200px;
       height: 180px;
       margin: 0 24px 24px 0;
@@ -392,6 +248,16 @@ const TourListBox = styled.div`
         width: 100%;
         height: 120px;
         border-radius: 7px 7px 0 0;
+      }
+
+      > div {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 15px;
       }
 
       :hover {
