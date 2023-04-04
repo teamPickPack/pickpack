@@ -31,8 +31,8 @@ public class RedisChatMessage implements Serializable {
 
 
     //TODO 줄때 포맷팅
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+//    @JsonSerialize(using = LocalDateTimeSerializer.class)
+//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime time;
 
     public static RedisChatMessage convertToRedisChatMessage(ChatMessage chatMessage){
