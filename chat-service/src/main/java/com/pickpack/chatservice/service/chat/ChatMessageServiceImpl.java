@@ -99,7 +99,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         System.out.println(33);
         if(redisChatMessageList.isEmpty())return null;
         System.out.println(44);
-        return ChatPagingResDto.messageListToDto(redisChatMessageList.orElseGet(null));
+        return ChatPagingResDto.messageListToDto(redisChatMessageList.get());
 
         //slice는 필요가 없는 것 같다. 캐시를 쓰는데 뭘..
 
