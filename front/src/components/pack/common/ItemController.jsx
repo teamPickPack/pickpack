@@ -1,22 +1,54 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { item } from "../../../apis/item";
+import { packAction } from "../../../store/packSlice";
+import store from "../../../store/store";
 
 const ItemController = (props) => {
   const [searchType, setSearchType] = useState("title");
   const [isTypeClick, setIsTypeClick] = useState(false);
+  const [tagList, setTagList] = useState([]);
+  const [searchTag, setSearchTag] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
+
   const inputText = useRef();
-  const menuType = props.menuType; // 살게요 팔게요 빌려요...
+  const tagRef = useRef();
 
   const navigator = useNavigate();
 
-  const searchHandler = (e) => {
+  useEffect(() => {
+    console.log("여긴 컨트롤러");
+
+    const getTagList = async () => {
+      const res = await item.get.tag();
+      setTagList(res.results);
+    };
+
+    getTagList();
+  }, []);
+
+  const searchHandler = async (e) => {
     e.preventDefault();
 
-    console.log(e);
-    // props로 살게욘지 팔게욘지 등이랑
-    //제목인지, 태그검색인지 타입에 따라 api 호출시켜버리면댐
+    console.log("여긴 컨트롤러 검색부분");
+
+    if (searchType === "tag" && !inputText.current.value) {
+      alert("검색할 도시를 선택해주세요.");
+      return;
+    }
+
+    props.setNewCondition(searchType, inputText.current.value);
+  };
+
+  const navigateRegist = () => {
+    if (store.getState().user.memberId === null) {
+      alert("로그인 후 이용하실 수 있습니다.");
+      return;
+    }
+    navigator("/pack/regist");
   };
 
   return (
@@ -34,8 +66,11 @@ const ItemController = (props) => {
                 name="search-pack-type"
                 type="radio"
                 onChange={() => {
+                  inputText.current.value = "";
                   setSearchType("title");
                   setIsTypeClick(!isTypeClick);
+                  setSearchTag("");
+                  setSelectedTag("");
                 }}
               />
               <label htmlFor="search-pack-title">제목</label>
@@ -46,6 +81,7 @@ const ItemController = (props) => {
                 name="search-pack-type"
                 type="radio"
                 onChange={() => {
+                  inputText.current.value = "";
                   setSearchType("tag");
                   setIsTypeClick(!isTypeClick);
                 }}
@@ -54,12 +90,65 @@ const ItemController = (props) => {
             </li>
           </ul>
         )}
-        <input
-          type="text"
-          ref={inputText}
-          placeholder="제목이나 태그로 검색해주세요"
-        />
-        <button>
+        {searchType === "title" ? (
+          <input
+            type="text"
+            ref={inputText}
+            placeholder="제목을 입력해주세요"
+          />
+        ) : (
+          <>
+            <div className="tag-content" ref={inputText}>
+              {selectedTag.cityName && <p>{selectedTag.cityName}</p>}
+            </div>
+            <div className="search-tag">
+              <input
+                type="text"
+                ref={tagRef}
+                onChange={(e) => {
+                  setSearchTag(e.target.value);
+                }}
+                onBlur={() => {
+                  setTimeout(() => {
+                    tagRef.current.value = "";
+                    setSearchTag("");
+                  }, 100);
+                }}
+                placeholder="도시명을 입력해주세요"
+              />
+            </div>
+            {searchTag && (
+              <section>
+                {tagList
+                  .filter((item) => {
+                    return (
+                      searchTag === item.cityName.substring(0, searchTag.length)
+                    );
+                  })
+                  .map((res) => {
+                    return (
+                      <div
+                        key={res.cityName}
+                        style={{ zIndex: 10 }}
+                        onClick={() => {
+                          tagRef.current.value = "";
+                          setSearchTag("");
+                          setSelectedTag({
+                            id: res.id,
+                            cityName: res.cityName,
+                          });
+                          inputText.current.value = res.id;
+                        }}
+                      >
+                        {res.cityName}
+                      </div>
+                    );
+                  })}
+              </section>
+            )}
+          </>
+        )}
+        <button onClick={searchHandler}>
           <svg
             width="19"
             height="16"
@@ -78,13 +167,7 @@ const ItemController = (props) => {
           </svg>
         </button>
       </SearchForm>
-      <button
-        type="button"
-        className="regist-item"
-        onClick={() => {
-          navigator("/pack/regist");
-        }}
-      >
+      <button type="button" className="regist-item" onClick={navigateRegist}>
         글쓰기
       </button>
     </ControlContainer>
@@ -202,6 +285,80 @@ const SearchForm = styled.form`
     :hover {
       path {
         fill: #d9d9d9;
+      }
+    }
+  }
+
+.tag-content {
+      z-index:-1;
+      width:200px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      text-align:center;
+      position:absolute;
+      background:none;
+      border:none;
+      height: 24px;
+      cursor:default;
+      transform:translate(200px, -29px);
+
+      p {
+        margin: 0;
+        height: 18px;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 4px 8px;
+        background: #ff8fb1;
+        border-radius: 8px;
+        letter-spacing: 1px;
+        color: white;
+      }
+    }
+    
+  .search-tag {
+      width: 324px;
+      border:none;
+      background:transparent;
+
+      input {
+        font-weight: 700;
+        font-size: 16px;
+        outline: none;
+        border: none;
+        padding: 0 12px;
+        width: 100%;
+        background:transparent;
+      }
+    }
+
+    section {
+      position: absolute;
+      transform: translate(80px, 0);
+      width: 354px;
+      font-weight: 600;
+      font-size: 16px;
+      color: #000000;
+      background: #ffffff;
+      border: 2px solid #d9d9d9;
+
+      > div {
+        cursor: pointer;
+        padding: 0 16px;
+        height: 32px;
+        border-bottom: 2px solid #d9d9d9;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s ease;
+
+        :hover {
+          color: #ff8fb1;
+          text-shadow: 0 0 1px #ff8fb1;
+        }
+      }
+
+      >div: last-child {
+        border: none;
       }
     }
   }
