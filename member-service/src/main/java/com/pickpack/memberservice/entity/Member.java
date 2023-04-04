@@ -21,7 +21,7 @@ public class Member implements Serializable {
     private Long id;
     private String mid;
     @Column(nullable = false, length = 20)
-    private String pwd;
+    private String password;
     private String nickname;
     private String img_url;
 

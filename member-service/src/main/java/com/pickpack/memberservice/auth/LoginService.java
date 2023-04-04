@@ -22,7 +22,7 @@ public class LoginService implements UserDetailsService {
         Member memberPS = memberRepository.findByMid(username).orElseThrow(
                 () -> new InternalAuthenticationServiceException("인증 실패")
         );
-        System.out.println(memberPS.getMid()+" "+memberPS.getPwd());
+        System.out.println(memberPS.getMid()+" "+memberPS.getPassword());
         return new LoginUser(memberPS);
     }
 }

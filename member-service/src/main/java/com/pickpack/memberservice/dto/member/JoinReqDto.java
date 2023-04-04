@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class JoinReqDto {
 
     private String mid;
-    private String pwd;
+    private String password;
     private String nickname;
     private String img_url;
 
@@ -18,17 +18,17 @@ public class JoinReqDto {
         return Member.builder()
                 .mid(mid)
                 .nickname(nickname)
-                .pwd(bCryptPasswordEncoder.encode(pwd))
+                .password(bCryptPasswordEncoder.encode(password))
                 .img_url(img_url)
                 .build();
     }
 
-    public Member toTestEntity(){
-        return Member.builder()
-                .mid(mid)
-                .nickname(nickname)
-                .pwd(pwd)
-                .img_url(img_url)
-                .build();
-    }
+//    public Member toTestEntity(){
+//        return Member.builder()
+//                .mid(mid)
+//                .nickname(nickname)
+//                .password(password)
+//                .img_url(img_url)
+//                .build();
+//    }
 }
