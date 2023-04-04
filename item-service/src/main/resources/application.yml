@@ -26,9 +26,12 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+
 logging:
+  config: classpath:Logback-spring.xml
   level:
     org.hibernate.sql : debug
+
 cloud:
   aws:
     s3:

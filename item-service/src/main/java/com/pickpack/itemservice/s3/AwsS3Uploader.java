@@ -47,7 +47,6 @@ public class AwsS3Uploader {
             }
             return Optional.of(convertFile);
         }
-
         return Optional.empty();
     }
 
