@@ -11,5 +11,5 @@ public interface ChatMessageService {
     void redisChatMessageWarming();
 
     void sendMessageToDB();
-    ChatPagingResDto getMessages(String roomId, LocalDate page);
+    ChatPagingResDto getMessages(String roomId, String page);
 }

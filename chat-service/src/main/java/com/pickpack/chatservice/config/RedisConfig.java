@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,6 +15,8 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import javax.annotation.PostConstruct;
 
 @RequiredArgsConstructor
 @Configuration
@@ -34,10 +37,18 @@ public class RedisConfig {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(host);
-        redisStandaloneConfiguration.setPort(port);
+        RedisStandaloneConfiguration redisStandaloneConfiguration= new RedisStandaloneConfiguration(host,port);
         redisStandaloneConfiguration.setPassword(password);
+//        RedisSentinelConfiguration redisSentinelConfiguration = new RedisSentinelConfiguration()
+//                .master("mymaster")
+//                .sentinel(host,26379)
+//                .sentinel(host, 26380)
+//                .sentinel(host, 26381)
+//                .sentinel(host,26382)
+//                .sentinel(host, 26383);
+//        redisSentinelConfiguration.setPassword(password);
+
+//        return new LettuceConnectionFactory(redisSentinelConfiguration);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 

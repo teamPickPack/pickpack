@@ -43,6 +43,15 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     public RedisChatRoom createChatRoom(CreateRoomReqDto createRoomReqDto) {
         Item item = itemRepository.findItemById(createRoomReqDto.getItemId());
 
+        Optional<List<RedisChatRoom>> list =redisChatRoomRepository.findRoomsByNickname(createRoomReqDto.getBuyer());
+        if(list.isPresent()) {
+            for(RedisChatRoom redisChatRoom:list.get()){
+                if(redisChatRoom.getItemId()==createRoomReqDto.getItemId()){
+                    return redisChatRoom;
+                }
+            }
+        }
+
         RedisChatRoom redisChatRoom = RedisChatRoom.builder()
                 //db에 roomid로 정렬이됨
                 .roomId(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
@@ -56,6 +65,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
                 .messageSize(0)
                 .lastMessageTime(LocalDateTime.now())
                 .build();
+
         log.info("RedisChatRoom이다 :{}",redisChatRoom.getRoomId());
         saveRedisChatRoom(redisChatRoom, redisChatRoom.getSeller());
         saveRedisChatRoom(redisChatRoom, redisChatRoom.getBuyer());
