@@ -4,6 +4,7 @@ spring:
     redis:
       host: 54.180.157.223
       port: 6379
+      password: "pickpack"
   application:
     name: chat
   #  datasource:
