@@ -87,7 +87,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     }
 
     @Override
-    @Scheduled(cron = "0 0/10 * * *")
+    @Scheduled(cron = "0 0/10 * * * *")
     public void sendRoomToDB() {
         //TODO entries 대신 scan을 사용해보는것
         Map<String, List<RedisChatRoom>> map = redisChatRoomRepository.findAllRoomByKey()
