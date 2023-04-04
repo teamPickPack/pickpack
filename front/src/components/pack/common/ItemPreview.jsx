@@ -1,4 +1,5 @@
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import noImg from "../../../assets/image/noimg.png";
 import styled from "styled-components";
 
 const ItemPreview = (props) => {
@@ -48,7 +49,13 @@ const ItemPreview = (props) => {
         navigator(`/pack/detail/${item.itemId}`);
       }}
     >
-      <img src={item.imgUrl} alt={item.itemName} />
+      <img
+        src={item.imgUrl}
+        onError={(e) => {
+          e.target.src = noImg;
+        }}
+        alt={item.itemName}
+      />
       <div className="item-desc">
         <div>
           <span className="item-title">{item.title}</span>
@@ -75,8 +82,13 @@ const LiWrapper = styled.li`
   border-radius: 8px;
   flex-direction: column;
   margin-top: 38px;
+  margin-right: 24px;
   cursor: pointer;
   transition: all 0.2s ease;
+
+  :nth-child(4n) {
+    margin-right: 0;
+  }
 
   :hover {
     border: 1px solid #626262;

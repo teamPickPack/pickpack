@@ -7,7 +7,7 @@ import { useState } from "react";
 
 const Main = () => {
   const [tourItem, setTourItem] = useState(null);
-  const [tourContinent, setTourContinent] = useState("South America");
+  const [tourContinent, setTourContinent] = useState("Europe");
 
   return (
     <>
@@ -26,6 +26,7 @@ const Main = () => {
         <TourList
           setTourItem={setTourItem}
           setTourContinent={setTourContinent}
+          tourContinent={tourContinent}
         />
       </ThirdSection>
     </>

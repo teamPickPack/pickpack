@@ -1,25 +1,50 @@
 import styled from "styled-components";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ItemPreview from "../../../components/pack/common/ItemPreview";
-
-const DETAIL_DUMMY = {
-  itemId: 9,
-  memberId: 2,
-  title: "태극기랑 사진 찍으실 분",
-  category: "SELL",
-  price: 15000,
-  itemName: "태극기",
-  imgUrl:
-    "https://pickpack8.s3.ap-northeast-2.amazonaws.com/item/15bbbef4-4c8f-4057-bc63-cd061d625dbd%ED%83%9C%EA%B7%B9%EA%B8%B0.jpg",
-  registDate: "2023-03-31 14:02",
-  isComplete: false,
-  cityId: 44,
-  cityName: "세부",
-};
+import { useEffect, useState } from "react";
+import { item } from "../../../apis/item";
+import { useSelector } from "react-redux";
+import Spinner from "../../../components/pack/common/Spinner";
+import noImg from "../../../assets/image/noimg.png";
 
 const Detail = () => {
   const navigator = useNavigate();
+  const param = useParams();
+  const [itemDetail, setItemDetail] = useState(null);
+  const [isLike, setIsLike] = useState(false);
+  const [images, setImages] = useState([]);
+  const [imageNum, setImageNum] = useState(0);
+
+  const memberId = useSelector((state) => {
+    return state.user.memberId / 2373.15763 - 7;
+  });
+
+  useEffect(() => {
+    const getItemInfo = async () => {
+      const res = await item.post.detail(param.itemNo, memberId);
+
+      window.scrollTo(0, 0);
+      setItemDetail(res);
+      setIsLike(res.isLike);
+    };
+
+    getItemInfo();
+  }, [param]);
+
+  useEffect(() => {
+    if (!itemDetail) {
+      return;
+    }
+
+    console.log(itemDetail.item.imgUrl);
+
+    let imgs = itemDetail.item.imgUrl.split("|").filter((img) => {
+      return img !== "";
+    });
+
+    setImages(imgs);
+  }, [itemDetail]);
 
   const timeAgo = (datetimeString) => {
     const datetime = new Date(datetimeString.replace(/-/g, "/"));
@@ -77,75 +102,179 @@ const Detail = () => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  const likeHandler = () => {
+    if (memberId === -7) {
+      alert("로그인이 필요한 서비스입니다.");
+      return;
+    }
+
+    if (isLike) {
+      const updateLike = async () => {
+        await item.put.like(itemDetail.item.itemId, memberId);
+        setIsLike(!isLike);
+      };
+
+      updateLike();
+    } else {
+      const updateLike = async () => {
+        await item.post.like(itemDetail.item.itemId, memberId);
+        setIsLike(!isLike);
+      };
+
+      updateLike();
+    }
+  };
+
+  const openChatting = () => {
+    if (memberId === -7) {
+      alert("로그인이 필요한 서비스입니다.");
+      return;
+    }
+  };
+
+  // 화살표로 사진보여주기 할차례입니다~~
+
   return (
-    <DetailContainer>
-      <DetailInner>
-        <div className="inner-top">
-          <div className="image-box">
-            <img src={DETAIL_DUMMY.imgUrl} alt={DETAIL_DUMMY.itemName} />
-            <button className="left-arrow">
-              <FaChevronLeft />
-            </button>
-            <button className="right-arrow">
-              <FaChevronRight />
-            </button>
-          </div>
-          <div className="control-box">
-            <div className="left-div">닉네임</div>
-            <div className="right-div">
-              <button>채팅하기</button>
-              <input id="like" type="checkbox" />
-              <label htmlFor="like">
-                찜하기
-                <LikeSVG />
-              </label>
-              <button
-                onClick={() => {
-                  navigator(`pack/modify/${DETAIL_DUMMY.itemId}`);
-                }}
-              >
-                수정하기
-              </button>
-            </div>
-          </div>
-          <div className="info-box">
-            <div className="left-div">
-              <h2>제목</h2>
-              <div>
-                작성일ㆍ{timeAgo(DETAIL_DUMMY.registDate)}{" "}
-                <span className="tag-span">세부</span>
+    <>
+      {!itemDetail ? (
+        <Spinner />
+      ) : (
+        <DetailContainer>
+          <DetailInner otherItemLength={itemDetail.otherItems.length}>
+            <div className="inner-top">
+              <div className="image-box">
+                <img
+                  src={images[imageNum]}
+                  onError={(e) => {
+                    e.target.src = noImg;
+                  }}
+                  alt={itemDetail.item.itemName}
+                />
+                <button
+                  className="left-arrow"
+                  onClick={() => {
+                    if (imageNum === 0) {
+                      setImageNum(images.length - 1);
+                    } else {
+                      setImageNum((imageNum) => {
+                        return imageNum - 1;
+                      });
+                    }
+                  }}
+                >
+                  <FaChevronLeft />
+                </button>
+                <button
+                  className="right-arrow"
+                  onClick={() => {
+                    if (imageNum === images.length - 1) {
+                      setImageNum(0);
+                    } else {
+                      setImageNum((imageNum) => {
+                        return imageNum + 1;
+                      });
+                    }
+                  }}
+                >
+                  <FaChevronRight />
+                </button>
+              </div>
+              <div className="control-box">
+                <div className="left-div">{itemDetail.item.nickname}</div>
+                <div className="right-div">
+                  {memberId !== itemDetail.item.memberId ? (
+                    <>
+                      <button type="button" onClick={openChatting}>
+                        채팅하기
+                      </button>
+                      <input
+                        id="like"
+                        value={itemDetail.isLike}
+                        type="checkbox"
+                        onChange={() => {
+                          console.log("hi");
+                        }}
+                        checked={isLike}
+                      />
+                      <label htmlFor="like" onClick={likeHandler}>
+                        찜하기
+                        <LikeSVG />
+                      </label>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        navigator(`/pack/modify/${itemDetail.item.itemId}`);
+                      }}
+                    >
+                      수정하기
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="info-box">
+                <div className="left-div">
+                  <h2>{itemDetail.item.title}</h2>
+                  <div>
+                    작성일ㆍ{timeAgo(itemDetail.item.registDate)}{" "}
+                    <span className="tag-span">{itemDetail.item.cityName}</span>
+                  </div>
+                </div>
+                <div className="right-div">
+                  <div className="category-div">
+                    {categoryName(itemDetail.item.category)}
+                  </div>
+                  <div className="price-div">
+                    {setPriceFormat(itemDetail.item.price)}원
+                  </div>
+                </div>
+              </div>
+              <div className="content-box">
+                <pre>{itemDetail.item.content}</pre>
               </div>
             </div>
-            <div className="right-div">
-              <div className="category-div">
-                {categoryName(DETAIL_DUMMY.category)}
+            <div className="inner-bottom">
+              <p>{itemDetail.item.nickname} 님의 다른 게시글</p>
+              <div className="another-list">
+                {itemDetail.otherItems.map((item) => {
+                  return (
+                    <ItemPreview
+                      item={item}
+                      key={item.itemId}
+                      onClick={() => {
+                        navigator(`/pack/detail/${item.itemId}`);
+                      }}
+                    />
+                  );
+                })}
               </div>
-              <div className="price-div">
-                {setPriceFormat(DETAIL_DUMMY.price)}원
-              </div>
+              {itemDetail.otherItems.length ? (
+                <>
+                  <button
+                    className="left-arrow"
+                    onClick={() => {
+                      document.querySelector(".another-list").scrollBy(-266, 0);
+                    }}
+                  >
+                    <FaChevronLeft />
+                  </button>
+                  <button
+                    className="right-arrow"
+                    onClick={() => {
+                      document.querySelector(".another-list").scrollBy(266, 0);
+                    }}
+                  >
+                    <FaChevronRight />
+                  </button>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
-          </div>
-          <div className="content-box">
-            <pre>{`반갑습니다. 반갑습니다. 반갑습니다. 반갑습니다. 
-강호동입니다.
-행복하세요.반갑습니다. 
-강호동입니다.
-행복하세요.반갑습니다. 
-강호동입니다.
-행복하세요.반갑습니다. 
-강호동입니다.
-행복하세요.`}</pre>
-          </div>
-        </div>
-        <div className="inner-bottom">
-          <p>닉네임 님의 다른 게시글</p>
-          <div className="another-list">
-            <ItemPreview item={DETAIL_DUMMY} />
-            <ItemPreview item={DETAIL_DUMMY} />
-          </div>
-        </div>
-      </DetailInner>
-    </DetailContainer>
+          </DetailInner>
+        </DetailContainer>
+      )}
+    </>
   );
 };
 
@@ -183,6 +312,8 @@ const DetailInner = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: all 0.3s ease;
+      scroll-behavior: smooth;
 
       img {
         width: 100%;
@@ -303,16 +434,18 @@ const DetailInner = styled.div`
         h2 {
           font-size: 24px;
           font-weight: 700;
-          margin: 0;
+          margin: 0 0 2px 0;
         }
 
         .tag-span {
-          padding: 2px 12px;
+          display: inline-flex;
+          padding: 4px 8px;
           background: #ff8fb1;
           color: #ffffff;
           border-radius: 8px;
           border: none;
           margin-left: 8px;
+          font-size: 12px;
         }
       }
 
@@ -334,7 +467,7 @@ const DetailInner = styled.div`
       border-width: 0 0 2px 0;
 
       pre {
-        min-height: 200px;
+        min-height: 320px;
         margin: 0;
         font-size: 16px;
         font-weight: 600;
@@ -354,13 +487,51 @@ const DetailInner = styled.div`
       font-weight: 600;
     }
 
-    > div {
+    .another-list {
       display: flex;
+      max-width: 600px;
+      overflow: hidden;
       align-items: center;
-      justify-content: center;
+      justify-content: ${(props) => {
+        return props.otherItemLength > 2 ? `flex-start` : `center`;
+      }};
+      scroll-behavior: smooth;
 
       li {
         margin: 24px 12px;
+      }
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      opacity: 0.4;
+      border: none;
+      cursor: pointer;
+
+      :hover {
+        opacity: 1;
+      }
+    }
+    .left-arrow {
+      transform: translate(-40px, -208px);
+      svg {
+        transform: translate(-2px, 0);
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .right-arrow {
+      transform: translate(620px, -208px);
+      svg {
+        width: 20px;
+        height: 20px;
       }
     }
   }

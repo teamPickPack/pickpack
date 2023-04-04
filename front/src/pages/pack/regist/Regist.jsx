@@ -1,32 +1,22 @@
 import axios from "axios";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { item } from "../../../apis/item";
 import ImageInput from "../../../components/pack/common/ImageInput";
-
-const TAG_DUMMNY = [
-  {
-    id: "1",
-    cityName: "세부",
-  },
-  {
-    id: "2",
-    cityName: "세네갈",
-  },
-  {
-    id: "3",
-    cityName: "고릴라",
-  },
-  {
-    id: "4",
-    cityName: "헤네시스",
-  },
-];
+import store from "../../../store/store";
 
 const Regist = () => {
   const [images, setImages] = useState([]);
   const [isCategory, setIsCategory] = useState(false);
   const [selectedTag, setSelectedTag] = useState("");
   const [searchTag, setSearchTag] = useState("");
+  const [tagList, setTagList] = useState([]);
+
+  const memberId = useSelector((state) => {
+    return state.user.memberId / 2373.15763 - 7;
+  });
 
   const categoryRef = useRef();
   const titleRef = useRef();
@@ -34,28 +24,24 @@ const Regist = () => {
   const priceRef = useRef();
   const contentRef = useRef();
 
-  // axios
-  //   .get("https://j8b307.p.ssafy.io/api/item", {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //   .then((res) => {
-  //     console.log(res);
-  //   });
-  axios
-    .post(
-      "https://j8b307.p.ssafy.io/api/item/detail",
-      { itemId: 9, memberId: 1 },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    .then((res) => {
-      console.log(res);
-    });
+  const navigator = useNavigate();
+
+  useEffect(() => {
+    if (store.getState().user.memberId === null) {
+      alert("로그인 후 이용하실 수 있습니다.");
+
+      navigator(-1);
+    }
+  }, []);
+
+  useEffect(() => {
+    const getTagList = async () => {
+      const res = await item.get.tag();
+      setTagList(res.results);
+    };
+
+    getTagList();
+  }, []);
 
   const inputNumBlurHandler = (event) => {
     event.target.value = event.target.value
@@ -106,6 +92,80 @@ const Regist = () => {
     }
 
     event.target.value = result;
+  };
+
+  const registItem = () => {
+    if (memberId === -7) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    if (
+      (titleRef.current.value === undefined) |
+      (titleRef.current.value === "")
+    ) {
+      alert("제목을 입력하세요.");
+      return;
+    }
+    if (
+      (categoryRef.current.category === undefined) |
+      (categoryRef.current.category === "")
+    ) {
+      alert("카테고리를 선택하세요.");
+      return;
+    }
+    if (!selectedTag.id) {
+      alert("태그를 선택하세요.");
+      return;
+    }
+    if (
+      (priceRef.current.value === undefined) |
+      (priceRef.current.value === "")
+    ) {
+      alert("가격을 입력하세요.");
+      return;
+    }
+    if (
+      (contentRef.current.value === undefined) |
+      (contentRef.current.value === "")
+    ) {
+      alert("내용을 입력하세요.");
+      return;
+    }
+
+    const data = {
+      item: {
+        memberId: memberId,
+        category: categoryRef.current.category,
+        itemName: "",
+        price: priceRef.current.value.replaceAll(",", "").replaceAll("원", ""),
+        title: titleRef.current.value,
+        content: contentRef.current.value,
+        cityId: selectedTag.id,
+      },
+      imgs: images,
+    };
+
+    const registData = async () => {
+      const formData = new FormData();
+
+      formData.append(
+        "item",
+        new Blob([JSON.stringify(data.item)], { type: "application/json" })
+      );
+
+      data.imgs.forEach((element) => {
+        formData.append("imgs", element);
+      });
+
+      try {
+        const res = await item.post.item(formData);
+        alert("등록이 완료되었습니다.");
+        navigator(`/pack/detail/${res}`);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    registData();
   };
 
   return (
@@ -232,27 +292,30 @@ const Regist = () => {
           </div>
           {searchTag && (
             <section>
-              {TAG_DUMMNY.filter((item) => {
-                return (
-                  searchTag === item.cityName.substring(0, searchTag.length)
-                );
-              }).map((res) => {
-                return (
-                  <div
-                    key={res.cityName}
-                    onClick={() => {
-                      tagRef.current.value = "";
-                      setSearchTag("");
-                      setSelectedTag({
-                        id: res.id,
-                        cityName: res.cityName,
-                      });
-                    }}
-                  >
-                    {res.cityName}
-                  </div>
-                );
-              })}
+              {tagList
+                .filter((item) => {
+                  return (
+                    searchTag === item.cityName.substring(0, searchTag.length)
+                  );
+                })
+                .map((res) => {
+                  return (
+                    <div
+                      key={res.cityName}
+                      style={{ zIndex: 10 }}
+                      onClick={() => {
+                        tagRef.current.value = "";
+                        setSearchTag("");
+                        setSelectedTag({
+                          id: res.id,
+                          cityName: res.cityName,
+                        });
+                      }}
+                    >
+                      {res.cityName}
+                    </div>
+                  );
+                })}
             </section>
           )}
         </div>
@@ -270,7 +333,9 @@ const Regist = () => {
           <textarea ref={contentRef} placeholder="내용을 입력해주세요" />
         </div>
         <div className="button-box">
-          <button>완 료</button>
+          <button type="button" onClick={registItem}>
+            완 료
+          </button>
         </div>
       </RegistInner>
     </RegistContainer>
