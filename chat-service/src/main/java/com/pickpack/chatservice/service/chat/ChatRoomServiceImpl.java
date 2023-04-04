@@ -47,6 +47,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         if(list.isPresent()) {
             for(RedisChatRoom redisChatRoom:list.get()){
                 if(redisChatRoom.getItemId()==createRoomReqDto.getItemId()){
+                    log.info(redisChatRoom.getRoomId());
                     return redisChatRoom;
                 }
             }
