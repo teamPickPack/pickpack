@@ -64,11 +64,6 @@ public class SecurityConfig {
         http.apply(new CustomSecurityFilterManager());
 
         http.authorizeRequests()
-//                .antMatchers("/api/member/join").permitAll()
-//                .antMatchers("/api/member/login").permitAll()
-//                .antMatchers("/api/member/health1").permitAll()
-//                .antMatchers(HttpMethod.POST,"/api/flight/one").permitAll()
-//                .antMatchers(HttpMethod.POST, "/api/flight/round").permitAll()
                 .antMatchers("/api/**").permitAll()
                 .anyRequest().authenticated();
 
