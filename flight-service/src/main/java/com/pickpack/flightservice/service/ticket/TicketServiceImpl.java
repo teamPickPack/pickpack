@@ -70,7 +70,7 @@ public class TicketServiceImpl implements TicketService {
                     tmp = result.getContent();
                     totalCount += result.getTotalElements();
                 } else if(direct[i] && (i == 3)) { //경유 2회 이상
-                    Page<Ticket> result = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, departure, destination, date, minPrice, maxPrice, 2);
+                    Page<Ticket> result = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, departure, destination, date, minPrice, maxPrice, 1);
                     tmp = result.getContent();
                     totalCount += result.getTotalElements();
                 }
@@ -187,7 +187,7 @@ public class TicketServiceImpl implements TicketService {
                     Page<Ticket> goWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 0);
                     goWayTicketList = goWayResult.getContent();
 
-                    Page<Ticket> returnWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 2);
+                    Page<Ticket> returnWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 1);
                     returnWayTicketList = returnWayResult.getContent();
 
                     totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
@@ -196,7 +196,7 @@ public class TicketServiceImpl implements TicketService {
                     roundTicketList.addAll(tmp);
 
                     //출국편 경유 2회 이상, 귀국편 경유 0회
-                    goWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 2);
+                    goWayResult = ticketRepository.findWaypointIsGraterThanTickets(pageRequest, "ICN", destination, depDate, minPrice, maxPrice, 1);
                     goWayTicketList = goWayResult.getContent();
 
                     returnWayResult = ticketRepository.findWaypoint0or1Tickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice, 0);
