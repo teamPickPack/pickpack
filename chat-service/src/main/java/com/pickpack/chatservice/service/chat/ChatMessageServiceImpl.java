@@ -84,11 +84,16 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public ChatPagingResDto getMessages(String roomId, LocalDate date) {
             Optional<List<RedisChatMessage>> redisChatMessageList
                     = redisChatMessageRepository.findMessagesByRoomId(roomId);
+        System.out.println(11);
         if (redisChatMessageList.isEmpty()) {
+            System.out.println(22);
             fillRedisChatMessage(roomId, date, 1);
+
             redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
         }
+        System.out.println(33);
         if(redisChatMessageList.isEmpty())return null;
+        System.out.println(44);
         return ChatPagingResDto.messageListToDto(redisChatMessageList.orElseGet(null));
 
         //slice는 필요가 없는 것 같다. 캐시를 쓰는데 뭘..
