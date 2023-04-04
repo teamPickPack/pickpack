@@ -78,7 +78,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         for (ChatMessage chatMessage : chatMessageList) {
             newChatMessageList.add(RedisChatMessage.convertToRedisChatMessage(chatMessage));
         }
-        redisChatMessageRepository.saveMessageList(roomId, newChatMessageList);
+//        redisChatMessageRepository.saveMessageList(roomId, newChatMessageList);
         //TODO 필요없는딩
         return chatMessageList;
     }
