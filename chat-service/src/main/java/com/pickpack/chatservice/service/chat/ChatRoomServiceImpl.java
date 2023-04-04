@@ -13,6 +13,7 @@ import com.pickpack.chatservice.repo.ChatRoomRepository;
 import com.pickpack.chatservice.repo.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -86,7 +87,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     }
 
     @Override
-//    @Scheduled(cron = "0 0 3 * * *")
+    @Scheduled(cron = "0 0/10 * * *")
     public void sendRoomToDB() {
         //TODO entries 대신 scan을 사용해보는것
         Map<String, List<RedisChatRoom>> map = redisChatRoomRepository.findAllRoomByKey()
