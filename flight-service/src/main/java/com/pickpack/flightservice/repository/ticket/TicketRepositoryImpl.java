@@ -27,7 +27,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     public Page<Ticket> findAllTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice) {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
-                .join(ticket.flightList, flight)
+                .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
@@ -35,18 +35,19 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.price.between(minPrice, maxPrice)
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .distinct();
 
         sortAndOrder(query, pageable);
 
         List<Ticket> ticketList = query.fetch();
 
-        System.out.println(ticketList);
+        System.out.println("티켓사이즈: " + ticketList.size());
 
-        Long totalCount = queryFactory
-                .select(ticket.count())
+        Long totalCount =  queryFactory
+                .select(ticket.countDistinct())
                 .from(ticket)
-                .join(ticket.flightList, flight)
+                .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
@@ -55,6 +56,8 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 )
                 .fetchOne();
 
+        System.out.println("총개수: " + totalCount);
+
         return new PageImpl<>(ticketList, pageable, totalCount);
     }
 
@@ -62,7 +65,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     public Page<Ticket> findWaypoint0or1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
-                .join(ticket.flightList, flight)
+                .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
@@ -78,9 +81,9 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         List<Ticket> ticketList = query.fetch();
 
         Long totalCount = queryFactory
-                .select(ticket.count())
+                .select(ticket.countDistinct())
                 .from(ticket)
-                .join(ticket.flightList, flight)
+                .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
@@ -97,7 +100,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     public Page<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
                 .selectFrom(ticket)
-                .join(ticket.flightList, flight)
+                .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
@@ -113,9 +116,9 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         List<Ticket> ticketList = query.fetch();
 
         Long totalCount = queryFactory
-                .select(ticket.count())
+                .select(ticket.countDistinct())
                 .from(ticket)
-                .join(ticket.flightList, flight)
+                .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
                         ticket.arrCode.eq(destination),
