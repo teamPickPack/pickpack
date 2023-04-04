@@ -89,6 +89,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             fillRedisChatMessage(roomId, date, 1);
             redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
         }
+        if(redisChatMessageList.isEmpty())return null;
         return ChatPagingResDto.messageListToDto(redisChatMessageList.orElseGet(null));
 
         //slice는 필요가 없는 것 같다. 캐시를 쓰는데 뭘..
