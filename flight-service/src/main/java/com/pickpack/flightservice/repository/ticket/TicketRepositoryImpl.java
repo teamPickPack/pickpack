@@ -10,6 +10,7 @@ import org.springframework.data.domain.*;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.pickpack.flightservice.entity.QFlight.flight;
 import static com.pickpack.flightservice.entity.QTendency.tendency;
@@ -64,7 +65,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     @Override
     public Page<Ticket> findWaypoint0or1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
-                .selectFrom(ticket)
+                .selectFrom(ticket).distinct()
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
@@ -78,7 +79,9 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query.fetch();
+        List<Ticket> ticketList = query.fetch().stream().collect(Collectors.toList());
+
+        System.out.println(ticketList.size());
 
         Long totalCount = queryFactory
                 .select(ticket.countDistinct())
@@ -99,7 +102,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     @Override
     public Page<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Ticket> query  = queryFactory
-                .selectFrom(ticket)
+                .selectFrom(ticket).distinct()
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
@@ -113,7 +116,9 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query.fetch();
+        List<Ticket> ticketList = query.fetch().stream().collect(Collectors.toList());
+
+        System.out.println(ticketList.size());
 
         Long totalCount = queryFactory
                 .select(ticket.countDistinct())
