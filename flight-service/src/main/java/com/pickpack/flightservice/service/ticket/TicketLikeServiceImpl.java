@@ -32,13 +32,18 @@ public class TicketLikeServiceImpl implements TicketLikeService {
     @Override
     public void likeOnewayTicket(OnewayTicketLikeReq onewayTicketLikeReq) {
         Member member = memberRepository.getById(onewayTicketLikeReq.getMemberId());
-        OnewayTicketLike onewayTicketLike = OnewayTicketLike.builder()
-                .isDelete(false)
-                .isChange(false)
-                .ticketId(onewayTicketLikeReq.getTicketId())
-                .wantedPrice(0)
-                .member(member)
-                .build();
+        OnewayTicketLike onewayTicketLike = onewayTicketLikeRepository.findByTicketIdAndMember(onewayTicketLikeReq.getTicketId(), member);
+        if(onewayTicketLike == null){
+            onewayTicketLike = OnewayTicketLike.builder()
+                    .isDelete(false)
+                    .isChange(false)
+                    .ticketId(onewayTicketLikeReq.getTicketId())
+                    .wantedPrice(0)
+                    .member(member)
+                    .build();
+        }else{
+            onewayTicketLike.changeDelete();
+        }
 
         onewayTicketLikeRepository.save(onewayTicketLike);
     }
@@ -48,14 +53,15 @@ public class TicketLikeServiceImpl implements TicketLikeService {
         Member member = memberRepository.getById(onewayTicketLikeReq.getMemberId());
         OnewayTicketLike onewayTicketLike = onewayTicketLikeRepository.findByTicketIdAndMember(onewayTicketLikeReq.getTicketId(), member);
 
-        onewayTicketLike = OnewayTicketLike.builder()
-                .id(onewayTicketLike.getId())
-                .isDelete(true)
-                .isChange(false)
-                .ticketId(onewayTicketLikeReq.getTicketId())
-                .wantedPrice(onewayTicketLike.getWantedPrice())
-                .member(member)
-                .build();
+//        onewayTicketLike = OnewayTicketLike.builder()
+//                .id(onewayTicketLike.getId())
+//                .isDelete(true)
+//                .isChange(false)
+//                .ticketId(onewayTicketLikeReq.getTicketId())
+//                .wantedPrice(onewayTicketLike.getWantedPrice())
+//                .member(member)
+//                .build();
+        onewayTicketLike.changeDelete();
 
         onewayTicketLikeRepository.save(onewayTicketLike);
     }
