@@ -50,7 +50,7 @@ public class ItemService {
         Member member = memberOptional.get();
         Item item = Item.createItem(title, str2Category(categoryStr), price, content, itemName, city, member);
 
-        if(imgs.isEmpty()){
+        if(imgs == null || imgs.isEmpty()){
             item.setImage("Null");
             itemRepository.save(item);
             return item.getId();
