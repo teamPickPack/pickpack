@@ -61,7 +61,9 @@ public class RedisChatMessageRepository implements Serializable {
 
     //마지막 메시지 주기
     public IsNewDto findSizeAndLastMessage(String roomId) {
-        return IsNewDto.create(findMessagesByRoomId(roomId).orElseGet(null));
+        Optional<List<RedisChatMessage>> messageList= findMessagesByRoomId(roomId);
+        if(!messageList.isPresent()) return null;
+        return IsNewDto.create(messageList.get());
     }
 
     public int[][] writeMessageFromRedisToDB(List<RedisChatMessage> allMessageList) {
