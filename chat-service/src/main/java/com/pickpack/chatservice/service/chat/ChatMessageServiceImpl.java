@@ -79,12 +79,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     //TODO 먹는지 확인 하자
     @Override
-    public ChatPagingResDto getMessages(String roomId, String date) {
+    public ChatPagingResDto getMessages(String roomId, LocalDate date) {
 
             Optional<List<RedisChatMessage>> redisChatMessageList
                     = redisChatMessageRepository.findMessagesByRoomId(roomId);
         if (redisChatMessageList.isEmpty()) {
-            fillRedisChatMessage(roomId, LocalDate.parse(date, DateTimeFormatter.ISO_DATE), 1);
+            fillRedisChatMessage(roomId, date, 1);
             redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
         }
         return ChatPagingResDto.messageListToDto(redisChatMessageList.orElseGet(null));
