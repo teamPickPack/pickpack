@@ -69,15 +69,19 @@ public class TicketLikeServiceImpl implements TicketLikeService {
     @Override
     public void likeRoundTicket(RoundTicketLikeReq roundTicketLikeReq) {
         Member member = memberRepository.getById(roundTicketLikeReq.getMemberId());
-        RoundTicketLike roundTicketLike = RoundTicketLike.builder()
-                .isDelete(false)
-                .isChange(false)
-                .ticketToId(roundTicketLikeReq.getTicketToId())
-                .ticketFromId(roundTicketLikeReq.getTicketFromId())
-                .wantedPrice(0)
-                .member(member)
-                .build();
-
+        RoundTicketLike roundTicketLike = roundTicketLikeRepository.findByTicketToIdAndTicketFromIdAndMember(roundTicketLikeReq.getTicketToId(), roundTicketLikeReq.getTicketFromId(), member);
+        if(roundTicketLike == null) {
+            roundTicketLike = RoundTicketLike.builder()
+                    .isDelete(false)
+                    .isChange(false)
+                    .ticketToId(roundTicketLikeReq.getTicketToId())
+                    .ticketFromId(roundTicketLikeReq.getTicketFromId())
+                    .wantedPrice(0)
+                    .member(member)
+                    .build();
+        }else{
+            roundTicketLike.changeDelete();
+        }
         roundTicketLikeRepository.save(roundTicketLike);
     }
 
@@ -86,15 +90,16 @@ public class TicketLikeServiceImpl implements TicketLikeService {
         Member member = memberRepository.getById(roundTicketLikeReq.getMemberId());
         RoundTicketLike roundTicketLike = roundTicketLikeRepository.findByTicketToIdAndTicketFromIdAndMember(roundTicketLikeReq.getTicketToId(), roundTicketLikeReq.getTicketFromId(), member);
 
-        roundTicketLike = RoundTicketLike.builder()
-                .id(roundTicketLike.getId())
-                .isDelete(true)
-                .isChange(false)
-                .ticketToId(roundTicketLikeReq.getTicketToId())
-                .ticketFromId(roundTicketLikeReq.getTicketFromId())
-                .wantedPrice(roundTicketLike.getWantedPrice())
-                .member(member)
-                .build();
+//        roundTicketLike = RoundTicketLike.builder()
+//                .id(roundTicketLike.getId())
+//                .isDelete(true)
+//                .isChange(false)
+//                .ticketToId(roundTicketLikeReq.getTicketToId())
+//                .ticketFromId(roundTicketLikeReq.getTicketFromId())
+//                .wantedPrice(roundTicketLike.getWantedPrice())
+//                .member(member)
+//                .build();
+        roundTicketLike.changeDelete();
 
         roundTicketLikeRepository.save(roundTicketLike);
     }
