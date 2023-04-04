@@ -5,6 +5,7 @@ import com.pickpack.itemservice.api.request.ItemSearchTitleReq;
 import com.pickpack.itemservice.api.response.ListRes;
 import com.pickpack.itemservice.dto.item.ItemCreateDto;
 import com.pickpack.itemservice.dto.item.ItemDetailDto;
+import com.pickpack.itemservice.dto.item.ItemModifyDto;
 import com.pickpack.itemservice.service.item.ItemService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,16 @@ public class ItemController {
         }catch (Exception e){
             return exceptionHandling(e);
         }
+    }
 
+    @PutMapping(value = "/{itemId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> modifyItem(@PathVariable("itemId") Long itemId, @RequestPart ItemModifyDto item, @RequestPart(value = "imgs", required = false) List<MultipartFile> imgs){
+        try{
+            Long id = itemService.modifyItem(itemId, item.getMemberId(), item.getTitle(), item.getCategory(), item.getPrice(), item.getContent(), item.getItemName(), item.getCityId(), item.getImgUrl(),  imgs);
+            return new ResponseEntity<>(id, HttpStatus.OK);
+        }catch (Exception e){
+            return exceptionHandling(e);
+        }
     }
 
     @GetMapping("/{category}/{page}")
