@@ -1,10 +1,12 @@
-import axios from 'axios';
+import axios from "axios";
 
 const instance = axios.create({
-  baseURL: 'https://j8b307.p.ssafy.io/',
-  timeout: 2000,
+  baseURL: "https://j8b307.p.ssafy.io/",
+  // timeout: 2000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json;charset=UTF-8",
+    // Authorization:
+    //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpbWdVcmwiOiJzYWRhc2Q4YXM2ODdmNmFmLWFzZGFzOC1hc2RhIiwic3ViIjoiUGlja1BhY2tUb2tlbiIsIm5pY2tuYW1lIjoic3NhZnkxOTkiLCJtaWQiOiJ0ZXN0OTk5OTkiLCJpZCI6MjQsImV4cCI6MTY4MTIzNTk0N30.F8aaae35uXMo5s-kAUPdHXS2vP7AVyYO2VRYbDkAHHlizRUDFJtdVuhMWhOtPJ-kfWesmtxenZT3pPA-aFRS3A",
   },
 });
 instance.interceptors.request.use(
@@ -26,7 +28,7 @@ instance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 instance.interceptors.response.use(
@@ -35,8 +37,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 export default instance;
-
