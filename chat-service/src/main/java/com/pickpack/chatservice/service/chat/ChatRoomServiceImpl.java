@@ -42,17 +42,22 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     @Override
     public RedisChatRoom createChatRoom(CreateRoomReqDto createRoomReqDto) {
         Item item = itemRepository.findItemById(createRoomReqDto.getItemId());
-
+        System.out.println(1);
         Optional<List<RedisChatRoom>> list =redisChatRoomRepository.findRoomsByNickname(createRoomReqDto.getBuyer());
+        System.out.println(2);
         if(list.isPresent()) {
+            System.out.println(3);
             for(RedisChatRoom redisChatRoom:list.get()){
+                System.out.println(4);
                 if(redisChatRoom.getItemId()==createRoomReqDto.getItemId()){
+                    System.out.println(5);
                     log.info("아니이게뭐야:{}",createRoomReqDto.getItemId());
                     log.info("이게뭐냐고:{}",redisChatRoom.getItemId());
                     return redisChatRoom;
                 }
             }
         }
+        System.out.println(6);
 
         RedisChatRoom redisChatRoom = RedisChatRoom.builder()
                 //db에 roomid로 정렬이됨
