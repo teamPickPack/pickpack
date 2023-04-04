@@ -51,10 +51,10 @@ public class ChatRoomServiceImpl implements ChatRoomService{
                 System.out.println(4);
                 if(redisChatRoom.getItemId()==createRoomReqDto.getItemId()){
                     System.out.println(5);
-                    log.info("아니이게뭐야:{}",createRoomReqDto.getItemId());
-                    log.info("이게뭐냐고:{}",redisChatRoom.getItemId());
                     return redisChatRoom;
                 }
+                log.info("아니이게뭐야:{}",createRoomReqDto.getItemId());
+                log.info("이게뭐냐고:{}",redisChatRoom.getItemId());
             }
         }
         System.out.println(6);
