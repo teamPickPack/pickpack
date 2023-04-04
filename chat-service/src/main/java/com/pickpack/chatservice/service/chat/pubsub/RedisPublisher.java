@@ -22,7 +22,10 @@ public class RedisPublisher {
             message.setMessage(message.getSender() + "님이 입장하셨습니다.");
         }
         message.setTime(LocalDateTime.now());
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
         chatMessageService.createMessage(message);
+        System.out.println("???????????????????????????????????????????????");
 
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);
     }
