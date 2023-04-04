@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -32,9 +35,9 @@ public class ChatController {
     }
 
     @GetMapping("/api/chat/message")
-    public ResponseEntity<ChatPagingResDto> getMessages(@RequestBody ChatPagingReqDto chatPagingReqDTO) {
-        log.info("roomId:{}, page(date):{}",chatPagingReqDTO.getRoomId(),chatPagingReqDTO.getDate());
-        return new ResponseEntity<>(chatMessageService.getMessages(chatPagingReqDTO.getRoomId(),chatPagingReqDTO.getDate()), HttpStatus.OK);
+    public ResponseEntity<ChatPagingResDto> getMessages(@RequestParam String roomId, String date) {
+//        log.info("roomId:{}, page(date):{}",chatPagingReqDTO.getRoomId(),chatPagingReqDTO.getDate());
+        return new ResponseEntity<>(chatMessageService.getMessages(roomId,date), HttpStatus.OK);
     }
     //TODO 페이징처리!!!!!!!!!!!!!!!
 

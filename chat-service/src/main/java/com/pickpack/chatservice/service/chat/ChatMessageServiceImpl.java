@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -78,12 +79,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     //TODO 먹는지 확인 하자
     @Override
-    public ChatPagingResDto getMessages(String roomId, LocalDate date) {
+    public ChatPagingResDto getMessages(String roomId, String date) {
 
             Optional<List<RedisChatMessage>> redisChatMessageList
                     = redisChatMessageRepository.findMessagesByRoomId(roomId);
         if (redisChatMessageList.isEmpty()) {
-            fillRedisChatMessage(roomId, date, 1);
+            fillRedisChatMessage(roomId, LocalDate.parse(date, DateTimeFormatter.ISO_DATE), 1);
             redisChatMessageList = redisChatMessageRepository.findMessagesByRoomId(roomId);
         }
         return ChatPagingResDto.messageListToDto(redisChatMessageList.orElseGet(null));
