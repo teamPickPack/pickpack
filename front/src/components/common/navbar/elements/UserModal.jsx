@@ -8,30 +8,30 @@ import defaultProfile from '../../../../assets/image/defaultProfile.png';
 import { member } from '../../../../apis/member';
 
 export const CloseSVG = () => {
-    return (
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 14 14"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M13 1L1 13"
-          stroke="#6C6F75"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M1 1L13 13"
-          stroke="#6C6F75"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    );
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M13 1L1 13"
+        stroke="#6C6F75"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M1 1L13 13"
+        stroke="#6C6F75"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 };
 
 export default function UserModal({initialLoginMode, handleUserModalState}) {
@@ -353,26 +353,26 @@ const UserModalContentMode = styled.div`
     
 `
 const CloseBox = styled.div`
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
 
-    &:hover{
-        cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const UserModalLogin = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 72px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 72px 0px;
 
     .login-error {
         text-align: left;
@@ -405,12 +405,12 @@ const TextInputBox = styled.div`
     border: 1px solid #80489C;
     border-radius: ${(props) => props.inspect? '16px 0px 0px 16px' : '16px'};
 
-    input {
-        border: 0px solid white;
-        font-size: 24px;
-        margin-left: 8px;
-        outline: none;
-    }
+  input {
+    border: 0px solid white;
+    font-size: 24px;
+    margin-left: 8px;
+    outline: none;
+  }
 `;
 
 const ErrorMessage = styled.div`

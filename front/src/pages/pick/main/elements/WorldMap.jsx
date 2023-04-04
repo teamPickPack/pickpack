@@ -73,7 +73,7 @@ const MapController = (props) => {
     },
     zoomend(e) {
       if (airportMarkers.current) {
-        if (e.target._zoom > 3) {
+        if (e.target._zoom > 4) {
           airportMarkers.current.getLayers().forEach((marker) => {
             marker.openTooltip();
           });
@@ -367,7 +367,7 @@ const MapController = (props) => {
         })
         .addTo(map);
 
-      map.flyTo([tourItem.lat, tourItem.lng], 3);
+      map.flyTo([tourItem.lat, tourItem.lng], 5);
 
       markers.current.openTooltip();
 
