@@ -35,7 +35,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         //roomid와 sender로 room수정
         //updateroomtime바로 때려버리면 안됨
         System.out.println(123);
-        redisChatRoomRepository.updateRoomTime(message.getSender(), message.getRoomId(), message.getTime(), false);
+//        redisChatRoomRepository.updateRoomTime(message.getSender(), message.getRoomId(), message.getTime(), false);
         System.out.println(456);
 
         List<RedisChatMessage> list = redisChatMessageRepository.findMessagesByRoomId(message.getRoomId())
