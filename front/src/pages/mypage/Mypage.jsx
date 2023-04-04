@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import styled from "styled-components"
-
+import MypageTab from './elements/MypageTab';
 export default function Mypage(){
     const [mypageMode, setMypageMode] = useState(1);
     return(
@@ -20,10 +20,7 @@ export default function Mypage(){
                 </LeftContent>
             </MypageLeft>
             <div>
-                <div>
-                    <div style={{fontSize: '32px'}}>편도</div>
-                    <div style={{fontSize: '32px'}}>왕복</div>
-                </div>
+                <MypageTab mypageMode={mypageMode}/>
                 <div>
                     Content
                 </div>
