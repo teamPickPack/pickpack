@@ -52,6 +52,7 @@ public class ItemController {
     @PostMapping("/{category}/title/{page}")
     public ResponseEntity<?> getItemsSearchOnTitle(@PathVariable("category") String category, @PathVariable("page") Integer page, @RequestBody ItemSearchTitleReq itemSearchTitleReq){
         try{
+            log.info("아이템 검색어 = {}",itemSearchTitleReq.getSearch());
             return new ResponseEntity<>(itemService.getItemsSearchOnTitle(category, itemSearchTitleReq.getSearch(), page), HttpStatus.OK);
         }catch(Exception e){
             return exceptionHandling(e);

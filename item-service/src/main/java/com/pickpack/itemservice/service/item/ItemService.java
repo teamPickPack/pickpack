@@ -98,10 +98,10 @@ public class ItemService {
         PageRequest pageRequest = PageRequest.of(page, itemSize);
         ListRes items = itemRepository.getItemsSearchOnCity(pageRequest, categoryStr, cityId);
 
-
         List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
         if(!lists.isEmpty()){
             items.setResults(getThumbnail(lists));
+            log.info("도시명 검색어 = {}", lists.get(0).getCityName());
         }
 
         return items;
