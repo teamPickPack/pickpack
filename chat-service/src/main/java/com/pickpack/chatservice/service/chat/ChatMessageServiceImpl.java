@@ -45,7 +45,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
 
     public List<ChatMessage> fillRedisChatMessage(String roomId, LocalDate page, int day) {
-        if(chatMessageRepository.findTop1ById(roomId).getTime()
+        Optional<ChatMessage> tchatMessage = chatMessageRepository.findTop1ById(roomId);
+        if(!tchatMessage.isPresent())return null;
+        if(tchatMessage.get().getTime()
                 .after(Timestamp.valueOf(LocalDateTime.of(page, LocalTime.MIDNIGHT)))) return null;
 
         LocalDateTime startDate = LocalDateTime.of(page.minusDays(day), LocalTime.MIDNIGHT);
