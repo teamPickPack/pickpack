@@ -21,6 +21,10 @@ public class ChatPagingResDto {
             chatPagingResDTO.date = LocalDate.now();
         chatPagingResDTO.pageSize=redisChatMessageList.size();
         chatPagingResDTO.chatMessages=redisChatMessageList;
+        for(RedisChatMessage redisChatMessage:redisChatMessageList){
+            System.out.println(redisChatMessage.getMessage());
+            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        }
         return chatPagingResDTO;
     }
 }
