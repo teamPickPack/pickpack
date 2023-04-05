@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
+import jwt_decode from "jwt-decode";
 
 const initialState = {
-  memberId: null, // 유저아이디 대충 암호화~
+  memberId: null, 
+  nickname: null,
   accessToken: null,
   refreshToken: null,
 };
@@ -11,10 +13,11 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setAccessToken(state, action) {
-      state.accessToken = action.payload.substring(7, action.payload.length);
-    },
-    setMemberId(state, action) {
-      state.memberId = (action.payload + 7) * 2373.15763;
+      const token = action.payload.substring(7, action.payload.length);
+      const userInfo = jwt_decode(token);
+      state.accessToken = token;
+      state.nickname = userInfo.nickname;
+      state.memberId = (userInfo.id + 7) * 2373.15763; // 유저아이디 대충 암호화~
     },
   },
 });
