@@ -5,6 +5,7 @@ import defaultProfile from "../../../../assets/image/defaultProfile.png";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { userAction } from "../../../../store/userSlice";
+
 export const CloseSVG = () => {
   return (
     <svg
@@ -86,17 +87,18 @@ export default function UserModal({ initialLoginMode, handleUserModalState }) {
   const doLogin = () => {
     const data = {
       mid: loginId,
-      pwd: loginPassword,
+      password: loginPassword,
     };
     console.log(data);
+
     axios
       .post("https://j8b307.p.ssafy.io/api/member/login", data, {
         "Content-Type": "application/json",
       })
-      .then((res) => {
-        console.log(res);
-        dispatch(userAction.setAccessToken(res.headers.getAuthorization()));
-        dispatch(userAction.setMemberId(res.data.data.id));
+      .then(async (res) => {
+        dispatch(
+          userAction.setAccessToken(await res.headers.getAuthorization())
+        );
       })
       .catch((err) => console.log(err));
   };
@@ -104,7 +106,7 @@ export default function UserModal({ initialLoginMode, handleUserModalState }) {
   const doSignup = () => {
     const data = {
       mid: signupId,
-      pwd: signupPassword,
+      password: signupPassword,
       nickname: nickname,
       img_url: ".",
     };

@@ -12,7 +12,7 @@ const Chat = (props) => {
     <ChatContainer>
       <ChatInner>
         {roomId ? (
-          <ChatRoom />
+          <ChatRoom roomId={roomId} />
         ) : (
           <ChatList setChatOpen={props.setChatOpen} chatOpen={props.chatOpen} />
         )}

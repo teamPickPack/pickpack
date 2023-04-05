@@ -2,25 +2,91 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import borrow from "../../../assets/image/borrow.jpg";
 import { chatAction } from "../../../store/chatSlice";
+import { useEffect, useState } from "react";
+import store from "../../../store/store";
+import { chat } from "../../../apis/chat";
+import noImg from "../../../assets/image/noimg.png";
 
-const ChatItem = () => {
+const ChatItem = (props) => {
   const dispatch = useDispatch();
+  const [chatItem, setChatItem] = useState(props.chatItem);
 
   const openChatRoom = () => {
-    dispatch(chatAction.setRoomId(1));
+    const data = {
+      itemId: chatItem.itemId,
+      seller: chatItem.nickName,
+      buyer: store.getState().user.nickname,
+    };
+
+    chat.post.chat(data);
   };
+
+  const timeAgo = (datetimeString) => {
+    const newDatetimeString =
+      datetimeString.substring(0, 10) + " " + datetimeString.substring(11, 19);
+    const datetime = new Date(newDatetimeString.replace(/-/g, "/"));
+    const seconds = Math.floor((new Date() - datetime) / 1000);
+
+    let interval = Math.floor(seconds / 31536000);
+    if (interval >= 1) {
+      return interval + "년 전";
+    }
+
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) {
+      return interval + "달 전";
+    }
+
+    interval = Math.floor(seconds / 604800);
+    if (interval >= 1) {
+      return interval + "주 전";
+    }
+
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) {
+      return interval + "일 전";
+    }
+
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) {
+      return interval + "시간 전";
+    }
+
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) {
+      return interval + "분 전";
+    }
+
+    return "방금 전";
+  };
+
+  // console.log(chatItem);
 
   return (
     <ChatItemContainer onClick={openChatRoom}>
       <div className="left-div">
-        <input type="checkbox" value="아이디.." />
+        <input type="checkbox" value={chatItem.roomId} />
         <div>
-          <p>닉네임</p>
-          <p>마지막 채팅 내용</p>
+          <p>{chatItem.nickName}</p>
+          <p>{chatItem.lastMessage}</p>
         </div>
       </div>
       <div className="right-div">
-        <img src={borrow} />
+        <div className="right-info">
+          <div className="">{timeAgo(chatItem.lastMessageTime)}</div>
+          {chatItem.new ? (
+            <div className="new-box">New</div>
+          ) : (
+            <div className="empty-box"></div>
+          )}
+        </div>
+        <img
+          src={chatItem.imgUrl.substring(0, chatItem.imgUrl.length - 1)}
+          alt={chatItem.imgUrl}
+          onError={(e) => {
+            e.target.src = noImg;
+          }}
+        />
       </div>
     </ChatItemContainer>
   );
@@ -48,21 +114,53 @@ const ChatItemContainer = styled.div`
       outline: none;
     }
 
-    p {
-      margin: 0;
+    > div {
       display: flex;
-      font-weight: 600;
-      font-size: 16px;
+      flex-direction: column;
+      align-items: flex-start;
+
+      p {
+        margin: 0;
+        display: block;
+        font-weight: 600;
+        max-width: 350px;
+        font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
 
   .right-div {
     display: flex;
-
+    .right-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+    }
+    .new-box {
+      border-radius: 16px;
+      padding: 4px 8px;
+      background: #ff5a5a;
+      font-size: 12px;
+      color: #ffffff;
+      font-weight: 600;
+      height: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .empty-box {
+      height: 12px;
+      padding: 4px 8px;
+    }
     img {
       width: 56px;
       height: 56px;
       border-radius: 4px;
+      margin-left: 8px;
+      border: 1px solid #d9d9d9;
     }
   }
 `;
