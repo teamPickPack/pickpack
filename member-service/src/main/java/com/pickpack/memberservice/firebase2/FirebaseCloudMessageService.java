@@ -47,7 +47,13 @@ public class FirebaseCloudMessageService {
                         .build();
 
         log.info("바디" + mes);
-//        log.info("바바" + request);
+
+
+//        try{
+//            Thread.sleep(10000);
+//        }catch(InterruptedException e){
+//            e.printStackTrace();
+//        }
 
         String send = FirebaseMessaging.getInstance().send(mes);
         System.out.println("🎄" + send);
