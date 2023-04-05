@@ -10,7 +10,6 @@ import org.springframework.data.domain.*;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.pickpack.flightservice.entity.QFlight.flight;
 import static com.pickpack.flightservice.entity.QTendency.tendency;
@@ -35,15 +34,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.depDate.eq(date),
                         ticket.price.between(minPrice, maxPrice)
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .distinct();
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query.fetch();
-
-        System.out.println("티켓사이즈: " + ticketList.size());
+        List<Ticket> ticketList = query
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         Long totalCount =  queryFactory
                 .select(ticket.countDistinct())
@@ -56,8 +54,6 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.price.between(minPrice, maxPrice)
                 )
                 .fetchOne();
-
-        System.out.println("총개수: " + totalCount);
 
         return new PageImpl<>(ticketList, pageable, totalCount);
     }
@@ -74,15 +70,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.price.between(minPrice, maxPrice),
                         ticket.waypointNum.eq(waypointNum)
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .distinct();
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query.fetch();
-
-        System.out.println(ticketList.size());
+        List<Ticket> ticketList = query
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         Long totalCount = queryFactory
                 .select(ticket.countDistinct())
@@ -112,15 +107,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                         ticket.price.between(minPrice, maxPrice),
                         ticket.waypointNum.gt(waypointNum)
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .distinct();
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query.fetch();
-
-        System.out.println(ticketList.size());
+        List<Ticket> ticketList = query
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         Long totalCount = queryFactory
                 .select(ticket.countDistinct())
@@ -143,11 +137,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
             if(o.getProperty().equals("updown")) {
                 PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
                 query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
+                        pathBuilder.get(o.getProperty())), new OrderSpecifier(Order.ASC,
+                        ticket.depTime), new OrderSpecifier(Order.ASC,
+                        ticket.arrTime));
             } else {
                 PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
                 query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
+                        pathBuilder.get(o.getProperty())), new OrderSpecifier(Order.ASC,
+                        ticket.depTime));
             }
         }
     }
