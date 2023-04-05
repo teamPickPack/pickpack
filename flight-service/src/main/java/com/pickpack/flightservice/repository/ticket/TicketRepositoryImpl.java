@@ -143,11 +143,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
             if(o.getProperty().equals("updown")) {
                 PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
                 query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
+                        pathBuilder.get(o.getProperty())), new OrderSpecifier(Order.ASC,
+                        ticket.depTime), new OrderSpecifier(Order.ASC,
+                        ticket.arrTime));
             } else {
                 PathBuilder pathBuilder = new PathBuilder(ticket.getType(), ticket.getMetadata());
                 query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                        pathBuilder.get(o.getProperty())));
+                        pathBuilder.get(o.getProperty())), new OrderSpecifier(Order.ASC,
+                        ticket.depTime));
             }
         }
     }
