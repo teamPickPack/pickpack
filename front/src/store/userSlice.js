@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import jwt_decode from "jwt-decode";
 
 const initialState = {
-  memberId: null, 
+  memberId: null,
   nickname: null,
   accessToken: null,
   refreshToken: null,

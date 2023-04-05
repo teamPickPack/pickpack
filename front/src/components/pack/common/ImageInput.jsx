@@ -21,6 +21,8 @@ const ImageInput = (props) => {
   const [loadedImages, setLoadedImages] = useState(props.loadedImages);
   const [emptyImage, setEmptyImage] = useState([]);
 
+  console.log(loadedImages, props.loadedImages);
+
   const ImageChangeEventHandler = async (data) => {
     const images = [...data.target.files];
     data.target.value = "";
@@ -121,7 +123,8 @@ const ImageInput = (props) => {
     const targetNo = event.target.value;
 
     const resultSet = loadedImages.filter((image) => {
-      return image.itemImageNo !== +targetNo;
+      console.log(image, targetNo);
+      return image !== targetNo;
     });
 
     setLoadedData([...resultSet]);
@@ -167,12 +170,21 @@ const ImageInput = (props) => {
   useEffect(() => {
     let empty = [];
 
-    for (let index = 0; index < props.maxFileNum - imageState.length; index++) {
+    for (
+      let index = 0;
+      index <
+      props.maxFileNum -
+        imageState.length -
+        (loadedImages ? loadedImages.length : 0);
+      index++
+    ) {
       empty.push(index);
     }
 
     setEmptyImage([...empty]);
-  }, [imageState]);
+  }, [imageState, loadedImages]);
+
+  console.log(loadedImages, imageState);
 
   return (
     <ImageInputContainer>
@@ -212,16 +224,14 @@ const ImageInput = (props) => {
             );
           })}
           {loadedImages &&
-            loadedImages.map((data) => {
-              const imageNo = data.itemImageNo;
-              const imageURL = data.imageSrc;
+            loadedImages.map((data, idx) => {
               return (
-                <ImagePreview key={imageNo}>
-                  <img src={imageURL} alt={imageNo} id={imageNo} />
+                <ImagePreview key={idx}>
+                  <img src={data} alt={idx} id={data} />
                   <button
                     type="button"
                     onClick={loadedImageRemoveHandler}
-                    value={imageNo}
+                    value={data}
                   >
                     ✖
                   </button>
