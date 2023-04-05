@@ -17,8 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -84,6 +83,9 @@ public class TicketServiceImpl implements TicketService {
 
         List<OneWayTicketRes> oneWayTicketResList = new ArrayList<>();
         for(Ticket ticket : ticketList) {
+            //티켓안의 flightList 정렬하기
+            Collections.sort(ticket.getFlightList(), Comparator.comparing(Flight::getDepDate).thenComparing(Flight::getDepTime));
+
             ticket.setWaypoints(wayPointToString(ticket.getFlightList()));
 
             boolean isLike = false; //항공권 찜여부
@@ -240,9 +242,15 @@ public class TicketServiceImpl implements TicketService {
         List<RoundTicketRes> result = new ArrayList<>();
 
        for(Ticket goWayTicket : goWayTicketList) {
+           //티켓안의 flightList 정렬하기
+           Collections.sort(goWayTicket.getFlightList(), Comparator.comparing(Flight::getDepDate).thenComparing(Flight::getDepTime));
+
            goWayTicket.setWaypoints(wayPointToString(goWayTicket.getFlightList()));
 
            for(Ticket returnWayTicket : returnWayTicketList) {
+               //티켓안의 flightList 정렬하기
+               Collections.sort(goWayTicket.getFlightList(), Comparator.comparing(Flight::getDepDate).thenComparing(Flight::getDepTime));
+
                returnWayTicket.setWaypoints(wayPointToString(returnWayTicket.getFlightList()));
 
                boolean isLike = false; //항공권 찜여부
