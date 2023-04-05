@@ -328,7 +328,7 @@ export default function List() {
             onClick={() => handleCompareModalVisible("body")}
             style={{ minWidth: "1200px" }}
           >
-            <FistSection>
+            <FistSection style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <SearchTicket />
             </FistSection>
             <Content flexStyle={compareBoxVisible}>
