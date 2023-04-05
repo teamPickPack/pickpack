@@ -1,6 +1,6 @@
-import Send from './send';
+import Send from "./send";
 
-const memberURL = 'api/member';
+const memberURL = "api/member";
 export const member = {
   // 고객 정보 호출
   info: async(data) => { 
@@ -24,6 +24,6 @@ export const member = {
   }
 
 };
-//사용범: api 사용할 곳에서 
+//사용범: api 사용할 곳에서
 //import {member} from '?'
 //const response = await member.함수(data)

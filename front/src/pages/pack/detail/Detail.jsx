@@ -7,6 +7,8 @@ import { item } from "../../../apis/item";
 import { useSelector } from "react-redux";
 import Spinner from "../../../components/pack/common/Spinner";
 import noImg from "../../../assets/image/noimg.png";
+import { chat } from "../../../apis/chat";
+import store from "../../../store/store";
 
 const Detail = () => {
   const navigator = useNavigate();
@@ -23,6 +25,8 @@ const Detail = () => {
   useEffect(() => {
     const getItemInfo = async () => {
       const res = await item.post.detail(param.itemNo, memberId);
+
+      console.log(res);
 
       window.scrollTo(0, 0);
       setItemDetail(res);
@@ -130,6 +134,14 @@ const Detail = () => {
       alert("로그인이 필요한 서비스입니다.");
       return;
     }
+
+    const data = {
+      itemId: itemDetail.item.itemId,
+      seller: itemDetail.item.nickname,
+      buyer: store.getState().user.nickname,
+    };
+
+    chat.post.chat(data);
   };
 
   // 화살표로 사진보여주기 할차례입니다~~

@@ -45,7 +45,13 @@ const WorldMap = (props) => {
         {/* <TileLayer url="http://mt0.google.com/vt/lyrs=p&hl=ko&x={x}&y={y}&z={z}" /> */}
         {/* <TileLayer url="http://mt0.google.com/vt/lyrs=y&hl=ko&x={x}&y={y}&z={z}" /> */}
         {/* <TileLayer url="http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png" /> */}
-        <MapController tourItem={tourItem} tourContinent={tourContinent} />
+        <MapController
+          tourItem={tourItem}
+          tourContinent={tourContinent}
+          setDestination={props.setDestination}
+          setDeparture={props.setDeparture}
+          criterion={props.criterion}
+        />
       </MapContainer>
     </MapBox>
   );
@@ -60,9 +66,10 @@ const MapController = (props) => {
 
   const dispatch = useDispatch();
 
-  const criterion = useSelector((state) => {
-    return state.flight.criterion;
-  });
+  // const criterion = useSelector((state) => {
+  //   return state.flight.criterion;
+  // });
+  const criterion = props.criterion;
 
   const map = useMapEvents({
     click(e) {
@@ -162,9 +169,11 @@ const MapController = (props) => {
     };
 
     if (criterion === "departure") {
-      dispatch(flightAction.setDestination(selectedItem));
+      // dispatch(flightAction.setDestination(selectedItem));
+      props.setDestination(selectedItem);
     } else {
-      dispatch(flightAction.setDeparture(selectedItem));
+      // dispatch(flightAction.setDeparture(selectedItem));
+      props.setDeparture(selectedItem);
     }
 
     CONTINENT_MAPPER.map((continent) => {
@@ -219,9 +228,11 @@ const MapController = (props) => {
               };
 
               if (criterion === "departure") {
-                dispatch(flightAction.setDestination(selectedAirport));
+                // dispatch(flightAction.setDestination(selectedAirport));
+                props.setDestination(selectedAirport);
               } else {
-                dispatch(flightAction.setDeparture(selectedAirport));
+                // dispatch(flightAction.setDeparture(selectedAirport));
+                props.setDeparture(selectedAirport);
               }
             })
         );
@@ -256,9 +267,11 @@ const MapController = (props) => {
           };
 
           if (criterion === "departure") {
-            dispatch(flightAction.setDestination(selectedItem));
+            // dispatch(flightAction.setDestination(selectedItem));
+            props.setDestination(selectedItem);
           } else {
-            dispatch(flightAction.setDeparture(selectedItem));
+            // dispatch(flightAction.setDeparture(selectedItem));
+            props.setDeparture(selectedItem);
           }
           country.airports.forEach((airport) => {
             airportMarkers.current.addLayer(
@@ -286,9 +299,11 @@ const MapController = (props) => {
                   };
 
                   if (criterion === "departure") {
-                    dispatch(flightAction.setDestination(selectedAirport));
+                    // dispatch(flightAction.setDestination(selectedAirport));
+                    props.setDestination(selectedAirport);
                   } else {
-                    dispatch(flightAction.setDeparture(selectedAirport));
+                    // dispatch(flightAction.setDeparture(selectedAirport));
+                    props.setDeparture(selectedAirport);
                   }
                 })
             );
