@@ -10,7 +10,7 @@ import { flight } from "../../../../apis/flight";
 import { useLocation, useNavigate } from "react-router";
 import store from "../../../../store/store";
 
-const SearchTicket = () => {
+const SearchTicket = (props) => {
   const dispatch = useDispatch();
 
   const [isCondition, setIsCondition] = useState(false);
@@ -36,6 +36,18 @@ const SearchTicket = () => {
   const [rightPrice, setRightPrice] = useState(flight.rightPrice);
   const [minPrice, setMinPrice] = useState(flight.minPrice);
   const [maxPrice, setMaxPrice] = useState(flight.maxPrice);
+
+  useEffect(() => {
+    if (props.departure) {
+      setDeparture(props.departure);
+    }
+  }, [props.departure]);
+
+  useEffect(() => {
+    if (props.destination) {
+      setDestination(props.destination);
+    }
+  }, [props.destination]);
 
   const resetCondition = () => {
     setDirect([true, false, false, false]);
@@ -196,8 +208,14 @@ const SearchTicket = () => {
   const changePlace = () => {
     if (criterion === "departure") {
       setCriterion("destination");
+      if (props.criterion) {
+        props.setCriterion("destination");
+      }
     } else {
       setCriterion("departure");
+      if (props.criterion) {
+        props.setCriterion("departure");
+      }
     }
 
     const _temp = departure;

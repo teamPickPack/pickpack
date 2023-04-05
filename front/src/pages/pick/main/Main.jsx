@@ -4,10 +4,16 @@ import WorldMap from "./elements/WorldMap";
 import mainBanner from "../../../assets/image/mainBanner.png";
 import TourList from "./elements/TourList";
 import { useState } from "react";
+import store from "../../../store/store";
 
 const Main = () => {
+  const flight = store.getState().flight;
+
   const [tourItem, setTourItem] = useState(null);
   const [tourContinent, setTourContinent] = useState("Europe");
+  const [departure, setDeparture] = useState(null);
+  const [destination, setDestination] = useState(null);
+  const [criterion, setCriterion] = useState(flight.criterion);
 
   return (
     <>
@@ -16,11 +22,22 @@ const Main = () => {
           <div>안녕하세요</div>
         </div>
         <div className="search-section">
-          <SearchTicket />
+          <SearchTicket
+            departure={departure}
+            destination={destination}
+            criterion={criterion}
+            setCriterion={setCriterion}
+          />
         </div>
       </FistSection>
       <SecondSection>
-        <WorldMap tourItem={tourItem} tourContinent={tourContinent} />
+        <WorldMap
+          tourItem={tourItem}
+          tourContinent={tourContinent}
+          setDeparture={setDeparture}
+          setDestination={setDestination}
+          criterion={criterion}
+        />
       </SecondSection>
       <ThirdSection>
         <TourList

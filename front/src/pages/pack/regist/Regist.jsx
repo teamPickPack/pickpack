@@ -177,7 +177,7 @@ const Regist = () => {
               setImages(data);
             }}
             maxFileNum={10}
-            maxFileSize={10}
+            maxFileSize={3}
             isPreview={true}
             addButton={
               <div className="add-button">
