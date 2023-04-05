@@ -140,6 +140,11 @@ public class TicketServiceImpl implements TicketService {
 
             Page<Ticket> returnWayResult = ticketRepository.findAllTickets(pageRequest, destination, "ICN", arrDate, minPrice, maxPrice);
             returnWayTicketList = returnWayResult.getContent();
+
+            totalCount += (goWayResult.getTotalElements() * returnWayResult.getTotalElements());
+
+            roundTicketList = combine(goWayTicketList, returnWayTicketList, member);
+
         }else { //경유 필터 : 직항, 경유 1회, 경유 2회 이상
             for(int i = 1;  i < direct.length; i++) {
                 List<RoundTicketRes> tmp = new ArrayList<>();
