@@ -29,7 +29,6 @@ public class FcmController {
                 requestDto.getBody());
 
         return ResponseEntity.ok().body("success");
-//        return new ResponseEntity("success", HttpStatus.OK);
 
     }
 
