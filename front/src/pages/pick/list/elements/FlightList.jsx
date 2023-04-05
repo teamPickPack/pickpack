@@ -3,9 +3,9 @@ import FlightItem from "./FlightItem";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import styled from "styled-components";
 
-export default function FlightList(){
+export default function FlightList({data}){
     const FlightDetailAllItemRef = useRef();
-    
+    // console.log(data);
     const [scrollLeftButtonVisible, setScrollLeftButtonVisible] = useState(false)
     const [scrollRightButtonVisible, setScrollRightButtonVisible] = useState(false)
     useEffect(() => {
@@ -43,11 +43,12 @@ export default function FlightList(){
     }
     return(
             <FlightDetailAllItem centerAlign={!scrollLeftButtonVisible && !scrollRightButtonVisible} ref={FlightDetailAllItemRef}>
+                {data.map((item) => <FlightItem key={item.id} item={item} />)}
+                {/* <FlightItem/>
                 <FlightItem/>
                 <FlightItem/>
                 <FlightItem/>
-                <FlightItem/>
-                <FlightItem/>
+                <FlightItem/> */}
                 <div style={{display: 'flex', alignItems: 'center'}}>
                     {scrollLeftButtonVisible? <ScrollLeftButton className="scroll-button" onClick={() => handleHorizontalScroll('prev')}><FaChevronLeft size={20}/></ScrollLeftButton> : null}
                     {scrollRightButtonVisible? <ScrollRightButton className="scroll-button" onClick={() => handleHorizontalScroll('next')}><FaChevronRight size={20}/></ScrollRightButton> : null}
