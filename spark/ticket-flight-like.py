@@ -14,24 +14,24 @@ from pyspark.sql.functions import expr, date_add
 from pyspark.sql.types import StructType, StructField, BooleanType, DateType, IntegerType, LongType, StringType
 
 # data insert할 때 필요
-db_connection_str = 'mysql+pymysql://root:@j8b307.p.ssafy.io:3306/test?charset=utf8'
+db_connection_str = 'mysql+pymysql://root:@j8b307.p.ssafy.io:3306/pickpack?charset=utf8'
 engine = create_engine(db_connection_str)
 
 
-#db = pymysql.connect(host="j8b307.p.ssafy.io", port=3306, user="root", password="ssafy", db="test")
+#db = pymysql.connect(host="j8b307.p.ssafy.io", port=3306, user="root", password="", db="test")
 #cursor = db.cursor()
 
-spark = SparkSession.builder.appName("PICKPACK").getOrCreate()
+spark = SparkSession.builder.appName("FlightService").getOrCreate()
 
 ####################################### 찜 테이블 정보 저장 #######################################
 with engine.begin() as conn:
     tckDBPD = pd.read_sql_table(table_name = "ticket", con=conn)
     onewayPD = pd.read_sql_table(table_name="oneway_ticket_like", con=conn)
     roundPD = pd.read_sql_table(table_name="round_ticket_like", con=conn)
-
-tckDF = None if tckDBPD.empty else spark.createDataFrame(tckDBPD)
-onewayDF = None if onewayPD.empty else spark.createDataFrame(onewayPD)
-roundDF = None if roundPD.empty else spark.createDataFrame(roundPD)
+    print(tckDBPD)
+    tckDF = None if tckDBPD.empty else spark.createDataFrame(tckDBPD)
+    onewayDF = None if onewayPD.empty else spark.createDataFrame(onewayPD)
+    roundDF = None if roundPD.empty else spark.createDataFrame(roundPD)
 
 if tckDF != None and onewayDF != None:
     onewayDF = onewayDF.join(tckDF, "ticket_id", "inner")
@@ -115,7 +115,8 @@ schema = StructType([
     ])
 # load data
 # hadoopDF : key = String, value = price
-lines = spark.read.option("sep", "\t").schema(schema).csv("hdfs://localhost:9000/user/output/2023-03-29")
+#lines = spark.read.option("sep", "\t").schema(schema).csv("hdfs://localhost:9000/user/output/2023-03-29")
+lines = spark.read.option("sep", "\t").schema(schema).csv("file:/home/j8b307/pjt_spark/2023-04-01-2")
 lines = lines.distinct()
 # ticket과 flight 정보가 들어있는 key 컬럼을 ', '를 기준으로 split     
 lines = lines.withColumn("info", func.split(func.col("key"), ", "))
@@ -128,7 +129,7 @@ tckDF = lines.select(lines["info"].getItem(0).cast("string").alias("dep_date"), 
                         lines["info"].getItem(4).alias("dep_time"), lines["info"].getItem(5).alias("total_time"), lines["info"].getItem(6).alias("arr_code"), \
                         lines["info"].getItem(7).alias("arr_time"), lines["info"].getItem(8).alias("plus_date"), lines["info"].getItem(9).alias("waypoint_num"), lines["price"].alias("price"))
 
-today_date = parse("2023-03-29").date()
+today_date = parse("2023-04-01").date()
 
 # plus_date와 waypoint_num을 연산을 위해 int 형으로 형변환
 tckDF = tckDF.withColumn("plus_date", func.col("plus_date").cast("int"))
@@ -197,6 +198,9 @@ fhtDF4 = fhtDF4.select("index", "wait_time", "dep_time", "dep_date", "dep_name",
 #fhtDF3.show()
 #fhtDF4.show()
 
+
+print("!!!!!!!!!!!!!!!!!!!!!!!!!", fhtDF1.count(), fhtDF2.count(), fhtDF3.count(), fhtDF4.count())
+
 tckDF = tckDF.join(fhtDF1.select("dep_name", "index", "arr_name", "arr_date"), "index", "inner")
 
 fhtDF2_temp = fhtDF2.select(func.col("index"), func.col("arr_name").alias("arr_name_temp"), func.col("arr_date").alias("arr_date_temp"))
@@ -245,7 +249,6 @@ tckDF = tckDF.select("index", "regist_date", "dep_date", "airline", "codeshare",
 
 tckPD = tckDF.toPandas()
 
-######################## ticket insert ########################
 with tqdm(total = len(tckPD.index), desc = "ticket insert") as pbar:
     tckPD.to_sql(name="ticket", con=engine, if_exists="append", index=False)
     pbar.update(len(tckPD.index))
@@ -257,18 +260,26 @@ tckDB = spark.createDataFrame(tckDBPD)
 tckDB = tckDB.select("ticket_id", "index")
 #tckDB.show()
 
-# flight 합치기
+fhtDF1 = fhtDF1.filter(func.col("wait_time").isNotNull())
+fhtDF2 = fhtDF2.filter(func.col("wait_time").isNotNull())
+fhtDF3 = fhtDF3.filter(func.col("wait_time").isNotNull())
+fhtDF4 = fhtDF4.filter(func.col("wait_time").isNotNull())
+
+fhtDF1 = fhtDF1.join(tckDB, "index", "inner").select("wait_time", "dep_time", "dep_date", "dep_name", "dep_code", "flight_time", "code", "codeshare_name", "waypoint_name", "arr_time", "plus_date", "arr_date", "arr_name", "arr_code", "ticket_id")
+fhtDF2 = fhtDF2.join(tckDB, "index", "inner").select("wait_time", "dep_time", "dep_date", "dep_name", "dep_code", "flight_time", "code", "codeshare_name", "waypoint_name", "arr_time", "plus_date", "arr_date", "arr_name", "arr_code", "ticket_id")
+fhtDF3 = fhtDF3.join(tckDB, "index", "inner").select("wait_time", "dep_time", "dep_date", "dep_name", "dep_code", "flight_time", "code", "codeshare_name", "waypoint_name", "arr_time", "plus_date", "arr_date", "arr_name", "arr_code", "ticket_id")
+fhtDF4 = fhtDF4.join(tckDB, "index", "inner").select("wait_time", "dep_time", "dep_date", "dep_name", "dep_code", "flight_time", "code", "codeshare_name", "waypoint_name", "arr_time", "plus_date", "arr_date", "arr_name", "arr_code", "ticket_id")
+print("!!!!!!!!!!!!!!!!!!!!!!!!!", fhtDF1.count(), fhtDF2.count(), fhtDF3.count(), fhtDF4.count())
+
 fhtDF = fhtDF1.union(fhtDF2)
 fhtDF = fhtDF.union(fhtDF3)
 fhtDF = fhtDF.union(fhtDF4)
-fhtDF = fhtDF.filter(func.col("wait_time").isNotNull())
 #fhtDF.show(fhtDF.count())
 
-fhtDF = fhtDF.join(tckDB, "index", "inner").select("wait_time", "dep_time", "dep_date", "dep_name", "dep_code", "flight_time", "code", "codeshare_name", "waypoint_name", "arr_time", "plus_date", "arr_date", "arr_name", "arr_code", "ticket_id")
+print("!!!!!!!!!!!!!!!!!!!join after ", fhtDF.count())
 
 #fhtDF.show(fhtDF.count())
 
-######################## flight insert ########################
 fhtPD = fhtDF.toPandas()
 with tqdm(total=len(fhtPD.index), desc = "flight insert") as pbar:
     fhtPD.to_sql(name="flight", con=engine, if_exists="append", index=False)
@@ -290,7 +301,6 @@ if onewayDF != None:
     onewayDF = onewayDF.select("ticket_id", "is_change", "is_delete", "wanted_price", "member_id")
     onewayPD = onewayDF.toPandas()
 
-    ######################## oneway insert ########################
     with tqdm(total=len(onewayPD.index), desc = "oneway insert") as pbar:
         onewayPD.to_sql(name="oneway_ticket_like", con=engine, if_exists="append", index=False)
         pbar.update(len(onewayPD.index))
@@ -314,11 +324,12 @@ if roundDF != None:
     roundDF = roundDF.drop("round_ticket_like_id").drop("price")
 
     #roundDF.show()
-    ######################## round insert ########################
     roundPD = roundDF.toPandas()
     with tqdm(total=len(roundPD.index), desc = "round insert") as pbar:
         roundPD.to_sql(name="round_ticket_like", con=engine, if_exists="append", index=False)
         pbar.update(len(roundPD.index))    
 
 
+
+spark.stop()
 
