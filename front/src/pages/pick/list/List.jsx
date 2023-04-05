@@ -7,39 +7,16 @@ import mainBanner from "../../../assets/image/mainBanner.png";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { compareAction } from "../../../store/compareSlice";
-import { data1, data2 } from "./data";
 import garudaIndonesia from "../../../assets/airlines/가루다인도네시아항공.png";
 import gilsang from "../../../assets/airlines/가루다인도네시아항공.png";
 import korean from "../../../assets/airlines/대한항공.png";
 import delta from "../../../assets/airlines/델타항공.png";
-import { FaChevronUp } from "react-icons/fa";
+// import { FaChevronUp } from "react-icons/fa";
 import styled from "styled-components";
 import { createPortal } from "react-dom";
 import { flight } from "../../../apis/flight";
 
 export default function List() {
-  const airlineData = [
-    {
-      airline: "가루다인도네시아항공",
-      color: "rgb(19,150,168)",
-      image: garudaIndonesia,
-    },
-    {
-      airline: "길상항공",
-      color: "rgb(176,54,66)",
-      image: gilsang,
-    },
-    {
-      airline: "대한항공",
-      color: "rgb(181,237,254)",
-      image: korean,
-    },
-    {
-      airline: "델타항공",
-      color: "rgb(255,255,255)",
-      image: delta,
-    },
-  ];
 
   const {
     wayType,
@@ -58,7 +35,13 @@ export default function List() {
   });
 
   const [pageLoading, setPageLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(null);
+  const accessToken = useSelector((state) => {
+    return state.user.accessToken;
+  });
 
+  const [data, setData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     const getFlightList = async () => {
       if (wayType === "one") {
@@ -81,13 +64,16 @@ export default function List() {
             date: startDate,
           },
           pageable: {
-            orderBy: "desc",
-            page: 0,
+            orderBy: "asc",
+            page: currentPage,
             sortType: "price",
           },
         };
-
-        console.log(await flight.post.one(data));
+        console.log(data);
+        const response = (await flight.post.one(data));
+        console.log(response);
+        setData(response.ticketList);
+        setTotalCount(response.totalCount);
         setPageLoading(false);
       } else {
         if (!departure.code | !destination.code | !startDate | !endDate) {
@@ -118,24 +104,80 @@ export default function List() {
 
         console.log(data);
 
-        console.log(await flight.post.round(data));
+        const response = await flight.post.round(data);
+        console.log(response);
+        setData(response.ticketList);
+        setTotalCount(response.totalCount);
         setPageLoading(false);
       }
     };
 
     getFlightList();
-  }, []);
+  }, [accessToken]);
 
-  const [data, setData] = useState(null);
-  const [page, setPage] = useState(10);
   useEffect(() => {
-    const response = data2.slice(0, page);
-    response.forEach((res) => (res["check"] = null));
-    setData(response);
-  }, [page]);
+    console.log('currentPage가 돌아가유');
+    if(currentPage > 0){
+      const getFlightList = async () => {
+        if (wayType === "one") {
+          if (!departure.code | !destination.code | !startDate) {
+            return;
+          }
+  
+          const data = {
+            filter: {
+              direct: direct,
+              maxPrice: rightPrice * 10000,
+              minPrice: leftPrice * 10000,
+            },
+            info: {
+              departure: departure.code,
+              destination: destination.code,
+              date: startDate,
+            },
+            pageable: {
+              orderBy: "asc",
+              page: currentPage,
+              sortType: "price",
+            },
+          };
+          console.log(data);
+          const response = (await flight.post.one(data));
+          setData((data) => [...data, ...response.ticketList]);
+        } else {
+          if (!departure.code | !destination.code | !startDate | !endDate) {
+            return;
+          }
 
-  //스크롤이 끝까지 갔을 때...
-  // page += 10 해주고 reponse 다시 받아서 check 후 setData
+          const data = {
+            info: {
+              departure: departure.code,
+              destination: destination.code,
+              depDate: startDate,
+              arrDate: endDate,
+            },
+            filter: {
+              direct: direct,
+              maxPrice: rightPrice * 10000,
+              minPrice: leftPrice * 10000,
+            },
+            pageable: {
+              orderBy: "asc",
+              page: currentPage,
+              sortType: "price",
+            },
+          };
+  
+          console.log(data);
+  
+          const response = await flight.post.round(data);
+          setData((data) => [...data, ...response.ticketList]);
+        }
+      };
+  
+      getFlightList();
+    }
+  }, [currentPage]);
   const dispatch = useDispatch();
   const compareList = useSelector((state) => {
     return state.compare.compareList;
@@ -143,10 +185,11 @@ export default function List() {
   const compareMode = useSelector((state) => {
     return state.compare.compareMode;
   });
+
   const handleLikeData = (ticketId, value) => {
-    if (compareMode === "oneWay") {
+    if (wayType === "one") {
       for (let i = 0; i < data.length; i++) {
-        if (data[i].ticket.ticketId === ticketId) {
+        if (data[i].ticket.id === ticketId) {
           data[i].isLike = value;
           break;
         }
@@ -154,7 +197,7 @@ export default function List() {
     } else {
       for (let i = 0; i < data.length; i++) {
         if (
-          `${data[i].goWay.ticket.ticketId}-${data[i].returnWay.ticket.ticketId}` ===
+          `${data[i].goWay.ticket.id}-${data[i].returnWay.ticket.id}` ===
           ticketId
         ) {
           data[i].isLike = value;
@@ -179,7 +222,7 @@ export default function List() {
   }, [compareList, compareBoxVisible, ticketListWidth]);
 
   const initialCheck = (mode, ticketId) => {
-    //체크에 관련해서...
+    //체크에 관련해서..
     let result = false;
     if (mode !== compareMode) return result;
     for (let i = 0; i < compareList.length; i++) {
@@ -207,26 +250,41 @@ export default function List() {
   const [compareBoxHeight, setCompareBoxHeight] = useState(
     window.innerHeight - 160
   );
-  const [loading, setLoading] = useState(false);
-  const maxPage = data2.length;
-  window.onscroll = function () {
-    if (loading) return;
-    const totalPageHeight = document.body.scrollHeight - 200;
+  
+  // ---------------------- 무한 스크롤 부분.. ----------------------------
+  const [timer, setTimer] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    if (!timer) return;
+    const debounce = setTimeout(() => {
+      setCurrentPage((currentPage) => currentPage + 1);
+      setTimer(false);
+      setIsLoading(false);
+    }, 300);
+
+    return () => clearTimeout(debounce);
+  }, [timer]);
+
+  const InfinityScroll = () => {
+    const totalHeight = document.body.scrollHeight - 200;
     const scrollPoint = window.scrollY + window.innerHeight;
 
-    if (scrollPoint >= totalPageHeight) {
-      setLoading(true);
-      console.log("API 호출중...");
-      console.log("현재 가져온 티켓 개수: " + page);
-      if (page === maxPage) return;
-      else if (page + 10 > maxPage) setPage(maxPage);
-      else setPage((page) => page + 10);
-      setTimeout(() => {
-        console.log("호출 완료");
-        setLoading(false);
-      }, 1000);
-    }
+    if (totalHeight > scrollPoint) return;
+
+    if (timer) return;
+    setTimer(true);
+    setIsLoading(true);
   };
+
+  useEffect(() => {
+    window.addEventListener("scroll", InfinityScroll);
+
+    return () => {
+      window.removeEventListener("scroll", InfinityScroll);
+    };
+  }, [setCurrentPage]);
+  // ---------------------- 무한 스크롤 부분.. ----------------------------
+
   // const scrollUp = () => {
   //     window.scrollTo({top:0, left:0, behavior: 'smooth'});
   // }
@@ -344,9 +402,9 @@ export default function List() {
                         marginRight: "16px",
                       }}
                     >
-                      총 40,000개의 결과
+                      {totalCount && `${totalCount}개의 결과`}
                     </span>
-                    <div>
+                    {data && <div>
                       <label style={{ fontSize: "16px", fontWeight: "600" }}>
                         정렬{" "}
                       </label>
@@ -357,7 +415,7 @@ export default function List() {
                         <option value="">출발시간늦은순</option>
                         <option value="">소요시간낮은순</option>
                       </select>
-                    </div>
+                    </div>}
                   </SearchInfo>
                 </AdditionalInfo>
                 <TicketList
@@ -368,32 +426,34 @@ export default function List() {
                     padding: "24px 0px",
                   }}
                 >
-                  {/* {data && data.map((one) => {
-                                one.isCheck = initialCheck('oneWay', one.ticket.ticketId);
-                                return(
-                                    <OneWayTicket key={one.ticket.ticketId} fromCompare={false} isRound={false} handleLikeData={handleLikeData} 
-                                    isCheck={one.isCheck} isLike={one.isLike} ticket={one.ticket} flightList={one.flightList} />
-                                )
-                            })} */}
-                  {data &&
+                  {wayType === 'one' && data ? 
+                    data.map((one) => {
+                      one.isCheck = initialCheck('oneWay', one.ticket.id);
+                      return(
+                          <OneWayTicket key={one.ticket.id} fromCompare={false} isRound={false} handleLikeData={handleLikeData} 
+                          isCheck={one.isCheck} isLike={one.like} ticket={one.ticket} />
+                      )
+                    }) : null
+                  }
+                  {wayType === 'round' && data ?
                     data.map((one, index) => {
                       one.isCheck = initialCheck(
                         "round",
-                        `${one.goWay.ticket.ticketId}-${one.returnWay.ticket.ticketId}`
+                        `${one.goWay.ticket.id}-${one.returnWay.ticket.id}`
                       );
                       return (
                         <RoundTicket
-                          key={`${one.goWay.ticket.ticketId}-${one.returnWay.ticket.ticketId}-${index}`}
+                          key={`${one.goWay.ticket.id}-${one.returnWay.ticket.id}-${index}`}
                           fromCompare={false}
                           handleLikeData={handleLikeData}
                           isCheck={one.isCheck}
-                          isLike={one.isLike}
+                          isLike={one.like}
                           goWay={one.goWay}
                           returnWay={one.returnWay}
                           totalPrice={one.totalPrice}
                         />
                       );
-                    })}
+                    }) : null}
                 </TicketList>
               </div>
               {(compareBoxVisible && ticketListWidth > 880) ||

@@ -1,11 +1,12 @@
 import {useState, useEffect, useRef} from 'react';
 import styled from 'styled-components';
-// import { sha256 } from 'js-sha256';
-// import AWS from 'aws-sdk';
+import { sha256 } from 'js-sha256';
+import AWS from 'aws-sdk';
 import { FiUser, FiHash, FiKey, FiLock } from "react-icons/fi";
 import defaultProfile from '../../../../assets/image/defaultProfile.png';
-// import axios from 'axios';
 import { member } from '../../../../apis/member';
+import { userAction } from '../../../../store/userSlice';
+import { useDispatch } from 'react-redux';
 
 export const CloseSVG = () => {
   return (
@@ -36,6 +37,7 @@ export const CloseSVG = () => {
 
 export default function UserModal({initialLoginMode, handleUserModalState}) {
     //공통
+    const dispatch = useDispatch();
     const closeModal = () => {
         handleUserModalState('button');
     }
@@ -68,8 +70,17 @@ export default function UserModal({initialLoginMode, handleUserModalState}) {
             password: loginPassword,
         }
         console.log(data);
-        const response = await member.login(data);
-        console.log(response);
+        try{
+            const response = await member.login(data);
+            // console.log(response);
+            setLoginErrMsg('');
+            dispatch(userAction.setAccessToken(response.headers.authorization));
+            handleUserModalState('button');
+        } catch{
+            setLoginId('');
+            setLoginPassword('');
+            setLoginErrMsg('아이디 또는 비밀번호가 틀렸습니다.');
+        }
         //성공시 errMsg 초기화 + 로그인 처리 + 모달 닫기
         //실패시 : input 비우고, errMsg 아이디 또는 비밀번호가 틀렸습니다.
     }
@@ -125,7 +136,7 @@ export default function UserModal({initialLoginMode, handleUserModalState}) {
         }
     }, [signupPassword, signupPasswordCheck])
     const [profileImage, setProfileImage] = useState(null);
-    const [profileImageUrl, setProfileImageUrl] = useState('default'); //디폴트 이미지 주소로 설정;
+    const [profileImageUrl, setProfileImageUrl] = useState('default.png'); //디폴트 이미지 주소로 설정;
     const [profileImagePreview, setProfileImagePreview] = useState(null);
     useEffect(() => {
         if (profileImage !== null) {
@@ -134,63 +145,47 @@ export default function UserModal({initialLoginMode, handleUserModalState}) {
             reader.onload = () => {
                 setProfileImagePreview({ profileImage, url: reader.result });
             };
+            const originName = profileImage.name;
+            const date = new Date();
+            const extensionName = `.${originName.split('.').pop()}`;
+            const hashImageName = sha256(
+            `${date.toString()}${originName}`,
+        );
+            setProfileImageUrl(hashImageName + extensionName);
         }
     }, [profileImage]);
     
-    const [signupIdChecked, setSignupIdChecked] = useState(false);
-    const checkId = async () => {
-        if(signupIdChecked) return;
-        if(signupId.trim().length === 0) {
-            alert('아이디를 입력하세요.');
-            signupIdInput.current.focus();
-            return;
-        }
-        
-        const data = {
-            mid: signupId,
-        };
-
-        // const response = await member.checkId(data);
-        // console.log(response);
-        setSignupIdChecked(true);
-        //성공 시, 아이디 중복 성공 alert 후 해당 input disabled로 잠금
-        //실패 시, 실패 alert
-    }
     const registProfileImage = (event) => {
         if(event.target.files[0] === undefined) return;
-        console.log(event.target.files[0].name);
         setProfileImage(event.target.files[0]);
     }
     // 이미지 S3 전송 함수
     const sendImageToS3 = async (image) => {
-        // AWS.config.update({
-        //     region: process.env.REACT_APP_AWS_REGION,
-        //     accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-        //     secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
-        // });
-        // const originName = image.name;
-        // const date = new Date();
-        // const extensionName = `.${originName.split('.').pop()}`;
-        // const hashImageName = sha256(
-        //     `${date.toString()}${myPageData && myPageData.idx}${originName}`,
-        // );
-        // const upload = new AWS.S3.ManagedUpload({
-        //     params: {
-        //         Bucket: process.env.REACT_APP_AWS_BUCKET,
-        //         Key: hashImageName + extensionName, // 고유한 파일명(현재 날짜 + 유저아이디 + 파일명을 합쳐 해시값 생성)
-        //         Body: image, // 파일 객체 자체를 보냄
-        //     },
-        // });
-        // const promise = upload.promise();
-        // promise.catch((err) => {
-        //     alert(err);
-        //     return;
-        // });
-        // setProfileImageUrl(hashImageName + extensionName);
-        setProfileImageUrl('12345');
+        if(image === null) {
+            return;
+        }
+        AWS.config.update({
+            region: process.env.REACT_APP_AWS_REGION,
+            accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+        });
+        
+        const upload = new AWS.S3.ManagedUpload({
+            params: {
+                Bucket: `${process.env.REACT_APP_AWS_BUCKET}/member`,
+                Key: profileImageUrl, // 고유한 파일명(현재 날짜 + 유저아이디 + 파일명을 합쳐 해시값 생성)
+                Body: image, // 파일 객체 자체를 보냄
+            },
+        });
+        const promise = upload.promise();
+        promise.catch((err) => {
+            alert(err);
+            return;
+        });
+        //setProfileImageUrl(hashImageName + extensionName);
     };
 
-    const doSignup = () => {
+    const doSignup = async () => {
         if(signupId.trim().length < 8 || signupId.trim().length > 12) {
             alert('아이디를 입력하세요.');
             signupIdInput.current.focus();
@@ -212,22 +207,33 @@ export default function UserModal({initialLoginMode, handleUserModalState}) {
             return;
         }
         //등록된 이미지가 있다면 S3로 전송 후 변경된 주소 리턴
-        sendImageToS3(profileImage).then(() => {
-            const data = {
-                mid: signupId,
-                password: signupPassword,
-                nickname: nickname,
-                img_url: profileImageUrl,
-            };
-            console.log(data);
-
+        const data = {
+            mid: signupId,
+            password: signupPassword,
+            nickname: nickname,
+            img_url: profileImageUrl,
+        };
+        sendImageToS3(profileImage).then(async() => {
             //얘로 회원 등록 시켜주고
             //바로 로그인까지 연동
-        })
-        // axios.post('https://j8b307.p.ssafy.io/api/member/join', data, {
-        //     'Content-Type' : 'application/json',
-        // }).then((res) => console.log(res))
-        // .catch((err) => console.log(err));
+            try {
+                const response = await member.signup(data);
+                alert('회원가입이 완료되었습니다.');
+                const loginResponse = await member.login({
+                    mid: signupId,
+                    password: signupPassword,
+                });
+                dispatch(userAction.setAccessToken(loginResponse.headers.authorization));
+                handleUserModalState('button');
+            } catch(error) {
+                alert(error.response.data.message);
+                if(error.response.data.message === '동일한 아이디가 존재합니다.') {
+                    signupIdInput.current.focus();
+                } else if(error.response.data.message === '동일한 닉네임이 이미 존재합니다.'){
+                    nicknameInput.current.focus();
+                }
+            }
+        }).catch((err) => console.log(err))
     }
     return(
         <UserModalBox>
@@ -257,14 +263,11 @@ export default function UserModal({initialLoginMode, handleUserModalState}) {
                 </UserModalLogin> : <div>
                     <UserModalSignupContent>
                         <div>
-                            <SignupInputBox isDisabled={signupIdChecked}>
+                            <SignupInputBox>
                                 <TextInputBox inspect={true}>
                                     <FiUser size={30} />
-                                    <input ref={signupIdInput} onChange={handleSignupId} value={signupId} disabled={signupIdChecked} className="with-inspect" type='text' placeholder="아이디" style={{width: '194px'}}/>
+                                    <input ref={signupIdInput} onChange={handleSignupId} value={signupId} type='text' placeholder="아이디" />
                                 </TextInputBox>
-                                <IdCheckBtn isDisabled={signupIdChecked} onClick={checkId}>
-                                    <span>검사</span>
-                                </IdCheckBtn>
                             </SignupInputBox>
                             <ErrorMessage signupMode={true}>{signupIdErrMsg}</ErrorMessage>
                             <SignupInputBox>
@@ -403,7 +406,7 @@ const TextInputBox = styled.div`
     display: flex;
     align-items: center;
     border: 1px solid #80489C;
-    border-radius: ${(props) => props.inspect? '16px 0px 0px 16px' : '16px'};
+    border-radius: 16px;
 
   input {
     border: 0px solid white;
@@ -453,26 +456,6 @@ const UserModalSignupContent = styled.div`
 const SignupInputBox = styled.div`
     display: flex;
     opacity: ${(props) => props.isDisabled? '.5' : '1'};
-`;
-
-const IdCheckBtn = styled.div`
-    height: 32px;
-    border: 1px solid #80489C;
-    padding: 10.2px 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 0px 16px 16px 0px;
-    font-size: 18px;
-    font-weight: bold;
-
-    ${props => !props.isDisabled && `
-        &:hover {
-            cursor: pointer;
-            color: white;
-            background-color: #80489C;
-        }
-    `}
 `;
 
 const SignupBtn = styled.div`

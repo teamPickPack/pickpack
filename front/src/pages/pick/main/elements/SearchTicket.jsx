@@ -256,7 +256,7 @@ const SearchTicket = () => {
     }
   };
 
-  console.log(criterion);
+  console.log('crierion: '+criterion);
 
   return (
     <>
@@ -405,6 +405,8 @@ const SearchTicket = () => {
                           name: data.name_ko,
                           subName: "",
                           code: data.code,
+                          lat: data.lat,
+                          lng: data.lng,
                         };
                         if (criterion === "departure") {
                           setDestination(selectedItem);
@@ -424,6 +426,8 @@ const SearchTicket = () => {
                             name: data.name_ko,
                             subName: "",
                             code: data.code,
+                            lat: data.lat,
+                            lng: data.lng,
                           };
                           if (criterion === "departure") {
                             setDestination(selectedItem);
@@ -443,6 +447,8 @@ const SearchTicket = () => {
                             name: data.city,
                             subName: "",
                             code: data.code,
+                            lat: data.lat,
+                            lng: data.lng,
                           };
                           if (criterion === "departure") {
                             setDestination(selectedItem);
