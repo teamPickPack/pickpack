@@ -1,8 +1,11 @@
 import {useState} from 'react';
 import styled from "styled-components"
 import MypageTab from './elements/MypageTab';
+import MypageItem from './elements/MypageItem';
+import MypageUser from './elements/MypageUser';
 export default function Mypage(){
     const [mypageMode, setMypageMode] = useState(1);
+    const [mypageTab, setMypageTab] = useState(1);
     return(
         <div style={{display: 'flex'}}>
             <MypageLeft givenHeight={window.screen.availHeight - 88}>
@@ -20,10 +23,12 @@ export default function Mypage(){
                 </LeftContent>
             </MypageLeft>
             <div>
-                <MypageTab mypageMode={mypageMode}/>
-                <div>
+                <MypageTab mypageMode={mypageMode} setMypageTab={setMypageTab}/>
+                {mypageMode === 1 && <div style={{border: '1px solid blue'}}>
                     Content
-                </div>
+                </div>}
+                {mypageMode === 2 && <MypageItem mypageTab={mypageTab}/>}
+                {mypageMode === 3 && <MypageUser/>}
             </div>
         </div>
     )

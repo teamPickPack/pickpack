@@ -6,6 +6,7 @@ import LineChart from './LineChart';
 import { useSelector, useDispatch } from 'react-redux';
 import { compareAction } from '../../../../store/compareSlice';
 import garudaIndonesia from '../../../../assets/airlines/대한항공.png';
+import { flight } from '../../../../apis/flight';
 export default function OneWayTicket({
     fromCompare,
     isRound, 
@@ -13,11 +14,12 @@ export default function OneWayTicket({
     handleLikeData,
     isCheck,
     isLike,
-    ticket,    
-    flightList,
+    ticket,
 }){
     const dispatch = useDispatch();
-
+    const accessToken = useSelector((state) => {
+        return state.user.accessToken;
+    })
     const [ticketType, setTicketType] = useState(true); //앞면<->뒷면
     const [contentType, setContentType] = useState(true); //앞면 개요<->상세
     const [check, setCheck] = useState(isCheck) //체크 여부
@@ -33,10 +35,18 @@ export default function OneWayTicket({
     const flightTicket = useRef(); // Ticket 컴포넌트
     const flightContent = useRef(); // FrontTicketLeftMiddle 컴포넌트
     
-    const priceData = { //항공권 가격 추이 데이터
-        avg : 740000,info : [{date:'2023-03-01',price:710000},{date:'2023-03-02',price:720000},{date:'2023-03-03',price:730000},{date:'2023-03-04',price:740000},{date:'2023-03-05',price:750000},{date:'2023-03-06',price:760000},{date:'2023-03-07',price:770000},{date:'2023-03-08',price:780000},{date:'2023-03-09',price:790000},{date:'2023-03-10',price:800000},{date:'2023-03-11',price:710000},{date:'2023-03-12',price:720000},{date:'2023-03-13',price:730000},{date:'2023-03-14',price:740000},{date:'2023-03-15',price:750000},{date:'2023-03-16',price:760000},{date:'2023-03-17',price:770000},{date:'2023-03-18',price:780000},{date:'2023-03-19',price:790000},{date:'2023-03-20',price:800000},],
-    };
-
+    // const priceData = { //항공권 가격 추이 데이터
+    //     avg : 740000,info : [{date:'2023-03-01',price:710000},{date:'2023-03-02',price:720000},{date:'2023-03-03',price:730000},{date:'2023-03-04',price:740000},{date:'2023-03-05',price:750000},{date:'2023-03-06',price:760000},{date:'2023-03-07',price:770000},{date:'2023-03-08',price:780000},{date:'2023-03-09',price:790000},{date:'2023-03-10',price:800000},{date:'2023-03-11',price:710000},{date:'2023-03-12',price:720000},{date:'2023-03-13',price:730000},{date:'2023-03-14',price:740000},{date:'2023-03-15',price:750000},{date:'2023-03-16',price:760000},{date:'2023-03-17',price:770000},{date:'2023-03-18',price:780000},{date:'2023-03-19',price:790000},{date:'2023-03-20',price:800000},],
+    // };
+    const [priceData, setPriceData] = useState(null);
+    useEffect(() => {
+        const getTicketPrices = async (ticketId) => {
+            // const response = await flight.get.ticket(ticketId);
+            // console.log(response);
+            // setPriceData(response);
+        }
+        getTicketPrices(ticket.id);
+    }, [ticket])
     const changeTicketType = () => {
         if(fromCompare) return;
         if(changing) return;
@@ -74,10 +84,9 @@ export default function OneWayTicket({
         const payload = {
             mode: 'oneWay',
             isLike: like,
-            flightId: ticket.ticketId,
+            flightId: ticket.id,
             flightData: {
                 ticket,
-                flightList,
             }
         }
         if(!check){  //Off->On일 때.. 1. 체크 켜기 2. store에 담기
@@ -99,37 +108,63 @@ export default function OneWayTicket({
             dispatch(compareAction.deleteCompareItem(payload));
         }
     }
-    const handleLike = () => {
+    const handleLike = async () => {
+        if(accessToken === null) {
+            alert('로그인이 필요한 기능입니다.');
+            return;
+        }
         if(isRound){
             unifyCommon('like');
+            console.log('유니파이');
             return;
         }
         const payload = {
             mode: 'oneWay',
             isLike: !like, //목표값
-            flightId: ticket.ticketId,
+            flightId: ticket.id,
             flightData: {
                 ticket,
-                flightList,
             }
         }
         //비교 목록에서 눌렸다면? => 세션 스토리지 바꾸고 data에도 바뀐 값 적용해줘야 함
         //아닌데, check에도 있는 값이면? => 세션 스토리지 바꾸고 data에도 바꾸고
         //check에 없는 값이면 => data만 바꾸고
         if(like) {
-            alert('알림이 해제되었습니다.');
+            try{
+                const response = await flight.put.likeOne({ticketId: ticket.id});
+                console.log(response);
+                alert('알림이 해제되었습니다.');
+                if(check){
+                    //idx번째 data의 isLike를 바꿔라
+                    handleLikeData(payload.flightId, !like);
+                    dispatch(compareAction.updateCompareItem(payload));
+                }
+                else{
+                    handleLikeData(payload.flightId, !like);
+                    setLike((like) => !like);
+                }
+            } catch(err) {
+                console.log(err);
+            }
+            //찜 취소
         }
         else {
-            alert('알림이 등록되었습니다.');
-        }
-        if(check){
-            //idx번째 data의 isLike를 바꿔라
-            handleLikeData(payload.flightId, !like);
-            dispatch(compareAction.updateCompareItem(payload));
-        }
-        else{
-            handleLikeData(payload.flightId, !like);
-            setLike((like) => !like);
+            //찜 하기
+            try{
+                const response = await flight.post.likeOne({ticketId: ticket.id});
+                alert('알림이 등록되었습니다.');
+                if(check){
+                    //idx번째 data의 isLike를 바꿔라
+                    handleLikeData(payload.flightId, !like);
+                    dispatch(compareAction.updateCompareItem(payload));
+                }
+                else{
+                    handleLikeData(payload.flightId, !like);
+                    setLike((like) => !like);
+                }
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
     return(
@@ -142,33 +177,33 @@ export default function OneWayTicket({
                     <TicketLeftTopCheck type="checkbox" checked={check} onChange={handleCheck}/>
                     <TicketLeftTopAirLine>
                         <img src={garudaIndonesia} alt='#' width='32' height='32'/>
-                        <span style={{marginLeft: '8px'}}>대한항공</span>
+                        <span style={{marginLeft: '8px'}}>{ticket.airline} {ticket.id}</span>
                     </TicketLeftTopAirLine>
-                    <TicketLeftTopCodeShare>공동</TicketLeftTopCodeShare>
+                    {ticket.codeshare && <TicketLeftTopCodeShare>공동</TicketLeftTopCodeShare>}
                 </TicketLeftTop>
                 <FrontTicketLeftMiddle ref={flightContent} onAnimationEnd={() => deleteChangeAnimation(flightContent)}>
-                    {!contentType ? <FlightList /> : 
+                    {!contentType ? <FlightList data={ticket.flightList} /> : 
                     <>
                         <FrontTicketLeftMiddlePoint>
                             <div className="point-type">출발</div>
                             <div className="point-content">
-                                <div className="point-city">인천</div>
-                                <div className="point-code">(ICN)</div>
+                                <div className="point-city">{ticket.depName}</div>
+                                <div className="point-code">({ticket.depCode})</div>
                             </div>
-                            <div className="point-time">09:00</div>
+                            <div className="point-time">{ticket.depTime}</div>
                         </FrontTicketLeftMiddlePoint>
                         <FrontTicketLeftMiddleArrow>
-                            <div className="arrow-stopover">프랑크푸르트(FRA)/이스탄불(ISB)</div>
+                            <div className="arrow-stopover">{ticket.waypoints === "" ? '직항' : ticket.waypoints}</div>
                             <div className="arrow-line"/>
-                            <div className="arrow-time">33시간 30분</div>
+                            <div className="arrow-time">{ticket.totalTime}</div>
                         </FrontTicketLeftMiddleArrow>
                         <FrontTicketLeftMiddlePoint>
                             <div className="point-type">도착</div>
                             <div className="point-content" >
-                                <div className="point-city">씨엠립(앙코르와트)</div>
-                                <div className="point-code">(SER)</div>
+                                <div className="point-city">{ticket.arrName}</div>
+                                <div className="point-code">({ticket.arrCode})</div>
                             </div>
-                            <div className="point-time">09:00 + 1</div>
+                            <div className="point-time">{ticket.arrTime} {ticket.plusDate > 0 ? `+ ${ticket.plusDate}`: null}</div>
                         </FrontTicketLeftMiddlePoint>
                     </>
                     }
@@ -194,7 +229,7 @@ export default function OneWayTicket({
                     </svg>
                 </TicketRightTop>
                 <div id="ticket-right-middle" style={{height: '160px', display: 'flex', justifyContent: 'center', alignItems: 'center' ,backgroundColor:'white'}}>
-                    <div style={{fontSize: '20px', margin: 'auto 0px', fontWeight: '600'}}>1,320,000원</div>
+                    <div style={{fontSize: '20px', margin: 'auto 0px', fontWeight: '600'}}>{ticket.price.toLocaleString('ko-kr')}원</div>
                 </div>
                 <TicketRightBottom color='skyblue'>
                     <div className="flip-background"></div>

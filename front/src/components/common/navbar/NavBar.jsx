@@ -1,13 +1,20 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { createPortal } from "react-dom";
 import UserModal from "./elements/UserModal";
+import { useSelector } from "react-redux";
 const NavBar = () => {
   const [userModalState, setUserModalState] = useState({
     visible: false,
     loginMode: null,
   });
+  const accessToken = useSelector((state) => {
+    return state.user.accessToken;
+  })
+  useEffect(() => {
+    console.log(accessToken);
+  }, []);
   const handleUserModalState = (type, mode) => {
     if(type === 'button'){
       if(mode === 'login'){
@@ -56,10 +63,8 @@ const NavBar = () => {
           </li>
         </ul>
         <ul className="right-ul">
-          <li>
-            <NavLink to="/mypage">마이페이지</NavLink>
-          </li>
-          <li>
+          {accessToken === null ? <>
+            <li>
             <NavLink onClick={() => handleUserModalState("button", "login")}>
               로그인
             </NavLink>
@@ -71,13 +76,19 @@ const NavBar = () => {
             )}
           </li>
           <li>
-            <NavLink onClick={logoutHandler}>로그아웃</NavLink>
-          </li>
-          <li>
             <NavLink onClick={() => handleUserModalState("button", "signup")}>
               회원가입
             </NavLink>
           </li>
+          </> : <>
+            <li>
+              <NavLink to="/mypage">마이페이지</NavLink>
+            </li>
+            <li>
+              <NavLink onClick={logoutHandler}>로그아웃</NavLink>
+            </li>
+          </>}
+          
           {userModalState.visible &&
             createPortal(<Background />, document.getElementById("background"))}
         </ul>
