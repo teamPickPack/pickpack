@@ -5,7 +5,6 @@ import styled from "styled-components";
 
 export default function FlightList({data}){
     const FlightDetailAllItemRef = useRef();
-    // console.log(data);
     const [scrollLeftButtonVisible, setScrollLeftButtonVisible] = useState(false)
     const [scrollRightButtonVisible, setScrollRightButtonVisible] = useState(false)
     useEffect(() => {

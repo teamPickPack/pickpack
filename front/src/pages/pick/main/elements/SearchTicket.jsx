@@ -206,6 +206,7 @@ const SearchTicket = (props) => {
   }, [wayType]);
 
   const changePlace = () => {
+    console.log('changeP')
     if (criterion === "departure") {
       setCriterion("destination");
       if (props.criterion) {
