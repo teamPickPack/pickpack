@@ -7,7 +7,7 @@ import mainBanner from "../../../assets/image/mainBanner.png";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { compareAction } from "../../../store/compareSlice";
-// import { FaChevronUp } from "react-icons/fa";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import styled from "styled-components";
 import { createPortal } from "react-dom";
 import { flight } from "../../../apis/flight";
@@ -76,7 +76,6 @@ export default function List() {
             sortType,
           },
         };
-        console.log(data);
         const response = (await flight.post.one(data));
         // console.log(response);
         setData(response.ticketList);
@@ -112,7 +111,7 @@ export default function List() {
 
         const response = await flight.post.round(data);
         if(currentPage > 0) setCurrentPage(0);
-        console.log(response);
+        // console.log(response);
         setData(response.ticketList);
         setTotalCount(response.totalCount);
         setPageLoading(false);
@@ -121,9 +120,11 @@ export default function List() {
 
     getFlightList();
   }, [accessToken, sortType]);
-
+  const [getLoading, setGetLoading] = useState(false);
+  const [loadingPossible, setLoadingPossible] = useState(true);
   useEffect(() => {
     if(currentPage > 0){
+      setGetLoading(true);
       const getFlightList = async () => {
         if (wayType === "one") {
           if (!departure.code | !destination.code | !startDate) {
@@ -148,6 +149,8 @@ export default function List() {
             },
           };
           const response = (await flight.post.one(data));
+          // console.log(response);
+          if(response.ticketList.length === 0) setLoadingPossible(false);
           setData((data) => [...data, ...response.ticketList]);
         } else {
           if (!departure.code | !destination.code | !startDate | !endDate) {
@@ -174,8 +177,12 @@ export default function List() {
           };
   
           const response = await flight.post.round(data);
-          console.log(response);
+          // console.log(response);
+          if(response.ticketList.length  === 0) {
+            setLoadingPossible(false);
+          }
           setData((data) => [...data, ...response.ticketList]);
+          setGetLoading(false);
         }
       };
   
@@ -204,9 +211,7 @@ export default function List() {
           `${data[i].goWay.id}-${data[i].returnWay.id}` ===
           ticketId
         ) {
-          console.log(data[i]);
           data[i].like = value;
-          console.log('찾음');
           break;
         }
       }
@@ -409,7 +414,7 @@ export default function List() {
                         marginRight: "16px",
                       }}
                     >
-                      {totalCount && `${totalCount.toLocaleString('ko-kr')}개의 결과`}
+                      {totalCount > 0 ? `${totalCount.toLocaleString('ko-kr')}개의 결과` : `검색 결과가 없습니다.`}
                     </span>
                     {data && <div>
                       <label style={{ fontSize: "16px", fontWeight: "600" }}>
@@ -435,16 +440,18 @@ export default function List() {
                 >
                   {wayType === 'one' && data ? 
                     data.map((one) => {
-                      one.isCheck = initialCheck('oneWay', one.ticket.id);
-                      return(
+                      if(one.ticket !== undefined){
+                        one.isCheck = initialCheck('oneWay', one.ticket.id);
+                        return(
                           <OneWayTicket key={one.ticket.id} fromCompare={false} isRound={false} handleLikeData={handleLikeData} 
                           isCheck={one.isCheck} isLike={one.like} ticket={one.ticket} />
                       )
-                    }) : null
+                    }}) : null
                   }
                   {wayType === 'round' && data ?
                     data.map((one, index) => {
-                      one.isCheck = initialCheck(
+                      if(one.goWay !== undefined) {
+                        one.isCheck = initialCheck(
                         "round",
                         `${one.goWay.id}-${one.returnWay.id}`
                       );
@@ -460,8 +467,11 @@ export default function List() {
                           totalPrice={one.totalPrice}
                         />
                       );
-                    }) : null}
+                    }
+                      }
+                      ) : null}
                 </TicketList>
+                {(loadingPossible && getLoading) ? <LoadingSpinner><AiOutlineLoading3Quarters className="spinner" size={48}/></LoadingSpinner> : null}
               </div>
               {(compareBoxVisible && ticketListWidth > 880) ||
                 (compareBoxVisible && ticketListWidth > 1200)}
@@ -597,4 +607,20 @@ const Background = styled.div`
   left: 0;
   right: 0;
   background: rgba(0, 0, 0, 0.6);
+`;
+
+const LoadingSpinner = styled.span`
+    margin-bottom: -4px;
+    margin-left: 8px;
+    .spinner {
+        animation: rotate 2s infinite linear;
+        @keyframes rotate {
+            from{
+                transform: rotate(0deg);
+            }
+            to{
+                transform: rotate(360deg);
+            }
+        }
+    }
 `;
