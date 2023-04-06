@@ -4,6 +4,7 @@ import com.pickpack.flightservice.entity.Continent;
 import com.pickpack.flightservice.entity.Tourist;
 import com.pickpack.flightservice.repository.tourist.TouristRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class TouristService {
     private final TouristRepository touristRepository;
 
+    @Cacheable(value = "List<Tourist>", key = "#continent")
     public List<Tourist> getTouristsByContinent(String continent){
         return touristRepository.findByContinent(getContinent(continent));
     }

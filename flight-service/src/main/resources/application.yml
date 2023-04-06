@@ -21,7 +21,16 @@ spring:
     properties:
       hibernate:
         format_sql: true
-#        show_sql: true
+        show_sql: true
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      cache-null-values: true
+  redis:
+    host: 54.180.157.223
+    port: 6370
 
   mvc:
     pathmatch:
