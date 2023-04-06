@@ -26,16 +26,21 @@ const ChatList = (props) => {
           <TrashCanSVG />
           <CloseSVG
             clickEvent={() => {
-              console.log(123);
               props.setChatOpen(!props.chatOpen);
             }}
           />
         </div>
       </ListHeader>
       <ListBody>
-        {chatList.map((chatItem, idx) => {
-          return <ChatItem chatItem={chatItem} key={idx} />;
-        })}
+        {chatList
+          .sort((a, b) => {
+            if (a.lastMessageTime > b.lastMessageTime) return -1;
+            if (a.lastMessageTime === b.lastMessageTime) return 0;
+            return 1;
+          })
+          .map((chatItem, idx) => {
+            return <ChatItem chatItem={chatItem} key={idx} />;
+          })}
       </ListBody>
     </>
   );

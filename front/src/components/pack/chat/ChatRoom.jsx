@@ -12,6 +12,9 @@ import { item } from "../../../apis/item";
 import store from "../../../store/store";
 import noImg from "../../../assets/image/noimg.png";
 import { chat } from "../../../apis/chat";
+import { sha256 } from "js-sha256";
+import AWS from "aws-sdk";
+import { CloseSVG } from "../../common/navbar/elements/UserModal";
 
 const ChatRoom = (props) => {
   const [isFold, setIsFold] = useState(false);
@@ -24,6 +27,7 @@ const ChatRoom = (props) => {
   const dispatch = useDispatch();
   const [itemInfo, setItemInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const myNickName = useSelector((state) => {
     return state.user.nickname;
@@ -39,7 +43,7 @@ const ChatRoom = (props) => {
       setTimeout(async () => {
         const response = await item.post.detail(
           roomInfo.itemId,
-          store.getState().user.memberId
+          store.getState().user.memberId / 2373.15763 - 7
         );
         setItemInfo(response.item);
         const msgData = {
@@ -48,6 +52,8 @@ const ChatRoom = (props) => {
         };
 
         const result = await chat.post.message(msgData);
+
+        console.log(result);
 
         if (result) {
           setMessages([...result.chatMessages]);
@@ -111,26 +117,133 @@ const ChatRoom = (props) => {
     };
   }, [roomId]);
 
+  // 이미지 S3 전송 함수
+  const sendImageToS3 = async (image) => {
+    if (image === null) {
+      return;
+    }
+
+    console.log(image);
+
+    const originName = image.name;
+    const date = new Date();
+    const extensionName = `.${originName.split(".").pop()}`;
+    const hashImageName = sha256(`${date.toString()}${originName}`);
+
+    const fullUrl = hashImageName + extensionName;
+
+    AWS.config.update({
+      region: process.env.REACT_APP_AWS_REGION,
+      accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+    });
+
+    const upload = new AWS.S3.ManagedUpload({
+      params: {
+        Bucket: `${process.env.REACT_APP_AWS_BUCKET}/item`,
+        Key: fullUrl, // 고유한 파일명(현재 날짜 + 유저아이디 + 파일명을 합쳐 해시값 생성)
+        Body: image, // 파일 객체 자체를 보냄
+      },
+    });
+    const promise = upload.promise();
+    promise.catch((err) => {
+      alert(err);
+      return;
+    });
+
+    return process.env.REACT_APP_AWS_PROFILE_ITEM_BASE_URL + fullUrl;
+  };
+
+  const sendImage = async () => {
+    const result = [];
+
+    console.log(images);
+
+    await images.forEach(async (image) => {
+      console.log(image);
+      result.push((await sendImageToS3(image)) + "|");
+      console.log(result);
+    });
+
+    return result;
+  };
+
   const sendMessage = (type) => {
     if (stompClient == null) {
       return;
     }
-    try {
-      stompClient.current.send(
-        `/chat/pub/message`,
-        {},
-        JSON.stringify({
-          type: type,
-          roomId: roomId,
-          sender: myNickName,
-          message: message.current.value,
-          time: "",
+    if (images.length !== 0) {
+      sendImage()
+        .then(async (imageUrls) => {
+          try {
+            let urls = "";
+            imageUrls.forEach((url) => {
+              urls += url;
+            });
+
+            console.log(urls);
+            stompClient.current.send(
+              `/chat/pub/message`,
+              {},
+              JSON.stringify({
+                type: "IMAGE",
+                roomId: roomId,
+                sender: myNickName,
+                message: urls,
+                time: "",
+              })
+            );
+          } catch (err) {
+            console.log(err);
+          }
         })
-      );
-    } catch (err) {
-      console.log(err);
+        .then(() => {
+          setImages([]);
+        })
+        .then(() => {
+          if (message.current.value === "") {
+            return;
+          }
+
+          try {
+            stompClient.current.send(
+              `/chat/pub/message`,
+              {},
+              JSON.stringify({
+                type: type,
+                roomId: roomId,
+                sender: myNickName,
+                message: message.current.value,
+                time: "",
+              })
+            );
+            message.current.value = "";
+          } catch (err) {
+            console.log(err);
+          }
+        });
+    } else {
+      if (message.current.value === "") {
+        return;
+      }
+
+      try {
+        stompClient.current.send(
+          `/chat/pub/message`,
+          {},
+          JSON.stringify({
+            type: type,
+            roomId: roomId,
+            sender: myNickName,
+            message: message.current.value,
+            time: "",
+          })
+        );
+        message.current.value = "";
+      } catch (err) {
+        console.log(err);
+      }
     }
-    message.current.value = "";
   };
 
   const recvMessage = (recv) => {
@@ -142,13 +255,17 @@ const ChatRoom = (props) => {
       time: recv.time,
     };
 
-    console.log(msg);
+    setTimeout(
+      () => {
+        setMessages((messages) => [...messages, msg]);
+        const body = document.getElementById("room-body");
 
-    setMessages((messages) => [...messages, msg]);
-    const body = document.getElementById("room-body");
-    setTimeout(() => {
-      body.scrollTop = body.scrollHeight;
-    }, []);
+        setTimeout(() => {
+          body.scrollTop = body.scrollHeight;
+        }, []);
+      },
+      msg.type === "IMAGE" ? 500 : 0
+    );
   };
 
   useEffect(() => {
@@ -226,7 +343,7 @@ const ChatRoom = (props) => {
 
     if (imageSizeValid) {
       alert(
-        `등록이 가능한 사진의 최대 크기는 1장당 10MB입니다.\n업로드 파일의 크기를 확인바랍니다.`
+        `등록이 가능한 사진의 최대 크기는 1장당 5MB입니다.\n업로드 파일의 크기를 확인바랍니다.`
       );
       return;
     }
@@ -281,6 +398,11 @@ const ChatRoom = (props) => {
     return "방금 전";
   };
 
+  const getImgUrl = (imgUrl) => {
+    const imgs = imgUrl.split("|");
+    return imgs[0];
+  };
+
   return (
     <RoomContainer>
       <RoomHeader>
@@ -319,13 +441,16 @@ const ChatRoom = (props) => {
             </div>
             <div className="right-info">
               <img
-                src={itemInfo.imgUrl.substring(0, itemInfo.imgUrl.length - 1)}
+                src={getImgUrl(itemInfo.imgUrl)}
                 onError={(e) => {
                   e.target.src = noImg;
                 }}
                 alt={itemInfo.itemName}
               />
-              <div className="right-btn">거래하기</div>
+              {itemInfo.memberId ===
+                store.getState().user.memberId / 2373.15763 - 7 && (
+                <div className="right-btn">거래하기</div>
+              )}
             </div>
           </RoomInfo>
         ))}
@@ -335,29 +460,91 @@ const ChatRoom = (props) => {
         <RoomBody id="room-body" isImage={preview.length}>
           {messages.map((message, idx) => {
             if (message.sender === myNickName) {
-              return (
-                <BuyerMessage key={idx}>
-                  <div className="m-box">
-                    <div className="time-box">
-                      {timeAgo(
-                        message.time.substring(0, 10) +
-                          " " +
-                          message.time.substring(11, 19)
-                      )}
+              if (message.type === "IMAGE") {
+                return (
+                  <BuyerMessage>
+                    <div className="m-box">
+                      <div className="time-box">
+                        {timeAgo(
+                          message.time.substring(0, 10) +
+                            " " +
+                            message.time.substring(11, 19)
+                        )}
+                      </div>
+                      {message.message.split("|").map((image, idx) => {
+                        if (message.message.split("|").length - 1 === idx) {
+                          return null;
+                        }
+                        return (
+                          <img
+                            key={image}
+                            src={image}
+                            alt={image}
+                            onClick={() => {
+                              setSelectedImage(image);
+                            }}
+                          />
+                        );
+                      })}
                     </div>
-                    <pre className="message-box">{message.message}</pre>
-                  </div>
-                </BuyerMessage>
-              );
+                  </BuyerMessage>
+                );
+              } else {
+                return (
+                  <BuyerMessage key={idx}>
+                    <div className="m-box">
+                      <div className="time-box">
+                        {timeAgo(
+                          message.time.substring(0, 10) +
+                            " " +
+                            message.time.substring(11, 19)
+                        )}
+                      </div>
+                      <pre className="message-box">{message.message}</pre>
+                    </div>
+                  </BuyerMessage>
+                );
+              }
             } else {
-              return (
-                <SellerMessage key={idx}>
-                  <div className="m-box">
-                    <pre className="message-box">{message.message}</pre>
-                    <div className="time-box">{timeAgo(message.time)}</div>
-                  </div>
-                </SellerMessage>
-              );
+              if (message.type === "IMAGE") {
+                return (
+                  <SellerMessage>
+                    <div className="m-box">
+                      <div className="time-box">
+                        {timeAgo(
+                          message.time.substring(0, 10) +
+                            " " +
+                            message.time.substring(11, 19)
+                        )}
+                      </div>
+                      {message.message.split("|").map((image, idx) => {
+                        if (message.message.split("|").length - 1 === idx) {
+                          return null;
+                        }
+                        return (
+                          <img
+                            key={image}
+                            src={image}
+                            alt={image}
+                            onClick={() => {
+                              setSelectedImage(image);
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </SellerMessage>
+                );
+              } else {
+                return (
+                  <SellerMessage key={idx}>
+                    <div className="m-box">
+                      <pre className="message-box">{message.message}</pre>
+                      <div className="time-box">{timeAgo(message.time)}</div>
+                    </div>
+                  </SellerMessage>
+                );
+              }
             }
           })}
           {!messages.length && (
@@ -428,6 +615,20 @@ const ChatRoom = (props) => {
             </button>
           </div>
         </RoomFooter>
+        {selectedImage && (
+          <ImageModal
+            onClick={() => {
+              setSelectedImage(null);
+            }}
+          >
+            <img src={selectedImage} alt={selectedImage} />
+            <CloseSVG
+              onClick={() => {
+                setSelectedImage(null);
+              }}
+            />
+          </ImageModal>
+        )}
       </div>
     </RoomContainer>
   );
@@ -522,6 +723,34 @@ const FoldSVG = (props) => {
   );
 };
 
+const ImageModal = styled.div`
+  position: absolute;
+  top: 120px;
+  left: 80px;
+
+  img {
+    width: 400px;
+    height: 400px;
+    border-radius: 8px;
+  }
+
+  svg {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    cursor: pointer;
+
+    path {
+      stroke: #d9d9d9;
+    }
+    :hover {
+      path {
+        stroke: red;
+      }
+    }
+  }
+`;
+
 const SellerMessage = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -548,6 +777,18 @@ const SellerMessage = styled.div`
       background: #fce2db;
       border-radius: 6px;
       white-space: pre-wrap;
+    }
+
+    img {
+      width: 80px;
+      height: 80px;
+      border: 1px solid #d9d9d9;
+      border-width: 1px 1px 1px 0;
+      cursor: pointer;
+    }
+
+    img: last-child {
+      border-width: 1px 1px 1px 1px;
     }
   }
 `;
@@ -578,6 +819,18 @@ const BuyerMessage = styled.div`
       background: #fce2db;
       border-radius: 6px;
       white-space: pre-wrap;
+    }
+
+    img {
+      width: 80px;
+      height: 80px;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      border-width: 1px 0 1px 1px;
+    }
+
+    img: last-child {
+      border-width: 1px 1px 1px 1px;
     }
   }
 `;
