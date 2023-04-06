@@ -18,7 +18,6 @@ export default function MypageItem({mypageTab}) {
         const getData = async () => {
             if(mypageTab === 1) {
                 const response = await member.deal(memberId);
-                // console.log(response);
                 setDealData(response);
             }
             else if(mypageTab === 2) {

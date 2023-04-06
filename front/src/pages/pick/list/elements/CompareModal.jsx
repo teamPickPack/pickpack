@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import LineChart from './LineChart';
@@ -34,14 +35,32 @@ export default function CompareModal({handleCompareModalVisible}){
     const compareList = useSelector((state)=>{
         return state.compare.compareList;
     });
-    const priceData = [
-        { //항공권 가격 추이 데이터
-            avg : 740000/4*3,info : [{date:'2023-03-06',price:760000/4*3},{date:'2023-03-07',price:770000/4*3},{date:'2023-03-08',price:780000/4*3},{date:'2023-03-09',price:790000/4*3},{date:'2023-03-10',price:800000/4*3},{date:'2023-03-11',price:710000/4*3},{date:'2023-03-12',price:720000/4*3},{date:'2023-03-13',price:730000/4*3},{date:'2023-03-14',price:740000/4*3},{date:'2023-03-15',price:750000/4*3},{date:'2023-03-16',price:760000/4*3},{date:'2023-03-17',price:770000/4*3},{date:'2023-03-18',price:780000/4*3},{date:'2023-03-19',price:790000/4*3},{date:'2023-03-20',price:800000/4*3},],
-        },
-        { //항공권 가격 추이 데이터
-            avg : 740000,info : [{date:'2023-03-01',price:1230000},{date:'2023-03-02',price:720000},{date:'2023-03-03',price:730000},{date:'2023-03-04',price:740000},{date:'2023-03-05',price:1230000},{date:'2023-03-06',price:760000},{date:'2023-03-07',price:770000},{date:'2023-03-08',price:780000},{date:'2023-03-09',price:790000},{date:'2023-03-10',price:800000},{date:'2023-03-11',price:710000},{date:'2023-03-12',price:720000},{date:'2023-03-13',price:730000},{date:'2023-03-14',price:740000},{date:'2023-03-15',price:750000},{date:'2023-03-16',price:760000},{date:'2023-03-17',price:770000},{date:'2023-03-18',price:780000},{date:'2023-03-19',price:790000},{date:'2023-03-20',price:800000},],
-        },
-    ];
+    const compareMode = useSelector((state) => {
+        return state.compare.compareMode;
+    })
+    const [graphAvail, setGraphAvail] = useState(false);
+    useEffect(() => {
+        let flag = true;
+        for(let i = 0; i < compareList.length; i++){
+            if(compareList[i].priceData === 'no Info') {
+                flag = false;
+                setGraphAvail(false);
+            }
+        }
+        if(flag) setGraphAvail(true)
+    }, [compareList])
+    const priceData = compareList.map((compareItem) => {
+        // if(compareItem.priceData === 'no Info') setGraphAvail(false);
+        return compareItem.priceData;
+    });
+    // useEffect(() => {
+    //     setGraphAvail(true);
+    //     console.log('hihi');
+    //     setPriceData(compareList.map((compareItem) => {
+    //         if(compareItem.priceData === 'no Info') setGraphAvail(false);
+    //         return compareItem.priceData
+    //     }))
+    // }, [compareList]);
     const closeModal = () => {
         handleCompareModalVisible('button');
     }
@@ -66,8 +85,13 @@ export default function CompareModal({handleCompareModalVisible}){
                         </tr>
                     </thead>
                     <tbody>
-                        {compareList.map((compareItem, index) => (
-                            <CompareModalItem key={compareItem.flightId} item={compareItem} color={color[index]}/>
+                        {compareMode === 'oneWay' ? compareList.map((compareItem, index) => (
+                            <CompareModalItem mode={'one'} key={compareItem.flightId} item={compareItem} color={color[index]}/>
+                        )) : compareList.map((compareItem, index) => (
+                            <>
+                            <CompareModalItem mode={'round'} key={`${compareItem.flightId}-1`} item={compareItem.flightData[0]} color={color[index]}/>
+                            <CompareModalItem mode={'round'} dashed={true} key={`${compareItem.flightId}-2`} item={compareItem.flightData[1]} color={color[index]}/>
+                        </>
                         ))}
                     </tbody>
                 </CompareTableContent>
@@ -75,15 +99,15 @@ export default function CompareModal({handleCompareModalVisible}){
             <br/><br/>
             <CompareGraph>
                 <h2>항공권 그래프</h2>
-                <LineChart priceData={priceData} onCompare={true}/>
-                <CompareLabelBox>
+                {compareMode === 'oneWay' && graphAvail? <LineChart priceData={priceData} onCompare={true}/> : <div>항공권 그래프가 지원되지 않습니다.</div>}
+                {compareMode === 'oneWay' ? <CompareLabelBox>
                     {compareList.map((compareItem, index) => (
                         <CompareLabelList key={compareItem.flightId}>
                             <CompareGraphLabel color={color[index]} />
-                            <div>&nbsp;인천 - 파리</div>
+                            <div>&nbsp;{compareItem.flightData.ticket.depName} - {compareItem.flightData.ticket.arrName}</div>
                         </CompareLabelList>
                     ))}
-                </CompareLabelBox>
+                </CompareLabelBox> : null}
             </CompareGraph>
         </CompareModalBox>
     )
