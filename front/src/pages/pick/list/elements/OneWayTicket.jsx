@@ -141,7 +141,7 @@ export default function OneWayTicket({
         if(like) {
             try{
                 const response = await flight.put.likeOne({ticketId: ticket.id});
-                console.log('해제 '+response);
+                // console.log('해제 '+response);
                 alert('알림이 해제되었습니다.');
                 if(check){
                     //idx번째 data의 isLike를 바꿔라
@@ -161,7 +161,7 @@ export default function OneWayTicket({
             //찜 하기
             try{
                 const response = await flight.post.likeOne({ticketId: ticket.id});
-                console.log('등록 '+response);
+                // console.log('등록 '+response);
                 alert('알림이 등록되었습니다.');
                 if(check){
                     //idx번째 data의 isLike를 바꿔라
