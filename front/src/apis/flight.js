@@ -48,6 +48,17 @@ export const flight = {
       }
       const response = await Send.post(`${flightURL}/one/like`, data);
       return response;
+    },
+    likeRound: async (data) => {
+      const memberId = store.getState().user.memberId;
+      if(memberId === null) {
+        alert('로그인이 필요한 기능입니다.');
+        return;
+      } else{
+        data.memberId = memberId / 2373.15763 - 7;
+      }
+      const response = await Send.post(`${flightURL}/round/like`, data);
+      return response;
     }
   },
   put: {
@@ -60,6 +71,17 @@ export const flight = {
         data.memberId = memberId / 2373.15763 - 7;
       }
       const response = await Send.put(`${flightURL}/one/like`, data);
+      return response;
+    },
+    likeRound: async (data) => {
+      const memberId = store.getState().user.memberId;
+      if(memberId === null) {
+        alert('로그인이 필요한 기능입니다.');
+        return;
+      } else{
+        data.memberId = memberId / 2373.15763 - 7;
+      }
+      const response = await Send.put(`${flightURL}/round/like`, data);
       return response;
     }
     // //내 정보 수정

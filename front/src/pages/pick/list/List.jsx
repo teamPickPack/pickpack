@@ -7,10 +7,6 @@ import mainBanner from "../../../assets/image/mainBanner.png";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { compareAction } from "../../../store/compareSlice";
-import garudaIndonesia from "../../../assets/airlines/가루다인도네시아항공.png";
-import gilsang from "../../../assets/airlines/가루다인도네시아항공.png";
-import korean from "../../../assets/airlines/대한항공.png";
-import delta from "../../../assets/airlines/델타항공.png";
 // import { FaChevronUp } from "react-icons/fa";
 import styled from "styled-components";
 import { createPortal } from "react-dom";
@@ -42,6 +38,17 @@ export default function List() {
 
   const [data, setData] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [sortType, setSortType] = useState('price');
+  const [orderBy, setOrderBy] = useState('asc');
+  const handleSortType = (event) => {
+    if(event.target.value === 'chg') {
+      setOrderBy('desc');
+    } else{
+       setOrderBy('asc');
+    }
+    setSortType(event.target.value);
+  }
+
   useEffect(() => {
     const getFlightList = async () => {
       if (wayType === "one") {
@@ -64,14 +71,14 @@ export default function List() {
             date: startDate,
           },
           pageable: {
-            orderBy: "asc",
+            orderBy,
             page: currentPage,
-            sortType: "price",
+            sortType,
           },
         };
         console.log(data);
         const response = (await flight.post.one(data));
-        console.log(response);
+        // console.log(response);
         setData(response.ticketList);
         setTotalCount(response.totalCount);
         setPageLoading(false);
@@ -96,15 +103,15 @@ export default function List() {
             minPrice: leftPrice * 10000,
           },
           pageable: {
-            orderBy: "desc",
+            orderBy,
             page: 0,
-            sortType: "price",
+            sortType,
           },
         };
 
-        console.log(data);
 
         const response = await flight.post.round(data);
+        if(currentPage > 0) setCurrentPage(0);
         console.log(response);
         setData(response.ticketList);
         setTotalCount(response.totalCount);
@@ -113,10 +120,9 @@ export default function List() {
     };
 
     getFlightList();
-  }, [accessToken]);
+  }, [accessToken, sortType]);
 
   useEffect(() => {
-    console.log('currentPage가 돌아가유');
     if(currentPage > 0){
       const getFlightList = async () => {
         if (wayType === "one") {
@@ -138,10 +144,9 @@ export default function List() {
             pageable: {
               orderBy: "asc",
               page: currentPage,
-              sortType: "price",
+              sortType,
             },
           };
-          console.log(data);
           const response = (await flight.post.one(data));
           setData((data) => [...data, ...response.ticketList]);
         } else {
@@ -162,15 +167,14 @@ export default function List() {
               minPrice: leftPrice * 10000,
             },
             pageable: {
-              orderBy: "asc",
+              orderBy,
               page: currentPage,
-              sortType: "price",
+              sortType,
             },
           };
   
-          console.log(data);
-  
           const response = await flight.post.round(data);
+          console.log(response);
           setData((data) => [...data, ...response.ticketList]);
         }
       };
@@ -197,10 +201,12 @@ export default function List() {
     } else {
       for (let i = 0; i < data.length; i++) {
         if (
-          `${data[i].goWay.ticket.id}-${data[i].returnWay.ticket.id}` ===
+          `${data[i].goWay.id}-${data[i].returnWay.id}` ===
           ticketId
         ) {
-          data[i].isLike = value;
+          console.log(data[i]);
+          data[i].like = value;
+          console.log('찾음');
           break;
         }
       }
@@ -378,8 +384,9 @@ export default function List() {
                               handleLikeData={handleLikeData}
                               isCheck={true}
                               isLike={compareItem.isLike}
-                              goWay={compareItem.flightData[0]}
-                              returnWay={compareItem.flightData[1]}
+                              goWay={compareItem.flightData[0].ticket}
+                              returnWay={compareItem.flightData[1].ticket}
+                              totalPrice={compareItem.totalPrice}
                             />
                           </CompareItem>
                         )}
@@ -402,18 +409,18 @@ export default function List() {
                         marginRight: "16px",
                       }}
                     >
-                      {totalCount && `${totalCount}개의 결과`}
+                      {totalCount && `${totalCount.toLocaleString('ko-kr')}개의 결과`}
                     </span>
                     {data && <div>
                       <label style={{ fontSize: "16px", fontWeight: "600" }}>
                         정렬{" "}
                       </label>
-                      <select style={{ fontSize: "16px", fontWeight: "600" }}>
-                        <option value="">금액낮은순</option>
-                        <option value="">변동폭큰순</option>
-                        <option value="">출발시간빠른순</option>
-                        <option value="">출발시간늦은순</option>
-                        <option value="">소요시간낮은순</option>
+                      <select onChange={handleSortType} value={sortType} style={{ fontSize: "16px", fontWeight: "600" }}>
+                        <option value="price">금액낮은순</option>
+                        <option value="chg">변동폭큰순</option>
+                        <option value="depTime">출발시간빠른순</option>
+                        {/* <option value="">출발시간늦은순</option> */}
+                        <option value="totalTimeNum">소요시간낮은순</option>
                       </select>
                     </div>}
                   </SearchInfo>
@@ -439,11 +446,11 @@ export default function List() {
                     data.map((one, index) => {
                       one.isCheck = initialCheck(
                         "round",
-                        `${one.goWay.ticket.id}-${one.returnWay.ticket.id}`
+                        `${one.goWay.id}-${one.returnWay.id}`
                       );
                       return (
                         <RoundTicket
-                          key={`${one.goWay.ticket.id}-${one.returnWay.ticket.id}-${index}`}
+                          key={`${one.goWay.id}-${one.returnWay.id}-${index}`}
                           fromCompare={false}
                           handleLikeData={handleLikeData}
                           isCheck={one.isCheck}

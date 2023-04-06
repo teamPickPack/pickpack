@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { compareAction } from '../../../../store/compareSlice';
 import styled from 'styled-components';
 import OneWayTicket from "./OneWayTicket"
-
+import { flight } from '../../../../apis/flight';
 export default function RoundTicket({
     fromCompare,
     handleLikeData,
@@ -88,24 +88,23 @@ export default function RoundTicket({
     }, [isLike])
     const dispatch = useDispatch();
     
-    const unifyCommon = (type) => {
+    const unifyCommon = async (type) => {
         if(type === 'check'){
             //여기서도 세션 스토리지에 접근해서 데이터 넣어주고 빼줘야 함
             const payload = {
                 mode: 'round',
                 isLike: commonLike,
-                flightId: `${goWay.ticket.ticketId}-${returnWay.ticket.ticketId}`,
+                flightId: `${goWay.id}-${returnWay.id}`,
                 flightData: [
                     {
-                        ticket: goWay.ticket,
-                        flightList: goWay.flightList,
+                        ticket: goWay,
                     },
                     {
-                        ticket: returnWay.ticket,
-                        flightList: returnWay.flightList,
+                        ticket: returnWay,
                     },
-                ]
-            }
+                ],
+                totalPrice,
+            };
             if(!commonCheck){
                 if(compareList.length !== 0 && compareMode !== 'round'){
                     alert('편도와 왕복을 동시에 비교할 수 없습니다.');
@@ -126,30 +125,51 @@ export default function RoundTicket({
             const payload = {
                 mode: 'round',
                 isLike: !commonLike,
-                flightId: `${goWay.ticket.ticketId}-${returnWay.ticket.ticketId}`,
+                flightId: `${goWay.id}-${returnWay.id}`,
                 flightData: [
                     {
-                        ticket: goWay.ticket,
-                        flightList: goWay.flightList,
+                        ticket: goWay,
                     },
                     {
-                        ticket: returnWay.ticket,
-                        flightList: returnWay.flightList,
+                        ticket: returnWay,
                     },
-                ]
+                ],
+                totalPrice,
             }
-            if(commonLike) {
-                alert('알림이 해제되었습니다.');
+            if(commonLike) { //찜 취소
+                try{
+                    const response = await flight.put.likeRound({ticketToId: goWay.id, ticketFromId: returnWay.id});
+                    alert('알림이 해제되었습니다.');
+                    if(commonCheck){
+                        handleLikeData(payload.flightId, !commonLike);
+                        dispatch(compareAction.updateCompareItem(payload));
+                        setCommonLike((commonLike) => !commonLike);
+                    }
+                    else{
+                        handleLikeData(payload.flightId, !commonLike);
+                        setCommonLike((commonLike) => !commonLike);
+                    }
+                }
+                catch(err) {
+                    console.log(err);
+                }
             }
             else {
-                alert('알림이 등록되었습니다.');
-            }
-            if(commonCheck){
-                handleLikeData(payload.flightId, !commonLike);
-                dispatch(compareAction.updateCompareItem(payload));
-            }
-            else{
-                setCommonLike((commonLike) => !commonLike);
+                try{
+                    const response = await flight.post.likeRound({ticketToId: goWay.id, ticketFromId: returnWay.id});
+                    alert('알림이 등록되었습니다.');
+                    if(commonCheck){
+                        handleLikeData(payload.flightId, !commonLike);
+                        dispatch(compareAction.updateCompareItem(payload));
+                    }
+                    else{
+                        handleLikeData(payload.flightId, !commonLike);
+                        setCommonLike((commonLike) => !commonLike);
+                    }
+                }
+                catch(err) {
+                    console.log(err);
+                }
             }
         }
     }
@@ -157,12 +177,12 @@ export default function RoundTicket({
         <>
         <Tickets className="tickets">
             <ReturnTicket className="ticket under">
-                <OneWayTicket className="" fromCompare={fromCompare} isRound={true} unifyCommon={unifyCommon} handleLikeData={handleLikeData} isCheck={commonCheck} isLike={commonLike} ticket={returnWay.ticket} flightList={returnWay.flightList}/>
+                <OneWayTicket className="" fromCompare={fromCompare} isRound={true} unifyCommon={unifyCommon} handleLikeData={handleLikeData} isCheck={commonCheck} isLike={commonLike} ticket={returnWay} flightList={returnWay.flightList}/>
             </ReturnTicket>
             <GoTicket className="ticket over">
-                <OneWayTicket className="" fromCompare={fromCompare} isRound={true} unifyCommon={unifyCommon} handleLikeData={handleLikeData} isCheck={commonCheck} isLike={commonLike} ticket={goWay.ticket} flightList={goWay.flightList}/>
+                <OneWayTicket className="" fromCompare={fromCompare} isRound={true} unifyCommon={unifyCommon} handleLikeData={handleLikeData} isCheck={commonCheck} isLike={commonLike} ticket={goWay} flightList={goWay.flightList}/>
             </GoTicket>
-            <TotalPrice>총 2,640,000원</TotalPrice>
+            <TotalPrice>총 {totalPrice.toLocaleString('ko-kr')}원</TotalPrice>
         </Tickets>
         </>
     )

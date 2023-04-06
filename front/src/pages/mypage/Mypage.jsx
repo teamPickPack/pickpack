@@ -12,9 +12,9 @@ export default function Mypage(){
         window.addEventListener("scroll", () => setTop(window.screenTop));
         window.removeEventListener("scroll", setTop(window.screenTop));
     }, []);
-    useEffect(()=>{
-        console.log(top);
-    }, [top])
+    // useEffect(()=>{
+    //     console.log(top);
+    // }, [top])
     return(
         <div style={{display: 'flex', position: 'relative'}}>
             <MypageLeft Top={top}>
