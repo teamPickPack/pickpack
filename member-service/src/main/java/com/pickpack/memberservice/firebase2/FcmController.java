@@ -21,11 +21,11 @@ public class FcmController {
 
         System.out.println("🎈🎈🎈🎈🎈🎈🎈🎈");
         System.out.println(requestDto.getTargetToken() + " "
-                + requestDto.getTitle() + " " + requestDto.getBody());
+                + requestDto.getMemberId() + " " + requestDto.getBody());
 
         firebaseCloudMessageService.sendMessageTo(
                 requestDto.getTargetToken(),
-                requestDto.getTitle(),
+                requestDto.getMemberId(),
                 requestDto.getBody());
 
         return ResponseEntity.ok().body("success");

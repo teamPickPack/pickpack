@@ -8,6 +8,7 @@ import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import com.pickpack.memberservice.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -23,11 +24,12 @@ import java.util.List;
 @Slf4j
 public class FirebaseCloudMessageService {
 
-//    private final String API_URL = "https://fcm.googleapis.com/v1/projects/pickpack-68364/messages:send";
+    //    private final String API_URL = "https://fcm.googleapis.com/v1/projects/pickpack-68364/messages:send";
     private final ObjectMapper objectMapper;
 
+    private final TicketRepository ticketRepository;
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException, FirebaseMessagingException {
+    public void sendMessageTo(String targetToken, Long memberId, String body) throws IOException, FirebaseMessagingException {
 //        String message = makeMessage(targetToken, title, body);
 
         log.info("메세지 전송 전");
@@ -40,11 +42,14 @@ public class FirebaseCloudMessageService {
 //                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
 //                .build();
 
+        Long aLong1 = ticketRepository.CountOneway(memberId);
+        Long aLong2 = ticketRepository.CountRoundway(memberId);
+
         Message mes = Message.builder()
-                        .putData("name", "hs")
-                        .putData("age", "12")
-                        .setToken(targetToken)
-                        .build();
+                .putData("OnewayLikeCount", String.valueOf(aLong1))
+                .putData("RoundwayLikeCount", String.valueOf(aLong2))
+                .setToken(targetToken)
+                .build();
 
         log.info("바디" + mes);
 
@@ -63,9 +68,9 @@ public class FirebaseCloudMessageService {
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
-        
+
         log.info("메세지 만들기");
-        
+
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(FcmMessage.Message.builder()
                         .token(targetToken)
@@ -86,7 +91,7 @@ public class FirebaseCloudMessageService {
     }
 
     private String getAccessToken() throws IOException {
-        
+
         log.info("토큰 받아오기");
 
         String firebaseConfigPath = "firebase/pickpack-68364-firebase-adminsdk-xmhtk-15ec15cc25.json";
