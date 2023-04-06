@@ -7,30 +7,28 @@ importScripts(
 );
 
 firebase.initializeApp({
-  apiKey: "AIzaSyAGIHJBQnIsmFKqeBISzGmWJB2eZBTwkm4",
-  authDomain: "pickpack-68364.firebaseapp.com",
-  databaseURL: "https://pickpack-68364-default-rtdb.firebaseio.com/",
-  projectId: "pickpack-68364",
-  storageBucket: "pickpack-68364.appspot.com",
-  messagingSenderId: "768830642867",
-  appId: "1:768830642867:web:8a840e209ff01e2a126ec6",
-  measurementId: "G-P5CW4X17R2",
+  apiKey: "%REACT_APP_FIREBASE_API_KEY%",
+  authDomain: "%REACT_APP_FIREBASE_AUTH_DOMAIN%",
+  databaseURL: "%REACT_APP_FIREBASE_DATABASE_URL%",
+  projectId: "%REACT_APP_FIREBASE_PROJECT_ID%",
+  storageBucket: "%REACT_APP_FIREBASE_STORAGE_BUCKET%",
+  messagingSenderId: "%REACT_APP_FIREBASE_MESSAGING_SENDER_ID%",
+  appId: "%REACT_APP_FIREBASE_APP_ID%",
+  measurementId: "%REACT_APP_FIREBASE_MEASUREMENT_ID%",
 });
 
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  // const channel = new BroadcastChannel("sw-message");
-  // channel.postMessage(payload.notification);
-  // console.log(
-  //   "[firebase-messaging-sw.js] Received background message ",
-  //   payload
-  // );
-  // // Customize notification here
-  // const notificationTitle = payload.notification.title;
-  // const notificationOptions = {
-  //   body: payload.notification.body,
-  //   icon: "/firebase-logo.png",
-  // };
-  // self.registration.showNotification(notificationTitle, notificationOptions);
+  console.log(
+    "[firebase-messaging-sw.js] Received background message ",
+    payload
+  );
+  // Customize notification here
+  const notificationTitle = "항공권 가격 변동 알림";
+  const notificationOptions = {
+    body: payload.data.body,
+    icon: "/firebase-logo.png",
+  };
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
