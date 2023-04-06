@@ -1,4 +1,5 @@
-import Send from "./send";
+import store from "../store/store";
+import Send from './send';
 
 const memberURL = "api/member";
 export const member = {
@@ -24,19 +25,34 @@ export const member = {
     );
     return response;
   },
-  rent: async (data) => {
-    const response = await Send.get(
-      `${memberURL}/${data / 2373.15763 - 7}/rent`
-    );
+  //대여 목록 호출
+  rent : async(data) => {
+    const response = await Send.get(`${memberURL}/${data / 2373.15763 - 7}/rent`);
     return response;
   },
-  item: async (data) => {
-    const response = await Send.get(
-      `${memberURL}/${data / 2373.15763 - 7}/item`
-    );
+  //찜 목록
+  item : async(data) => {
+    const response = await Send.get(`${memberURL}/${data / 2373.15763 - 7}/item`);
+    return response;
+  },
+  //편도 알림
+  one : async(data) => {
+    const response = await Send.get(`${memberURL}/${data / 2373.15763 - 7}/one-flight`);
+    return response;
+  },
+  //왕복 알림
+  round : async(data) => {
+    const response = await Send.get(`${memberURL}/${data / 2373.15763 - 7}/round-flight`);
+    return response;
+  },
+  onewish: async(data) => {
+    const memberId = store.getState().user.memberId;
+    const response = await Send.put(`${memberURL}/${memberId / 2373.15763 - 7}/onewayWish`, data);
+    return response;
+  },
+  roundwish: async(data) => {
+    const memberId = store.getState().user.memberId;
+    const response = await Send.put(`${memberURL}/${memberId / 2373.15763 - 7}/roundwayWish`, data);
     return response;
   },
 };
-//사용범: api 사용할 곳에서
-//import {member} from '?'
-//const response = await member.함수(data)

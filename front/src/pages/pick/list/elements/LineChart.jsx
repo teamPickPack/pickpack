@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import {Line} from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale } from "chart.js/auto";
 
-export default function LineChart({priceData, onCompare}){
+export default function LineChart({priceData, onCompare, setLineChartPrice}){
     ChartJS.register(CategoryScale, {
         id: 'uniqueId',
         afterDraw: function (chart) {
@@ -116,6 +116,7 @@ export default function LineChart({priceData, onCompare}){
                                     }
                                     if(!onCompare && i === index) {
                                         const span = '<span>' + body + '원</span>';
+                                        setLineChartPrice(Number(body[0].replaceAll(",","")));
                                         innerHtml += '<tr><td style="font-size: 10px;">' + span + '</td></tr>';
                                     }
                                 });
