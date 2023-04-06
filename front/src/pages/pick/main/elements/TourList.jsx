@@ -27,6 +27,7 @@ const TourList = (props) => {
     const getTourList = async (data) => {
       const res = await flight.get.tourist(data);
       setPageNum(0);
+      document.getElementById("list-content").scrollLeft = 0;
       setTourList(res.results);
     };
 
@@ -34,16 +35,19 @@ const TourList = (props) => {
   }, [props.tourContinent]);
 
   const pageHandler = (type) => {
+    const item = document.getElementById("list-content");
+
     if (type === "prev") {
       if (+pageNum === +0) {
         return;
       }
+      item.scrollLeft -= 1120;
       setPageNum(pageNum - 1);
     } else {
-      console.log(pageNum, tourList.length);
       if (+pageNum === +parseInt((tourList.length - 1) / 10)) {
         return;
       }
+      item.scrollLeft += 1120;
       setPageNum(pageNum + 1);
     }
   };
@@ -139,8 +143,8 @@ const TourList = (props) => {
               <FaChevronLeft />
             </button>
           )}
-          <ul>
-            {tourList.slice(pageNum * 10, pageNum * 10 + 10).map((spot) => {
+          <ul id="list-content">
+            {tourList.map((spot) => {
               return (
                 <li
                   className="tour-item"
@@ -151,6 +155,9 @@ const TourList = (props) => {
                   <div>{spot.touristName}</div>
                 </li>
               );
+            })}
+            {[...Array(10 - (tourList.length % 10))].map((i, idx) => {
+              return <li className="empty-item" key={idx}></li>;
             })}
           </ul>
           {pageNum !== parseInt((tourList.length - 1) / 10) && (
@@ -220,17 +227,20 @@ const TourListBox = styled.div`
   }
 
   .list-body {
-    width: 1100px;
+    width: 1120px;
     margin: 0 32px;
     display: flex;
 
     ul {
-      height: 420px;
+      height: 440px;
       display: flex;
-      padding: 0;
+      padding: 4px;
       margin: 0;
       flex-direction: column;
       flex-wrap: wrap;
+      width: 1120px;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
     .tour-item {
@@ -243,6 +253,7 @@ const TourListBox = styled.div`
       border-radius: 8px;
       box-sizing: border-box;
       cursor: pointer;
+      box-shadow: 0px 0px 1px 0px gray;
 
       img {
         width: 100%;
@@ -265,6 +276,17 @@ const TourListBox = styled.div`
       }
     }
 
+    .empty-item {
+      display: flex;
+      flex-direction: column;
+      width: 200px;
+      height: 180px;
+      margin: 0 24px 24px 0;
+      border: 1px solid #ffffff;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
     button {
       display: flex;
       align-items: center;
@@ -283,7 +305,7 @@ const TourListBox = styled.div`
     }
 
     .left-arrow {
-      transform: translate(-38px, 174px);
+      transform: translate(-46px, 174px);
 
       svg {
         transform: translate(-2px, 0);
@@ -293,7 +315,7 @@ const TourListBox = styled.div`
     }
 
     .right-arrow {
-      transform: translate(1104px, 174px);
+      transform: translate(1108px, 174px);
       svg {
         width: 20px;
         height: 20px;

@@ -44,15 +44,18 @@ const ChatRoom = (props) => {
         setItemInfo(response.item);
         const msgData = {
           roomId: roomId,
-          // date: new Date().toISOString().substring(0, 10),
-          date: "2023-04-05",
+          date: new Date().toISOString().substring(0, 10),
         };
 
         const result = await chat.post.message(msgData);
 
-        console.log(result);
         if (result) {
           setMessages([...result.chatMessages]);
+
+          setTimeout(() => {
+            const body = document.getElementById("room-body");
+            body.scrollTop = body.scrollHeight;
+          }, []);
         }
 
         setIsLoading(false);
@@ -76,12 +79,10 @@ const ChatRoom = (props) => {
         stompClient.current.connect(
           {},
           (frame) => {
-            console.log(stompClient.current);
             try {
               stompClient.current.subscribe(
                 `/chat/sub/room/${roomId}`,
                 function (message) {
-                  console.log(message);
                   let recv = JSON.parse(message.body);
                   recvMessage(recv);
                 }
@@ -89,7 +90,6 @@ const ChatRoom = (props) => {
             } catch (err) {
               console.log(err);
             }
-            console.log(frame);
           },
           (error) => {
             console.log(`STOMP error: ${error}`);
@@ -124,7 +124,7 @@ const ChatRoom = (props) => {
           roomId: roomId,
           sender: myNickName,
           message: message.current.value,
-          time: new Date(),
+          time: "",
         })
       );
     } catch (err) {
@@ -176,8 +176,6 @@ const ChatRoom = (props) => {
 
     setPreviewImages();
   }, [images]);
-
-  console.log(images, preview);
 
   const returnChatList = () => {
     dispatch(chatAction.setRoomInfo(null));
@@ -236,11 +234,18 @@ const ChatRoom = (props) => {
     setImages([...nonDuplImages]);
   };
 
-  console.log(roomInfo);
-
   const timeAgo = (datetimeString) => {
-    console.log(datetimeString);
-    const datetime = new Date(datetimeString.replace(/-/g, "/"));
+    const utcNow =
+      new Date(datetimeString).getTime() +
+      new Date(datetimeString).getTimezoneOffset() * 60 * 1000;
+    const koreaTimeDiff = 27 * 60 * 60 * 1000;
+    const koreaNow = new Date(utcNow + koreaTimeDiff);
+
+    const now = koreaNow.toISOString();
+
+    const datetime = new Date(
+      now.substring(0, 10) + " " + now.substring(11, 19).replace(/-/g, "/")
+    );
     const seconds = Math.floor((new Date() - datetime) / 1000);
 
     let interval = Math.floor(seconds / 31536000);
@@ -349,13 +354,7 @@ const ChatRoom = (props) => {
                 <SellerMessage key={idx}>
                   <div className="m-box">
                     <pre className="message-box">{message.message}</pre>
-                    <div className="time-box">
-                      {timeAgo(
-                        message.time.substring(0, 10) +
-                          " " +
-                          message.time.substring(11, 19)
-                      )}
-                    </div>
+                    <div className="time-box">{timeAgo(message.time)}</div>
                   </div>
                 </SellerMessage>
               );
@@ -373,7 +372,6 @@ const ChatRoom = (props) => {
                   src={image.url}
                   alt={idx}
                   onClick={() => {
-                    console.log(image);
                     setImages(
                       images.filter((item) => {
                         return item !== image.image;
@@ -409,7 +407,6 @@ const ChatRoom = (props) => {
                 }
               }}
               onKeyDown={(e) => {
-                console.log(e);
                 if (e.key === "Enter" && e.shiftKey) {
                   return;
                 } else if (e.key === "Enter") {

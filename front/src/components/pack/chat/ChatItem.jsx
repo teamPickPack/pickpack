@@ -22,9 +22,17 @@ const ChatItem = (props) => {
   };
 
   const timeAgo = (datetimeString) => {
-    const newDatetimeString =
-      datetimeString.substring(0, 10) + " " + datetimeString.substring(11, 19);
-    const datetime = new Date(newDatetimeString.replace(/-/g, "/"));
+    const utcNow =
+      new Date(datetimeString).getTime() +
+      new Date(datetimeString).getTimezoneOffset() * 60 * 1000;
+    const koreaTimeDiff = 27 * 60 * 60 * 1000;
+    const koreaNow = new Date(utcNow + koreaTimeDiff);
+
+    const now = koreaNow.toISOString();
+
+    const datetime = new Date(
+      now.substring(0, 10) + " " + now.substring(11, 19).replace(/-/g, "/")
+    );
     const seconds = Math.floor((new Date() - datetime) / 1000);
 
     let interval = Math.floor(seconds / 31536000);
