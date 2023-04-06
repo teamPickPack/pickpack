@@ -258,6 +258,7 @@ const MyItemList = styled.div`
   scrollbar-width: none;
   -ms-overflow-style: none;
   margin-bottom: 12px;
+  scroll-behavior: smooth;
 
   ::-webkit-scrollbar {
     display: none;

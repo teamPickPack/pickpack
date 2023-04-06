@@ -3,11 +3,12 @@ import styled from "styled-components";
 import MypageTab from "./elements/MypageTab";
 import MypageItem from "./elements/MypageItem";
 import MypageUser from "./elements/MypageUser";
+import MypageFlight from "./elements/MypageFlight";
 export default function Mypage() {
   const [mypageMode, setMypageMode] = useState(1);
   const [mypageTab, setMypageTab] = useState(1);
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", minWidth: "1440px" }}>
       <MypageLeft givenHeight={window.screen.availHeight - 88}>
         <LeftTitle>
           <span>마이페이지</span>
@@ -33,9 +34,7 @@ export default function Mypage() {
       </MypageLeft>
       <div>
         <MypageTab mypageMode={mypageMode} setMypageTab={setMypageTab} />
-        {mypageMode === 1 && (
-          <div style={{ border: "1px solid blue" }}>Content</div>
-        )}
+        {mypageMode === 1 && <MypageFlight mypageTab={mypageTab} />}
         {mypageMode === 2 && <MypageItem mypageTab={mypageTab} />}
         {mypageMode === 3 && <MypageUser />}
       </div>
