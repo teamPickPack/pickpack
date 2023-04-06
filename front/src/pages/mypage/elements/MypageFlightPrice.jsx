@@ -4,28 +4,39 @@ import { member } from '../../../apis/member';
 
 export default function MypageFlightPrice({wantedPrice, wish, wayId}) {
     const [price, setPrice] = useState(wantedPrice);
+    
     const handlePrice = (event) => {
         if(isNaN(Number(event.target.value))) return;
         if(Number(event.target.value) === 0) setPrice(0);
         setPrice(Number(event.target.value.trim()));
     }
     const doWish = async () => {
+        
         if(window.confirm(`${price.toLocaleString('ko-kr')}원으로 가격을 수정하시겠습니까?`)) {
             if(wish === 'one'){
                 const data = {
                     onewayTicketLikeId: wayId,
                     wishPrice: price,
                 };
-    
-                const response = await member.onewish(data);
-                console.log(response);
+                try{
+                    const response = await member.onewish(data);
+                    alert('가격이 수정되었습니다.');
+                }
+                catch(err){
+                    alert(err.response.data.message);
+                }
             } else {
                 const data = {
                     roundwayTicketLikeId: wayId,
                     wishPrice: price,
                 }
-                const response = await member.roundwish(data);
-                console.log(response);
+                try{
+                    const response = await member.roundwish(data);
+                    alert('가격이 수정되었습니다.');
+                }
+                catch(err){
+                    alert(err.response.data.message);
+                }
             }
         }
     }
@@ -48,4 +59,9 @@ const WishBtn = styled.div`
     background-color: #432C7A;
     color: white;
     font-weight: bold;
+
+    &:hover {
+        cursor: pointer;
+        opacity: .7;
+    }
 `

@@ -2,36 +2,67 @@ import FlightList from "./FlightList"
 import {useState} from 'react';
 import styled from "styled-components";
 
-export default function CompareModalItem({item, color}) {
+export default function CompareModalItem({dashed, mode, item, color}) {
     const [showDetail, setShowDetail] = useState(false);
     return(
-        <BodyRow>
+        <BodyRow dashed={dashed}>
         {!showDetail ? <>
             <td>
-                <div>인천(ICN)</div>
-                <div>2023.03.23 12:40</div>
+                {mode === 'one' ?
+                <>
+                    <div>{`${item.flightData.ticket.depName}(${item.flightData.ticket.depCode})`}</div>
+                    <div>{item.flightData.ticket.depDate.replaceAll("-",".")} {item.flightData.ticket.depTime}</div>
+                </> : <>
+                    <div>{`${item.ticket.depName}(${item.ticket.depCode})`}</div>
+                    <div>{item.ticket.depDate.replaceAll("-",".")} {item.ticket.depTime}</div>
+                </>}
             </td>
             <td>
-                <div>인천(ICN)</div>
-                <div>2023.03.23 12:40</div>
+                {mode === 'one' ?
+                    <>
+                        <div>{`${item.flightData.ticket.arrName}(${item.flightData.ticket.arrCode})`}</div>
+                        <div>{item.flightData.ticket.arrDate.replaceAll("-",".")} {item.flightData.ticket.arrTime}</div>
+                    </> : <>
+                        <div>{`${item.ticket.arrName}(${item.ticket.arrCode})`}</div>
+                        <div>{item.ticket.arrDate.replaceAll("-",".")} {item.ticket.arrTime}</div>
+                    </>
+                }
             </td>
             <td>
-                <div>경유 2회</div>
-                <div>프랑크푸르트(FRA)</div>
-                <div>이스탄불(IST)</div>
+                {mode === 'one' ?
+                    <>
+                        <div>{item.flightData.ticket.waypointNum === 0 ? `직항` : `경유 ${item.flightData.ticket.waypointNum}회`}</div>
+                        {item.flightData.ticket.waypointNum > 0 ? item.flightData.ticket.flightList.map((flight, index) => {
+                            if(index !== item.flightData.ticket.waypointNum) return <div key={`${flight.arrName}-${index}`}>{`${flight.arrName}(${flight.arrCode})`}</div>
+                        }) : null}
+                    </> : <>
+                        <div>{item.ticket.waypointNum === 0 ? `직항` : `경유 ${item.ticket.waypointNum}회`}</div>
+                        {item.ticket.waypointNum > 0 ? item.ticket.flightList.map((flight, index) => {
+                            if(index !== item.ticket.waypointNum) return <div key={`${flight.arrName}-${index}`}>{`${flight.arrName}(${flight.arrCode})`}</div>
+                        }) : null}
+                    </>
+                }
             </td>
             <td>
-                <div>33시간 50분</div>
+                {mode === 'one' ?
+                    <div>{item.flightData.ticket.totalTime}</div> : <div>{item.ticket.totalTime}</div>
+                }
             </td>
             <td>
-                <div>대한항공</div>
+                {mode === 'one' ?
+                    <div>{item.flightData.ticket.airline}</div> : <div>{item.ticket.airline}</div>
+                }
             </td>
             <td>
-                <div>823,000원</div>
+                {mode === 'one' ?
+                    <div>{item.flightData.ticket.price.toLocaleString('ko-kr')}원</div> : <div>{item.ticket.price.toLocaleString('ko-kr')}원</div>
+                }
             </td>
         </> : 
             <td colSpan={6} style={{border: '1px solid gray', maxWidth: '900px', diplay: 'flex', justifyContent: 'space-between', position: 'relative'}}>
-                <FlightList fromCompare={true}/>
+                {mode === 'one' ?
+                    <FlightList data={item.flightData.ticket.flightList} fromCompare={true}/> : <FlightList data={item.ticket.flightList} fromCompare={true}/>
+                }
             </td>
         }   
             <td>
@@ -44,8 +75,10 @@ export default function CompareModalItem({item, color}) {
 const BodyRow = styled.tr`
     height: 164px;
     td {
-        border: 1px solid black;
-        
+        border-top: ${(props) => props.dashed? '1px solid white' : '1px solid black'};
+        border-bottom: ${(props) => props.dashed? '1px solid black' : '1px solid white'};
+        border-left: 1px solid black;
+        border-right: 1px solid black;
         div {
             font-size: 16px;
             font-weight: bold;
