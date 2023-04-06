@@ -28,7 +28,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     @Override
     public Page<Ticket> findAllTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice) {
         JPAQuery<Tuple> query  = queryFactory
-                .select(ticket, ticket.tendency.updown)
+                .select(ticket, ticket.tendency.chg)
                 .from(ticket)
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
@@ -69,7 +69,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     @Override
     public Page<Ticket> findWaypoint0or1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Tuple> query  = queryFactory
-                .select(ticket, ticket.tendency.updown)
+                .select(ticket, ticket.tendency.chg)
                 .from(ticket)
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
@@ -112,7 +112,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     @Override
     public Page<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
         JPAQuery<Tuple> query  = queryFactory
-                .select(ticket, ticket.tendency.updown)
+                .select(ticket, ticket.tendency.chg)
                 .from(ticket)
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
@@ -154,7 +154,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
     private void sortAndOrder(JPAQuery<Tuple> query, Pageable pageable) {
         for (Sort.Order o : pageable.getSort()) {
-            if(o.getProperty().equals("updown")) {
+            if(o.getProperty().equals("chg")) {
                 PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
                 query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
                         pathBuilder.get(o.getProperty())), new OrderSpecifier(Order.ASC,
