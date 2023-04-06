@@ -23,7 +23,7 @@ export default function MypageUser() {
         getUserInfo();
     }, [])
     return(
-        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '0', bottom: '0', left: '320px', right: '0'}}>
+        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '0', bottom: '0', left: '240px', right: '0'}}>
             {userData && <>
                 <div>
                     <h1>회원정보</h1>
