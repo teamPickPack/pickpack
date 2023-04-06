@@ -158,7 +158,7 @@ const Modify = () => {
     event.target.value = result;
   };
 
-  const modifyItem = () => {
+  const modifyItem = async () => {
     if (memberId === -7) {
       alert("로그인이 필요합니다.");
       return;
@@ -196,6 +196,17 @@ const Modify = () => {
       return;
     }
 
+    let imgUrl = "";
+    await loadedImage.forEach((element, idx) => {
+      console.log(element);
+      imgUrl += element + "|";
+      // if (idx === loadedImage.length - 1) {
+      //   imgUrl = imgUrl.substring(0, imgUrl.length - 1);
+      // }
+    });
+
+    console.log(imgUrl);
+
     const data = {
       item: {
         memberId: memberId,
@@ -205,9 +216,12 @@ const Modify = () => {
         title: titleRef.current.value,
         content: contentRef.current.value,
         cityId: selectedTag.id,
+        imgUrl: imgUrl ? imgUrl : "Null",
       },
       imgs: images,
     };
+
+    console.log(imgUrl, data);
 
     const modifyData = async () => {
       const formData = new FormData();
@@ -229,7 +243,7 @@ const Modify = () => {
         console.error(error);
       }
     };
-    modifyData();
+    await modifyData();
   };
 
   return (
@@ -244,7 +258,7 @@ const Modify = () => {
                 setImages(data);
               }}
               maxFileNum={10}
-              maxFileSize={3}
+              maxFileSize={10}
               isPreview={true}
               loadedImages={loadedImage}
               setLoadedImages={setLoadedImage}

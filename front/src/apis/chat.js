@@ -1,4 +1,3 @@
-import axios from "axios";
 import { chatAction } from "../store/chatSlice";
 import store from "../store/store";
 import Send from "./send";

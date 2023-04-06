@@ -274,7 +274,7 @@ const SearchTicket = (props) => {
     }
   };
 
-  console.log('crierion: '+criterion);
+  console.log("crierion: " + criterion);
 
   return (
     <>
@@ -1019,6 +1019,7 @@ const DateButton = styled.div`
   input[type="date"] {
     width: 174px;
     height: 48px;
+    color: transparent;
     background: transparent;
     border-radius: 4px;
     border: none;
@@ -1027,7 +1028,6 @@ const DateButton = styled.div`
 
     :hover {
       background: rgba(97, 97, 97, 0.1);
-      .date-btn: red;
     }
   }
 
