@@ -39,6 +39,7 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
 
         List<OnewayDto> list = queryFactory
                 .select(Projections.fields(OnewayDto.class,
+                        onewayTicketLike.id.as("onewayId"),
                         onewayTicketLike.isDelete.as("isLike"),
                         onewayTicketLike.wantedPrice,
                         onewayTicketLike.ticket
@@ -47,6 +48,7 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
                 .join(member.onewayTicketLikeList, onewayTicketLike)
                 .on(member.id.eq(memberId))
                 .join(onewayTicketLike.ticket, ticket)
+                .where(onewayTicketLike.isDelete.eq(FALSE))
                 .fetch();
 
         return list;
@@ -61,6 +63,7 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
 
         List<TwowayDto> list = queryFactory
                 .select(Projections.fields(TwowayDto.class,
+                        roundTicketLike.id.as("roundwayId"),
                         roundTicketLike.isDelete.as("isLike"),
                         roundTicketLike.wantedPrice,
                         roundTicketLike.ticketTo.as("goWay"),
@@ -70,6 +73,7 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom{
                 .join(member.roundTicketLikeList, roundTicketLike)
                 .on(member.id.eq(memberId))
                 .join(roundTicketLike.ticketTo, ticket)
+                .where(roundTicketLike.isDelete.eq(FALSE))
                 .fetch();
 
         return list;

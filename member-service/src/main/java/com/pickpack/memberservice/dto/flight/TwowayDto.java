@@ -16,6 +16,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class TwowayDto  implements Serializable {
 
+    private Long roundwayId;
+
     private Boolean isLike;
 
     private Integer wantedPrice;
