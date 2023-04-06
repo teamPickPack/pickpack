@@ -15,6 +15,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class OnewayDto implements Serializable {
 
+    private Long onewayId;
+
     private Boolean isLike;
 
     private Integer wantedPrice;

@@ -31,6 +31,9 @@ public class FlightService {
     @Transactional(readOnly = true)
     public List<OnewayDto> findlikeTicket(Long memberId) {
         List<OnewayDto> onewayTicketLike = ticketRepository.findOnewayTicketLike(memberId);
+        for(OnewayDto o : onewayTicketLike){
+            o.setIsLike(Boolean.TRUE);
+        }
         return onewayTicketLike;
     }
     // 왕복
@@ -39,6 +42,9 @@ public class FlightService {
     public List<TwowayDto> findLikeRoundTicket(Long memberId){
         List<TwowayDto> twowayTicketLike = ticketRepository.findTwoWayTicketLike(memberId);
 
+        for(TwowayDto o : twowayTicketLike){
+            o.setIsLike(Boolean.TRUE);
+        }
         //  총가격 계산
         for(TwowayDto t : twowayTicketLike){
             t.setTotalPrice(t.getGoWay().getPrice() + t.getReturnWay().getPrice());
