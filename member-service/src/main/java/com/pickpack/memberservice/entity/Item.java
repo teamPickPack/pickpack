@@ -30,6 +30,7 @@ public class Item {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<ItemLike> itemLikeList = new ArrayList<>();
 
