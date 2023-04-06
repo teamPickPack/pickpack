@@ -7,6 +7,7 @@ import com.pickpack.memberservice.dto.flight.RoundwayWishPriceDto;
 import com.pickpack.memberservice.dto.flight.TwowayDto;
 import com.pickpack.memberservice.entity.OnewayTicketLike;
 import com.pickpack.memberservice.entity.RoundTicketLike;
+import com.pickpack.memberservice.exception.custom.AlreadyDeleteTicketException;
 import com.pickpack.memberservice.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,7 @@ public class FlightService {
     public void changeOnePrice(Long memberId, OnewayWishPriceDto onewayWishPriceDto){
         OnewayTicketLike onewayTicketLike =
                 ticketRepository.CheckOnewayLike(memberId, onewayWishPriceDto.getOnewayTicketLikeId());
+        if(onewayTicketLike.getIsDelete()) throw new AlreadyDeleteTicketException("이미 삭제된 티켓입니다.");
         onewayTicketLike.changeWishPrice(onewayWishPriceDto.getWishPrice());
     }
     // 왕복
@@ -68,9 +70,9 @@ public class FlightService {
     public void changeRoundPrice(Long memberId, RoundwayWishPriceDto roundwayWishPriceDto){
         RoundTicketLike roundTicketLike =
                 ticketRepository.CheckRoundwayLike(memberId, roundwayWishPriceDto.getRoundwayTicketLikeId());
+        if(roundTicketLike.getIsDelete()) throw new AlreadyDeleteTicketException("이미 삭제된 티켓입니다.");
         roundTicketLike.changeWishPrice(roundwayWishPriceDto.getWishPrice());
     }
-
 
     /**
      * 찜취소

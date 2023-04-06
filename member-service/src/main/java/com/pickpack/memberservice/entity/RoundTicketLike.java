@@ -1,8 +1,11 @@
 package com.pickpack.memberservice.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class RoundTicketLike {
 
     @Id
