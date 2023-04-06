@@ -1,6 +1,7 @@
 package com.pickpack.flightservice.repository.ticket;
 
 import com.pickpack.flightservice.entity.Ticket;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -9,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.*;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.pickpack.flightservice.entity.QFlight.flight;
@@ -25,8 +27,9 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
     @Override
     public Page<Ticket> findAllTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice) {
-        JPAQuery<Ticket> query  = queryFactory
-                .selectFrom(ticket)
+        JPAQuery<Tuple> query  = queryFactory
+                .select(ticket, ticket.tendency.updown)
+                .from(ticket)
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
@@ -38,10 +41,15 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query
+        List<Tuple> ticketList = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        List<Ticket> result = new ArrayList<>();
+        for (Tuple tuple : ticketList) {
+            result.add(tuple.get(ticket));
+        }
 
         Long totalCount =  queryFactory
                 .select(ticket.countDistinct())
@@ -55,13 +63,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 )
                 .fetchOne();
 
-        return new PageImpl<>(ticketList, pageable, totalCount);
+        return new PageImpl<>(result, pageable, totalCount);
     }
 
     @Override
     public Page<Ticket> findWaypoint0or1Tickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
-        JPAQuery<Ticket> query  = queryFactory
-                .selectFrom(ticket)
+        JPAQuery<Tuple> query  = queryFactory
+                .select(ticket, ticket.tendency.updown)
+                .from(ticket)
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
@@ -74,10 +83,15 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query
+        List<Tuple> ticketList = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        List<Ticket> result = new ArrayList<>();
+        for (Tuple tuple : ticketList) {
+            result.add(tuple.get(ticket));
+        }
 
         Long totalCount = queryFactory
                 .select(ticket.countDistinct())
@@ -92,13 +106,14 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 )
                 .fetchOne();
 
-        return new PageImpl<>(ticketList, pageable, totalCount);
+        return new PageImpl<>(result, pageable, totalCount);
     }
 
     @Override
     public Page<Ticket> findWaypointIsGraterThanTickets(Pageable pageable, String departure, String destination, String date, int minPrice, int maxPrice, int waypointNum) {
-        JPAQuery<Ticket> query  = queryFactory
-                .selectFrom(ticket)
+        JPAQuery<Tuple> query  = queryFactory
+                .select(ticket, ticket.tendency.updown)
+                .from(ticket)
                 .leftJoin(ticket.flightList, flight)
                 .leftJoin(ticket.tendency, tendency)
                 .where(ticket.depCode.eq(departure),
@@ -111,10 +126,15 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
 
         sortAndOrder(query, pageable);
 
-        List<Ticket> ticketList = query
+        List<Tuple> ticketList = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        List<Ticket> result = new ArrayList<>();
+        for (Tuple tuple : ticketList) {
+            result.add(tuple.get(ticket));
+        }
 
         Long totalCount = queryFactory
                 .select(ticket.countDistinct())
@@ -129,10 +149,10 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 )
                 .fetchOne();
 
-        return new PageImpl<>(ticketList, pageable, totalCount);
+        return new PageImpl<>(result, pageable, totalCount);
     }
 
-    private void sortAndOrder(JPAQuery<Ticket> query, Pageable pageable) {
+    private void sortAndOrder(JPAQuery<Tuple> query, Pageable pageable) {
         for (Sort.Order o : pageable.getSort()) {
             if(o.getProperty().equals("updown")) {
                 PathBuilder pathBuilder = new PathBuilder(tendency.getType(), tendency.getMetadata());
