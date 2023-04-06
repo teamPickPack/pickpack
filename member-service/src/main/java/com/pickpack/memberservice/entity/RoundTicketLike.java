@@ -11,6 +11,8 @@ public class RoundTicketLike {
     private Long id;
 
     private Boolean isDelete;
+    private Boolean isChange;
+
     private Integer wantedPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)

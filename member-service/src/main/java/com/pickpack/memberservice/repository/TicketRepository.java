@@ -14,4 +14,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> , TicketRe
 
     @Query("select rl from RoundTicketLike rl where rl.member.id = :memberId and rl.id = :ticketId")
     RoundTicketLike CheckRoundwayLike(@Param("memberId")Long memberId, @Param("ticketId")Long ticketId);
+
+    @Query("select count(*) from OnewayTicketLike ol where ol.member.id = :memberId and ol.isDelete = false and ol.isChange = true")
+    Long CountOneway(@Param("memberId")Long memberId);
+
+    @Query("select count(*) from RoundTicketLike rl where rl.member.id = :memberId and rl.isDelete = false and rl.isChange = true")
+    Long CountRoundway(@Param("memberId")Long memberId);
 }

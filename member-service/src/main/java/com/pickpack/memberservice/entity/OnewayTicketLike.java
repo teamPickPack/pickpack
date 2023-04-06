@@ -10,6 +10,8 @@ public class OnewayTicketLike {
     @Column(name = "oneway_ticket_like_id")
     private Long id;
     private Boolean isDelete;
+    private Boolean isChange;
+
     private Integer wantedPrice;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

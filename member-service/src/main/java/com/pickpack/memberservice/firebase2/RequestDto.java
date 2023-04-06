@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class RequestDto {
 
-    private String title;
+    private Long memberId;
     private String body;
     private String targetToken;
 
