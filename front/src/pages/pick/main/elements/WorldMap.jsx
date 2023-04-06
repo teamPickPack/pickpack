@@ -89,6 +89,10 @@ const MapController = (props) => {
             marker.closeTooltip();
           });
         }
+        if (markers.current) {
+          markers.current.closeTooltip();
+          markers.current.openTooltip();
+        }
       }
       if (markers.current && e.target._zoom < 3) {
         markers.current.closeTooltip();
@@ -107,7 +111,7 @@ const MapController = (props) => {
       setZoomLevel(3);
     });
     layer.on("mouseover", () => {
-      layer.setStyle({ fillOpacity: 0.2, opacity: 0.3 });
+      layer.setStyle({ fillOpacity: 0.2, opacity: 0.1 });
     });
     layer.on("mouseout", () => {
       layer.setStyle({ fillOpacity: 0, opacity: 0 });
@@ -351,6 +355,7 @@ const MapController = (props) => {
       }
 
       removeAirportMarkers();
+      if (markers.current) map.removeLayer(markers.current);
       setSelectedContinent(null);
     }
   }, [zoomLevel]);
