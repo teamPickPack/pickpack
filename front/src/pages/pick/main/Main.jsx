@@ -17,10 +17,10 @@ const Main = () => {
 
   return (
     <>
-      <FistSection>
-        <div className="greetings-section">
+      <FirstSection>
+        {/* <div className="greetings-section">
           <div>안녕하세요</div>
-        </div>
+        </div> */}
         <div className="search-section">
           <SearchTicket
             departure={departure}
@@ -29,7 +29,7 @@ const Main = () => {
             setCriterion={setCriterion}
           />
         </div>
-      </FistSection>
+      </FirstSection>
       <SecondSection>
         <WorldMap
           tourItem={tourItem}
@@ -50,13 +50,16 @@ const Main = () => {
   );
 };
 
-const FistSection = styled.div`
+const FirstSection = styled.div`
   text-align: center;
-  height: 400px;
+  height: 200px;
   background: url(${mainBanner});
   background-size: cover;
   padding: 48px 0;
   margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   .greetings-section {
     display: flex;
@@ -83,6 +86,11 @@ const SecondSection = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  // display: inline-flex;
+  // width: 1200px;
+  // align-items: center;
+  // justify-content: center;
+  // flex-direction: column;
 `;
 
 const ThirdSection = styled.div`
