@@ -14,7 +14,7 @@ import java.util.List;
 public class TouristService {
     private final TouristRepository touristRepository;
 
-    @Cacheable(value = "List<Tourist>", key = "#continent")
+//    @Cacheable(value = "List<Tourist>", key = "#continent")
     public List<Tourist> getTouristsByContinent(String continent){
         return touristRepository.findByContinent(getContinent(continent));
     }
