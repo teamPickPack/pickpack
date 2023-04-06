@@ -16,6 +16,7 @@ public class GetRoomDto {
     private LocalDateTime lastMessageTime;
     private String nickName;
     private boolean isNew;
+    private String lastWriter;
 
     public GetRoomDto chatRoomToGetRoomDto(RedisChatRoom redisChatRoom, String memberId){
         GetRoomDto getRoomDto = new GetRoomDto();
@@ -26,6 +27,7 @@ public class GetRoomDto {
         getRoomDto.lastMessage= redisChatRoom.getLastMessage();
         getRoomDto.isNew= redisChatRoom.isNew();
         getRoomDto.nickName = redisChatRoom.getSeller().equals(memberId)? redisChatRoom.getBuyer(): redisChatRoom.getSeller();
+        getRoomDto.lastWriter=redisChatRoom.getLastWriter();
         return getRoomDto;
     }
 }
