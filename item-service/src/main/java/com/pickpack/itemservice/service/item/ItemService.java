@@ -146,7 +146,7 @@ public class ItemService {
         List<ItemListDto> lists = (List<ItemListDto>) items.getResults();
         if(!lists.isEmpty()){
             items.setResults(getThumbnail(lists));
-            log.info("도시명 검색어 = {}", lists.get(0).getCityName());
+            log.info("도시 = {}", lists.get(0).getCityName());
         }
 
         return items;
