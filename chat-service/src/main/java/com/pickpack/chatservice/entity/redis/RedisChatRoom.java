@@ -28,6 +28,7 @@ public class RedisChatRoom implements Serializable {
     //새로운거 봐주려고..
     private int messageSize;
     private String lastMessage;
+    private String lastWriter;
     private boolean isNew;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -37,6 +38,7 @@ public class RedisChatRoom implements Serializable {
         this.isNew= (!Objects.equals(this.messageSize, isNewDto.getSize()));
         this.lastMessage= isNewDto.getLastMessage();
         this.messageSize= isNewDto.getSize();
+        this.lastWriter = isNewDto.getLastWriter();
     }
     public void updateTime(LocalDateTime time){
         this.lastMessageTime=time;
