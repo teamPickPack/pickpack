@@ -13,7 +13,6 @@ import { createPortal } from "react-dom";
 import { flight } from "../../../apis/flight";
 
 export default function List() {
-
   const {
     wayType,
     criterion,
@@ -130,7 +129,7 @@ export default function List() {
           if (!departure.code | !destination.code | !startDate) {
             return;
           }
-  
+
           const data = {
             filter: {
               direct: direct,
@@ -185,7 +184,7 @@ export default function List() {
           setGetLoading(false);
         }
       };
-  
+
       getFlightList();
     }
   }, [currentPage]);
@@ -261,7 +260,7 @@ export default function List() {
   const [compareBoxHeight, setCompareBoxHeight] = useState(
     window.innerHeight - 160
   );
-  
+
   // ---------------------- 무한 스크롤 부분.. ----------------------------
   const [timer, setTimer] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -339,7 +338,13 @@ export default function List() {
             onClick={() => handleCompareModalVisible("body")}
             style={{ minWidth: "1200px" }}
           >
-            <FistSection style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <FistSection
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <SearchTicket />
             </FistSection>
             <Content flexStyle={compareBoxVisible}>

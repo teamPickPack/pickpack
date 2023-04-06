@@ -275,8 +275,6 @@ const SearchTicket = (props) => {
     }
   };
 
-  console.log("crierion: " + criterion);
-
   return (
     <>
       <TicketBox>
@@ -439,7 +437,6 @@ const SearchTicket = (props) => {
                         data={selectedContinent.countries}
                         type="country"
                         selected={(data) => {
-                          console.log(data);
                           setSelectedCountry(data);
                           const selectedItem = {
                             name: data.name_ko,
@@ -461,7 +458,6 @@ const SearchTicket = (props) => {
                         data={selectedCountry.airports}
                         type="airport"
                         selected={(data) => {
-                          console.log(data);
                           const selectedItem = {
                             name: data.city,
                             subName: "",
@@ -736,7 +732,6 @@ const SearchTicket = (props) => {
 };
 
 const SelectSection = (props) => {
-  console.log(props.data);
   return (
     <Section>
       {props.data.map((element) => {

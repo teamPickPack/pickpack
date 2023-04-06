@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { createPortal } from "react-dom";
 import UserModal from "./elements/UserModal";
 import { useSelector } from "react-redux";
+import airplaneImg from "../../../assets/image/airplane-img.png";
+
 const NavBar = () => {
   const [userModalState, setUserModalState] = useState({
     visible: false,
@@ -11,13 +13,10 @@ const NavBar = () => {
   });
   const accessToken = useSelector((state) => {
     return state.user.accessToken;
-  })
-  useEffect(() => {
-    console.log(accessToken);
-  }, []);
+  });
   const handleUserModalState = (type, mode) => {
-    if(type === 'button'){
-      if(mode === 'login'){
+    if (type === "button") {
+      if (mode === "login") {
         setUserModalState((userModalState) => ({
           visible: !userModalState.visible,
           loginMode: true,
@@ -53,7 +52,10 @@ const NavBar = () => {
       <div className="nav-inner">
         <ul className="left-ul">
           <li>
-            <NavLink to="/">Logo</NavLink>
+            <NavLink to="/" className="logo">
+              <img src={airplaneImg} alt="logo" />
+              <span>Pick&Packer</span>
+            </NavLink>
           </li>
           <li>
             <NavLink to="/pick/list">Pick</NavLink>
@@ -63,32 +65,40 @@ const NavBar = () => {
           </li>
         </ul>
         <ul className="right-ul">
-          {accessToken === null ? <>
-            <li>
-            <NavLink onClick={() => handleUserModalState("button", "login")}>
-              로그인
-            </NavLink>
-            {userModalState.visible && (
-              <UserModal
-                initialLoginMode={userModalState.loginMode}
-                handleUserModalState={handleUserModalState}
-              />
-            )}
-          </li>
-          <li>
-            <NavLink onClick={() => handleUserModalState("button", "signup")}>
-              회원가입
-            </NavLink>
-          </li>
-          </> : <>
-            <li>
-              <NavLink to="/mypage">마이페이지</NavLink>
-            </li>
-            <li>
-              <NavLink onClick={logoutHandler}>로그아웃</NavLink>
-            </li>
-          </>}
-          
+          {accessToken === null ? (
+            <>
+              <li>
+                <NavLink
+                  onClick={() => handleUserModalState("button", "login")}
+                >
+                  로그인
+                </NavLink>
+                {userModalState.visible && (
+                  <UserModal
+                    initialLoginMode={userModalState.loginMode}
+                    handleUserModalState={handleUserModalState}
+                  />
+                )}
+              </li>
+              <li>
+                <NavLink
+                  onClick={() => handleUserModalState("button", "signup")}
+                >
+                  회원가입
+                </NavLink>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <NavLink to="/mypage">마이페이지</NavLink>
+              </li>
+              <li>
+                <NavLink onClick={logoutHandler}>로그아웃</NavLink>
+              </li>
+            </>
+          )}
+
           {userModalState.visible &&
             createPortal(<Background />, document.getElementById("background"))}
         </ul>
@@ -107,6 +117,31 @@ const NavSection = styled.div`
   // position: fixed;
   // z-index: 10000;
 
+  .logo {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 40px;
+    }
+
+    span {
+      font-size: 16px;
+      font-weight: 900;
+
+      background: linear-gradient(
+        170deg,
+        #fff2db 20.29%,
+        #ff8fb1 60.29%,
+        #ffffff 80.36%
+      );
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+    }
+  }
   .nav-inner {
     width: 1200px;
     margin: 0 28px;
