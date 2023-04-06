@@ -73,10 +73,8 @@ export default function UserModal({ initialLoginMode, handleUserModalState }) {
       mid: loginId,
       password: loginPassword,
     };
-    console.log(data);
     try {
       const response = await member.login(data);
-      // console.log(response);
       setLoginErrMsg("");
       dispatch(userAction.setAccessToken(response.headers.authorization));
       getFirebasToken();
@@ -249,7 +247,7 @@ export default function UserModal({ initialLoginMode, handleUserModalState }) {
           }
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
   return (
     <UserModalBox>
@@ -262,12 +260,14 @@ export default function UserModal({ initialLoginMode, handleUserModalState }) {
           <div
             className={loginMode ? "on" : "off"}
             onClick={() => setLoginMode(true)}
+            style={{ borderRadius: "16px 0 0 0" }}
           >
             로그인
           </div>
           <div
             className={loginMode ? "off" : "on"}
             onClick={() => setLoginMode(false)}
+            style={{ borderRadius: "0 16px 0 0" }}
           >
             회원가입
           </div>
@@ -413,20 +413,23 @@ const UserModalBox = styled.div`
   height: 560px;
   border: 1px solid white;
   background-color: white;
+  border-radius: 24px;
 `;
 const UserModalContent = styled.div`
   width: 80%;
-  border: 2px solid black;
+  // border: 1px solid black;
   margin: 40px auto;
 `;
 const UserModalContentMode = styled.div`
-  border-bottom: 2px solid black;
   display: flex;
   div {
+    transition: all 0.2s ease;
     width: 50%;
     font-size: 24px;
     font-weight: bold;
     padding: 8px 0px;
+    border: 2px solid #432c7a;
+    border-bottom: none;
   }
 
   div:hover {
@@ -440,7 +443,7 @@ const UserModalContentMode = styled.div`
   .off:hover {
     background: #432c7a;
     color: white;
-    opacity: 0.3;
+    opacity: 0.8;
   }
 `;
 const CloseBox = styled.div`
@@ -457,6 +460,11 @@ const CloseBox = styled.div`
   &:hover {
     cursor: pointer;
   }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 `;
 const UserModalLogin = styled.div`
   display: flex;
@@ -464,6 +472,8 @@ const UserModalLogin = styled.div`
   justify-content: center;
   align-items: center;
   padding: 72px 0px;
+  border: 2px solid #432c7a;
+  border-radius: 0 0 16px 16px;
 
   .login-error {
     text-align: left;
@@ -472,9 +482,9 @@ const UserModalLogin = styled.div`
   }
 `;
 const LoginBtn = styled.div`
-  border: 1px solid black;
+  // border: 1px solid black;
   width: 80px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   padding: 8px 16px;
   border-radius: 8px;
@@ -493,12 +503,13 @@ const TextInputBox = styled.div`
   padding: 8px 16px;
   display: flex;
   align-items: center;
-  border: 1px solid #80489c;
+  border: 2px solid #80489c;
   border-radius: 16px;
 
   input {
     border: 0px solid white;
-    font-size: 24px;
+    font-size: 20px;
+    font-weight: 500;
     margin-left: 8px;
     outline: none;
   }
@@ -519,7 +530,7 @@ const ImageDiv = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  border: 1px solid black;
+  border: 2px solid black;
   border-radius: 50%;
   width: 96px;
   height: 96px;
@@ -539,6 +550,8 @@ const UserModalSignupContent = styled.div`
   justify-content: space-around;
   align-items: center;
   padding: 40px 0px 32px 0px;
+  border: 2px solid #432c7a;
+  border-radius: 0 0 16px 16px;
 `;
 
 const SignupInputBox = styled.div`
@@ -548,7 +561,6 @@ const SignupInputBox = styled.div`
 
 const SignupBtn = styled.div`
   margin: 0px auto;
-  border: 1px solid black;
   width: 80px;
   font-size: 16px;
   padding: 8px 16px;

@@ -21,8 +21,6 @@ const ImageInput = (props) => {
   const [loadedImages, setLoadedImages] = useState(props.loadedImages);
   const [emptyImage, setEmptyImage] = useState([]);
 
-  console.log(loadedImages, props.loadedImages);
-
   const ImageChangeEventHandler = async (data) => {
     const images = [...data.target.files];
     data.target.value = "";
@@ -123,7 +121,6 @@ const ImageInput = (props) => {
     const targetNo = event.target.value;
 
     const resultSet = loadedImages.filter((image) => {
-      console.log(image, targetNo);
       return image !== targetNo;
     });
 
@@ -184,8 +181,6 @@ const ImageInput = (props) => {
     setEmptyImage([...empty]);
   }, [imageState, loadedImages]);
 
-  console.log(loadedImages, imageState);
-
   return (
     <ImageInputContainer>
       <InputBox>
@@ -209,7 +204,6 @@ const ImageInput = (props) => {
           {imagePreviewState.map((data) => {
             const image = data.image;
             const imageURL = data.url;
-            console.log(imagePreviewState.length);
             return (
               <ImagePreview key={image.name}>
                 <img src={imageURL} alt={image.name} id={image.name} />

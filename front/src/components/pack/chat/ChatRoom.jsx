@@ -23,11 +23,11 @@ const ChatRoom = (props) => {
   const [preview, setPreview] = useState([]);
   const [roomId, setRoomId] = useState(props.roomId);
   const [messages, setMessages] = useState([]);
-  const [token, setToken] = useState();
   const dispatch = useDispatch();
   const [itemInfo, setItemInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [buyerNick, setBuyerNick] = useState(null);
 
   const myNickName = useSelector((state) => {
     return state.user.nickname;
@@ -52,8 +52,6 @@ const ChatRoom = (props) => {
         };
 
         const result = await chat.post.message(msgData);
-
-        console.log(result);
 
         if (result) {
           setMessages([...result.chatMessages]);
@@ -94,16 +92,16 @@ const ChatRoom = (props) => {
                 }
               );
             } catch (err) {
-              console.log(err);
+              console.error(err);
             }
           },
           (error) => {
-            console.log(`STOMP error: ${error}`);
+            console.error(`STOMP error: ${error}`);
             setTimeout(connect, reconnectTimeout);
           }
         );
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
@@ -112,7 +110,7 @@ const ChatRoom = (props) => {
     return async () => {
       if (stompClient !== null) {
         stompClient.current.disconnect();
-        console.log("연결이 끊어졌습니다.");
+        console.error("DisConnect To Server");
       }
     };
   }, [roomId]);
@@ -122,8 +120,6 @@ const ChatRoom = (props) => {
     if (image === null) {
       return;
     }
-
-    console.log(image);
 
     const originName = image.name;
     const date = new Date();
@@ -157,12 +153,8 @@ const ChatRoom = (props) => {
   const sendImage = async () => {
     const result = [];
 
-    console.log(images);
-
     await images.forEach(async (image) => {
-      console.log(image);
       result.push((await sendImageToS3(image)) + "|");
-      console.log(result);
     });
 
     return result;
@@ -181,7 +173,6 @@ const ChatRoom = (props) => {
               urls += url;
             });
 
-            console.log(urls);
             stompClient.current.send(
               `/chat/pub/message`,
               {},
@@ -194,7 +185,7 @@ const ChatRoom = (props) => {
               })
             );
           } catch (err) {
-            console.log(err);
+            console.error(err);
           }
         })
         .then(() => {
@@ -219,7 +210,7 @@ const ChatRoom = (props) => {
             );
             message.current.value = "";
           } catch (err) {
-            console.log(err);
+            console.error(err);
           }
         });
     } else {
@@ -241,7 +232,7 @@ const ChatRoom = (props) => {
         );
         message.current.value = "";
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     }
   };
@@ -403,6 +394,23 @@ const ChatRoom = (props) => {
     return imgs[0];
   };
 
+  const completeTrade = async () => {
+    if (!buyerNick) {
+      alert("상대방과 채팅 기록이 존재해야 거래를 완료할 수 있습니다.");
+      return;
+    }
+    const data = {
+      nickname: buyerNick,
+      itemId: itemInfo.itemId,
+    };
+
+    const modifyData = async () => {
+      await item.post.complete(data);
+    };
+
+    await modifyData();
+  };
+
   return (
     <RoomContainer>
       <RoomHeader>
@@ -448,9 +456,19 @@ const ChatRoom = (props) => {
                 alt={itemInfo.itemName}
               />
               {itemInfo.memberId ===
-                store.getState().user.memberId / 2373.15763 - 7 && (
-                <div className="right-btn">거래하기</div>
-              )}
+                store.getState().user.memberId / 2373.15763 - 7 &&
+                (itemInfo.isComplete ? (
+                  <div className="right-btn-complete">거래완료</div>
+                ) : (
+                  <div
+                    className="right-btn"
+                    onClick={() => {
+                      completeTrade();
+                    }}
+                  >
+                    거래하기
+                  </div>
+                ))}
             </div>
           </RoomInfo>
         ))}
@@ -462,7 +480,7 @@ const ChatRoom = (props) => {
             if (message.sender === myNickName) {
               if (message.type === "IMAGE") {
                 return (
-                  <BuyerMessage>
+                  <BuyerMessage key={message.message + message.time}>
                     <div className="m-box">
                       <div className="time-box">
                         {timeAgo(
@@ -491,7 +509,7 @@ const ChatRoom = (props) => {
                 );
               } else {
                 return (
-                  <BuyerMessage key={idx}>
+                  <BuyerMessage key={message.message + message.time}>
                     <div className="m-box">
                       <div className="time-box">
                         {timeAgo(
@@ -506,9 +524,12 @@ const ChatRoom = (props) => {
                 );
               }
             } else {
+              if (!buyerNick) {
+                setBuyerNick(message.sender);
+              }
               if (message.type === "IMAGE") {
                 return (
-                  <SellerMessage>
+                  <SellerMessage key={message.message + message.time}>
                     <div className="m-box">
                       <div className="time-box">
                         {timeAgo(
@@ -537,7 +558,7 @@ const ChatRoom = (props) => {
                 );
               } else {
                 return (
-                  <SellerMessage key={idx}>
+                  <SellerMessage key={message.message + message.time}>
                     <div className="m-box">
                       <pre className="message-box">{message.message}</pre>
                       <div className="time-box">{timeAgo(message.time)}</div>
@@ -985,6 +1006,14 @@ const RoomInfo = styled.div`
     }
     .right-btn {
       background: #ff8fb1;
+      border-radius: 8px;
+      padding: 4px 8px;
+      transform: translate(8px, 0);
+      color: #ffffff;
+      cursor: pointer;
+    }
+    .right-btn-complete {
+      background: #d9d9d9;
       border-radius: 8px;
       padding: 4px 8px;
       transform: translate(8px, 0);
