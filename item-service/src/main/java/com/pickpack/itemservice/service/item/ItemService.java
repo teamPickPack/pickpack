@@ -91,11 +91,14 @@ public class ItemService {
         item.modifyItem(title, str2Category(categoryStr), price, content, itemName, city, member);
 
         if(imgs == null || imgs.isEmpty()){
+            if(imgUrl != null) {
+                item.setImage(imgUrl);
+            }
             itemRepository.save(item);
             return item.getId();
         }
         StringBuilder sb = new StringBuilder();
-        if(!imgUrl.equals("Null")) {
+        if(imgUrl != null && !imgUrl.equals("Null")) {
             sb.append(imgUrl);
         }
 //        String imgUrl = null;
