@@ -50,17 +50,8 @@ export default function CompareModal({handleCompareModalVisible}){
         if(flag) setGraphAvail(true)
     }, [compareList])
     const priceData = compareList.map((compareItem) => {
-        // if(compareItem.priceData === 'no Info') setGraphAvail(false);
         return compareItem.priceData;
     });
-    // useEffect(() => {
-    //     setGraphAvail(true);
-    //     console.log('hihi');
-    //     setPriceData(compareList.map((compareItem) => {
-    //         if(compareItem.priceData === 'no Info') setGraphAvail(false);
-    //         return compareItem.priceData
-    //     }))
-    // }, [compareList]);
     const closeModal = () => {
         handleCompareModalVisible('button');
     }
