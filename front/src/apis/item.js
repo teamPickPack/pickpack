@@ -51,7 +51,7 @@ export const item = {
       return response;
     },
     complete: async (data) => {
-      const response = await Send.put(`${itemURL}/complete`, data);
+      const response = await Send.post(`${itemURL}/complete`, data);
       return response;
     },
   },

@@ -28,6 +28,7 @@ const ChatRoom = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [buyerNick, setBuyerNick] = useState(null);
+  const [completeCheck, setCompleteCheck] = useState(false);
 
   const myNickName = useSelector((state) => {
     return state.user.nickname;
@@ -68,6 +69,12 @@ const ChatRoom = (props) => {
 
     getItemInfo();
   }, []);
+
+  useEffect(() => {
+    if (itemInfo) {
+      setCompleteCheck(itemInfo.isComplete);
+    }
+  }, [itemInfo]);
 
   const message = useRef();
 
@@ -408,7 +415,14 @@ const ChatRoom = (props) => {
       await item.post.complete(data);
     };
 
-    await modifyData();
+    await modifyData()
+      .then(() => {
+        alert("거래가 완료되었습니다.");
+        setCompleteCheck(true);
+      })
+      .catch(() => {
+        alert("거래 완료에 실패했습니다.");
+      });
   };
 
   return (
@@ -457,7 +471,7 @@ const ChatRoom = (props) => {
               />
               {itemInfo.memberId ===
                 store.getState().user.memberId / 2373.15763 - 7 &&
-                (itemInfo.isComplete ? (
+                (completeCheck ? (
                   <div className="right-btn-complete">거래완료</div>
                 ) : (
                   <div
