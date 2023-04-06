@@ -61,7 +61,7 @@ const ItemPreview = (props) => {
       }}
     >
       <img
-        src={item.imgUrl}
+        src={item.imgUrl.split("|")[0]}
         onError={(e) => {
           e.target.src = noImg;
         }}

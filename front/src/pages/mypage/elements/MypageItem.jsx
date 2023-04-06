@@ -33,6 +33,8 @@ export default function MypageItem({ mypageTab }) {
     getData();
   }, [mypageTab]);
 
+  console.log(dealData);
+
   return (
     <WrapperDiv>
       {mypageTab === 1 ? (
