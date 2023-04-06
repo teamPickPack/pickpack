@@ -1,5 +1,6 @@
 package com.pickpack.itemservice.controller.item;
 
+import com.pickpack.itemservice.api.request.ItemCompleteReq;
 import com.pickpack.itemservice.api.request.ItemMemberReq;
 import com.pickpack.itemservice.api.request.ItemSearchTitleReq;
 import com.pickpack.itemservice.api.response.ListRes;
@@ -87,9 +88,9 @@ public class ItemController {
     }
 
     @PostMapping("/complete")
-    public ResponseEntity<?> completeItem(@RequestBody ItemMemberReq itemMemberReq){
+    public ResponseEntity<?> completeItem(@RequestBody ItemCompleteReq itemCompleteReq){
         try {
-            return new ResponseEntity<>(itemService.completeItem(itemMemberReq.getItemId(), itemMemberReq.getMemberId()), HttpStatus.OK);
+            return new ResponseEntity<>(itemService.completeItem(itemCompleteReq.getItemId(), itemCompleteReq.getNickname()), HttpStatus.OK);
         }catch (Exception e){
             return exceptionHandling(e);
         }
