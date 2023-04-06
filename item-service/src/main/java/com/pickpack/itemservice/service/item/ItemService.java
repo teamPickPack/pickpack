@@ -170,9 +170,14 @@ public class ItemService {
         return new ItemDetailRes(isLike, item, items);
     }
 
-    public Long completeItem(Long itemId, Long memberId){
+    public Long completeItem(Long itemId, String nickname){
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new IsNullException(itemId + "에 해당하는 물품 게시글이 없습니다."));
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IsNullException(memberId + "에 해당하는 회원이 없습니다."));
+        Member member = memberRepository.findByNickname(nickname);
+
+        if(member == null){
+            throw new IsNullException(nickname + "에 해당하는 회원이 없습니다.");
+        }
+
         Soldout soldout = Soldout.createSoldout(item, member);
         soldoutRepository.save(soldout);
         item.complete(soldout);
