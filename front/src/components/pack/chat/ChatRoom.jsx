@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { chatAction } from "../../../store/chatSlice";
 import borrow from "../../../assets/image/borrow.jpg";
@@ -8,17 +8,62 @@ import axios from "axios";
 import { useRef } from "react";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+import { item } from "../../../apis/item";
+import store from "../../../store/store";
+import noImg from "../../../assets/image/noimg.png";
+import { chat } from "../../../apis/chat";
 
 const ChatRoom = (props) => {
-  const [isFold, setIsFold] = useState(true);
+  const [isFold, setIsFold] = useState(false);
   const [textCheck, setTextCheck] = useState(false);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
-
   const [roomId, setRoomId] = useState(props.roomId);
-
   const [messages, setMessages] = useState([]);
   const [token, setToken] = useState();
+  const dispatch = useDispatch();
+  const [itemInfo, setItemInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const myNickName = useSelector((state) => {
+    return state.user.nickname;
+  });
+
+  const roomInfo = useSelector((state) => {
+    return state.chat.roomInfo;
+  });
+
+  useEffect(() => {
+    setIsLoading(true);
+    const getItemInfo = async () => {
+      setTimeout(async () => {
+        const response = await item.post.detail(
+          roomInfo.itemId,
+          store.getState().user.memberId
+        );
+        setItemInfo(response.item);
+        const msgData = {
+          roomId: roomId,
+          date: new Date().toISOString().substring(0, 10),
+        };
+
+        const result = await chat.post.message(msgData);
+
+        if (result) {
+          setMessages([...result.chatMessages]);
+
+          setTimeout(() => {
+            const body = document.getElementById("room-body");
+            body.scrollTop = body.scrollHeight;
+          }, []);
+        }
+
+        setIsLoading(false);
+      }, 500);
+    };
+
+    getItemInfo();
+  }, []);
 
   const message = useRef();
 
@@ -26,69 +71,60 @@ const ChatRoom = (props) => {
 
   const reconnectTimeout = 5000;
 
-  console.log(roomId);
+  useEffect(() => {
+    const connect = async () => {
+      try {
+        const socket = new SockJS("https://j8b307.p.ssafy.io/chat/ws-stomp");
+        stompClient.current = Stomp.over(socket);
+        stompClient.current.connect(
+          {},
+          (frame) => {
+            try {
+              stompClient.current.subscribe(
+                `/chat/sub/room/${roomId}`,
+                function (message) {
+                  let recv = JSON.parse(message.body);
+                  recvMessage(recv);
+                }
+              );
+            } catch (err) {
+              console.log(err);
+            }
+          },
+          (error) => {
+            console.log(`STOMP error: ${error}`);
+            setTimeout(connect, reconnectTimeout);
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  //   useEffect(() => {
-  //     const connect = async () => {
-  //       try {
-  //         const response = await axios.get(
-  //           "http://192.168.80.246:8080/chat/user"
-  //         );
-  //         const token = response.data.token;
-  //         setToken(token);
+    connect();
 
-  //         const socket = new SockJS("http://192.168.80.246:8080/ws-stomp");
-  //         stompClient.current = Stomp.over(socket);
-  //         stompClient.current.connect(
-  //           { token: token },
-  //           (frame) => {
-  //             // 연결 성공 시 필요한 작업 수행
-  //             console.log(stompClient.current);
-  //             try {
-  //               stompClient.current.subscribe(
-  //                 `/sub/chat/room/${roomId}`,
-  //                 function (message) {
-  //                   let recv = JSON.parse(message.body);
-  //                   recvMessage(recv);
-  //                 }
-  //               );
-  //               //   sendMessage("ENTER");
-  //             } catch (err) {
-  //               console.log(err);
-  //             }
-  //           },
-  //           (error) => {
-  //             console.log(`STOMP error: ${error}`);
-  //             setTimeout(connect, reconnectTimeout);
-  //           }
-  //         );
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     };
-
-  //     connect();
-
-  //     return async () => {
-  //       if (stompClient !== null) {
-  //         stompClient.current.disconnect();
-  //       }
-  //     };
-  //   }, [roomId]);
+    return async () => {
+      if (stompClient !== null) {
+        stompClient.current.disconnect();
+        console.log("연결이 끊어졌습니다.");
+      }
+    };
+  }, [roomId]);
 
   const sendMessage = (type) => {
-    // if (stompClient == null) {
-    //   return;
-    // }
-    console.log(stompClient);
+    if (stompClient == null) {
+      return;
+    }
     try {
       stompClient.current.send(
-        `/pub/chat/message`,
-        { token: token },
+        `/chat/pub/message`,
+        {},
         JSON.stringify({
           type: type,
           roomId: roomId,
+          sender: myNickName,
           message: message.current.value,
+          time: "",
         })
       );
     } catch (err) {
@@ -100,12 +136,20 @@ const ChatRoom = (props) => {
   const recvMessage = (recv) => {
     const msg = {
       type: recv.type,
+      roomId: recv.roomId,
       sender: recv.sender,
       message: recv.message,
+      time: recv.time,
     };
+
+    console.log(msg);
+
     setMessages((messages) => [...messages, msg]);
+    const body = document.getElementById("room-body");
+    setTimeout(() => {
+      body.scrollTop = body.scrollHeight;
+    }, []);
   };
-  console.log(messages);
 
   useEffect(() => {
     let imagePreview = [];
@@ -133,12 +177,8 @@ const ChatRoom = (props) => {
     setPreviewImages();
   }, [images]);
 
-  console.log(images, preview);
-
-  const dispatch = useDispatch();
-
-  const openChatRoom = () => {
-    dispatch(chatAction.setRoomId(null));
+  const returnChatList = () => {
+    dispatch(chatAction.setRoomInfo(null));
   };
 
   const ImageChangeEventHandler = async (data) => {
@@ -194,98 +234,201 @@ const ChatRoom = (props) => {
     setImages([...nonDuplImages]);
   };
 
+  const timeAgo = (datetimeString) => {
+    const utcNow =
+      new Date(datetimeString).getTime() +
+      new Date(datetimeString).getTimezoneOffset() * 60 * 1000;
+    const koreaTimeDiff = 27 * 60 * 60 * 1000;
+    const koreaNow = new Date(utcNow + koreaTimeDiff);
+
+    const now = koreaNow.toISOString();
+
+    const datetime = new Date(
+      now.substring(0, 10) + " " + now.substring(11, 19).replace(/-/g, "/")
+    );
+    const seconds = Math.floor((new Date() - datetime) / 1000);
+
+    let interval = Math.floor(seconds / 31536000);
+    if (interval >= 1) {
+      return interval + "년 전";
+    }
+
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) {
+      return interval + "달 전";
+    }
+
+    interval = Math.floor(seconds / 604800);
+    if (interval >= 1) {
+      return interval + "주 전";
+    }
+
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) {
+      return interval + "일 전";
+    }
+
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) {
+      return interval + "시간 전";
+    }
+
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) {
+      return interval + "분 전";
+    }
+
+    return "방금 전";
+  };
+
   return (
     <RoomContainer>
       <RoomHeader>
-        <ReturnSVG clickHandler={openChatRoom} />
-        <div>닉네임</div>
+        <ReturnSVG clickHandler={returnChatList} />
+        <div>
+          {roomInfo.seller === myNickName ? roomInfo.buyer : roomInfo.seller}
+        </div>
         {isFold ? (
           <UnfoldSVG
             clickHandler={() => {
-              console.log(12);
               setIsFold(!isFold);
             }}
           />
         ) : (
           <FoldSVG
             clickHandler={() => {
-              console.log(23);
               setIsFold(!isFold);
             }}
           />
         )}
       </RoomHeader>
-      {!isFold && (
-        <RoomInfo>
-          <div className="left-info">
-            <p>닉네임</p>
-            <p>
-              작성일ㆍ5일전 <span>세부</span>
-            </p>
-            <p>게시글 제목입니다</p>
-          </div>
-          <div className="right-info">
-            <img src={borrow} />
-          </div>
-        </RoomInfo>
-      )}
-      <RoomBody>
-        {messages.map((message) => {
-          return <div>{message}</div>;
-        })}
-      </RoomBody>
+      {!isFold &&
+        (isLoading ? (
+          <LayerPopup>
+            <div className="spinner"></div>
+          </LayerPopup>
+        ) : (
+          <RoomInfo>
+            <div className="left-info">
+              <p>{roomInfo.seller}</p>
+              <p>
+                작성일ㆍ{timeAgo(itemInfo.registDate)}{" "}
+                <span>{itemInfo.cityName}</span>
+              </p>
+              <p className="item-title">{itemInfo.title}</p>
+            </div>
+            <div className="right-info">
+              <img
+                src={itemInfo.imgUrl.substring(0, itemInfo.imgUrl.length - 1)}
+                onError={(e) => {
+                  e.target.src = noImg;
+                }}
+                alt={itemInfo.itemName}
+              />
+              <div className="right-btn">거래하기</div>
+            </div>
+          </RoomInfo>
+        ))}
       {/* <ImagePreview></ImagePreview>
        */}
       <div>
-        {preview.map((image) => {
-          return (
-            <img
-              src={image.url}
-              alt="123"
-              onClick={() => {
-                console.log(image);
-                setImages(
-                  images.filter((item) => {
-                    return item !== image.image;
-                  })
-                );
-              }}
+        <RoomBody id="room-body" isImage={preview.length}>
+          {messages.map((message, idx) => {
+            if (message.sender === myNickName) {
+              return (
+                <BuyerMessage key={idx}>
+                  <div className="m-box">
+                    <div className="time-box">
+                      {timeAgo(
+                        message.time.substring(0, 10) +
+                          " " +
+                          message.time.substring(11, 19)
+                      )}
+                    </div>
+                    <pre className="message-box">{message.message}</pre>
+                  </div>
+                </BuyerMessage>
+              );
+            } else {
+              return (
+                <SellerMessage key={idx}>
+                  <div className="m-box">
+                    <pre className="message-box">{message.message}</pre>
+                    <div className="time-box">{timeAgo(message.time)}</div>
+                  </div>
+                </SellerMessage>
+              );
+            }
+          })}
+          {!messages.length && (
+            <div className="greeting">인사를 통해 채팅을 시작해보세요!</div>
+          )}
+        </RoomBody>
+        {preview.length !== 0 && (
+          <div className="image-preview">
+            {preview.map((image, idx) => {
+              return (
+                <img
+                  src={image.url}
+                  alt={idx}
+                  onClick={() => {
+                    setImages(
+                      images.filter((item) => {
+                        return item !== image.image;
+                      })
+                    );
+                  }}
+                />
+              );
+            })}
+          </div>
+        )}
+        <RoomFooter textCheck={textCheck}>
+          <div>
+            <input
+              type="file"
+              id="Image"
+              accept="image/*"
+              multiple
+              onChange={ImageChangeEventHandler}
+              style={{ display: "none" }}
             />
-          );
-        })}
+            <label htmlFor="Image">
+              <InputImageSVG />
+            </label>
+          </div>
+          <div>
+            <textarea
+              onChange={(e) => {
+                if (e.target.value) {
+                  setTextCheck(true);
+                } else {
+                  setTextCheck(false);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && e.shiftKey) {
+                  return;
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  sendMessage("TALK");
+                }
+              }}
+              ref={message}
+            />
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                sendMessage("TALK");
+              }}
+            >
+              전송
+            </button>
+          </div>
+        </RoomFooter>
       </div>
-      <RoomFooter textCheck={textCheck}>
-        <div>
-          <input
-            type="file"
-            id="Image"
-            accept="image/*"
-            multiple
-            onChange={ImageChangeEventHandler}
-            style={{ display: "none" }}
-          />
-          <label htmlFor="Image">
-            <InputImageSVG />
-          </label>
-        </div>
-        <div>
-          <textarea
-            onChange={(e) => {
-              if (e.target.value) {
-                setTextCheck(true);
-              } else {
-                setTextCheck(false);
-              }
-            }}
-            ref={message}
-          />
-        </div>
-        <div>
-          <button type="button" onClick={sendMessage}>
-            전송
-          </button>
-        </div>
-      </RoomFooter>
     </RoomContainer>
   );
 };
@@ -379,11 +522,84 @@ const FoldSVG = (props) => {
   );
 };
 
+const SellerMessage = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  margin: 4px 12px;
+
+  .m-box {
+    display: flex;
+
+    .time-box {
+      display: flex;
+      font-size: 11px;
+      flex-direction: column-reverse;
+      margin-bottom: 2px;
+      margin-left: 4px;
+      color: #666666;
+    }
+
+    .message-box {
+      max-width: 260px;
+      padding: 4px 8px;
+      font-size: 16px;
+      text-align: start;
+      margin: 0;
+      background: #fce2db;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+  }
+`;
+
+const BuyerMessage = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin: 4px 12px;
+
+  .m-box {
+    display: flex;
+
+    .time-box {
+      display: flex;
+      font-size: 11px;
+      flex-direction: column-reverse;
+      margin-bottom: 2px;
+      margin-right: 4px;
+      color: #666666;
+    }
+
+    .message-box {
+      max-width: 260px;
+      padding: 4px 8px;
+      font-size: 16px;
+      text-align: start;
+      margin: 0;
+      background: #fce2db;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+  }
+`;
+
 const RoomContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  .image-preview {
+    background: #ffffff;
+    display: flex;
+    padding: 4px 12px;
+    border-top: 1px solid #d9d9d9;
+
+    img {
+      width: 80px;
+      height: 80px;
+      margin: 0 14px;
+    }
+  }
 `;
 
 const RoomFooter = styled.div`
@@ -440,7 +656,24 @@ const RoomFooter = styled.div`
   }
 `;
 
-const RoomBody = styled.div``;
+const RoomBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll; /* 세로 스크롤바는 항상 표시 */
+  scrollbar-width: none; /* 스크롤바 너비 제거 */
+  -ms-overflow-style: none; /* IE/Edge 용 스크롤바 제거 */
+  max-height: ${(props) => {
+    return props.isImage === 0 ? 484 : 379;
+  }}px;
+
+  ::-webkit-scrollbar {
+    display: none; /* Chrome/Safari 용 스크롤바 제거 */
+  }
+
+  .greeting {
+    height: 280px;
+  }
+`;
 
 const RoomInfo = styled.div`
   height: 80px;
@@ -463,6 +696,14 @@ const RoomInfo = styled.div`
     align-items: flex-start;
     font-size: 16px;
     font-weight: 600;
+
+    .item-title {
+      display: block;
+      max-width: 340px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     p {
       margin: 0;
@@ -487,6 +728,15 @@ const RoomInfo = styled.div`
       width: 80px;
       height: 80px;
       border-radius: 4px;
+      border: 1px solid #d9d9d9;
+    }
+    .right-btn {
+      background: #ff8fb1;
+      border-radius: 8px;
+      padding: 4px 8px;
+      transform: translate(8px, 0);
+      color: #ffffff;
+      cursor: pointer;
     }
   }
 `;
@@ -505,6 +755,36 @@ const RoomHeader = styled.div`
 
   svg {
     cursor: pointer;
+  }
+`;
+
+const LayerPopup = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+
+  .spinner {
+    position: absolute;
+    top: 45%;
+    left: 43%;
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spinner 2s linear infinite;
+  }
+  @keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 

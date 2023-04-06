@@ -45,35 +45,27 @@ export const item = {
       return response;
     },
     like: async (itemId, memberId) => {
-      const response = await Send.post(
-        `${itemURL}/like`,
-        {
-          itemId: itemId,
-          memberId: memberId,
-        },
-        {
-          headers: {
-            Authorization: store.getState().user.accessToken,
-          },
-        }
-      );
+      const response = await Send.post(`${itemURL}/like`, {
+        itemId: itemId,
+        memberId: memberId,
+      });
       return response;
     },
   },
   put: {
     like: async (itemId, memberId) => {
-      const response = await Send.put(
-        `${itemURL}/like`,
-        {
-          itemId: itemId,
-          memberId: memberId,
+      const response = await Send.put(`${itemURL}/like`, {
+        itemId: itemId,
+        memberId: memberId,
+      });
+      return response;
+    },
+    item: async (data, itemId) => {
+      const response = await Send.put(`${itemURL}/${itemId}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            Authorization: store.getState().user.accessToken,
-          },
-        }
-      );
+      });
       return response;
     },
     // schedule: async (reservationIdx, acceptFlag) => {
