@@ -1,14 +1,23 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import styled from "styled-components"
 import MypageTab from './elements/MypageTab';
+import MypageFlight from './elements/MypageFlight';
 import MypageItem from './elements/MypageItem';
 import MypageUser from './elements/MypageUser';
 export default function Mypage(){
     const [mypageMode, setMypageMode] = useState(1);
     const [mypageTab, setMypageTab] = useState(1);
+    const [top, setTop] = useState(0);
+    useEffect(() => {
+        window.addEventListener("scroll", () => setTop(window.screenTop));
+        window.removeEventListener("scroll", setTop(window.screenTop));
+    }, []);
+    useEffect(()=>{
+        console.log(top);
+    }, [top])
     return(
-        <div style={{display: 'flex'}}>
-            <MypageLeft givenHeight={window.screen.availHeight - 88}>
+        <div style={{display: 'flex', position: 'relative'}}>
+            <MypageLeft Top={top}>
                 <LeftTitle>
                     <span>마이페이지</span>
                 </LeftTitle>
@@ -24,26 +33,24 @@ export default function Mypage(){
             </MypageLeft>
             <div>
                 <MypageTab mypageMode={mypageMode} setMypageTab={setMypageTab}/>
-                {mypageMode === 1 && <div style={{border: '1px solid blue'}}>
-                    Content
-                </div>}
-                {mypageMode === 2 && <MypageItem mypageTab={mypageTab}/>}
-                {mypageMode === 3 && <MypageUser/>}
+                {mypageMode === 1 && <MypageFlight mypageTab={mypageTab} />}
+                {mypageMode === 2 && <MypageItem mypageTab={mypageTab} />}
+                {mypageMode === 3 && <MypageUser />}
             </div>
         </div>
     )
 }
 
 const MypageLeft = styled.div`
-    width: 320px;
-    border: 1px solid black;
+    width: 240px;
     background-color: #E9E7EF;
-    height: ${(props) => props.givenHeight}px;
+    height: 100vh;
+    position: sticky;
+    top: 0px;
 `;
 
 const LeftTitle = styled.div`
     height: 144px;
-    // border: 1px solid black;
     font-weight: bold;
     font-size: 32px;
     display: flex;

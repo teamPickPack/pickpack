@@ -23,8 +23,8 @@ export default function MypageTab({mypageMode, setMypageTab}){
 }
 
 const TabBox = styled.div`
-    border: 1px solid black;
-    // position: relative;
+    width: 400px;
+    // position: absolute;
     div {
         &:first-child {
             height: 160px;
