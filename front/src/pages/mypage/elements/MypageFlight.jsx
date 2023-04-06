@@ -12,7 +12,7 @@ export default function({mypageTab}) {
     });
     const [oneData, setOneData] = useState(null);
     const [roundData, setRoundData] = useState(null);
-    console.log(oneData);
+    
     const handleOneIsLike = (idx) => {
         
     }
@@ -44,7 +44,6 @@ export default function({mypageTab}) {
             ) : null}
             {mypageTab === 2 ? roundData &&
             roundData.map((one) => {
-                console.log(one);
                 return(
                     <div key={`${one.goWay.id}-${one.returnWay.id}`} style={{display: 'flex',alignItems: 'center', marginLeft: '160px'}}>
                         <RoundTicket isLike={one.isLike} goWay={one.goWay} returnWay={one.returnWay} totalPrice={one.totalPrice} handleLikeData={handleOneIsLike}/>
