@@ -15,6 +15,7 @@ import Detail from "./pages/pack/detail/Detail";
 import Regist from "./pages/pack/regist/Regist";
 import Modify from "./pages/pack/modify/Modify";
 import Mypage from "./pages/mypage/Mypage";
+import LikeNotification from "./components/common/footer/LikeNotification";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/mypage" element={<Mypage />} />
         </Routes>
       </MainContainer>
+      <LikeNotification />
       <Footer />
     </div>
   );
