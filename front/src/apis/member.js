@@ -1,7 +1,7 @@
 import store from "../store/store";
 import Send from './send';
 
-const memberURL = 'api/member';
+const memberURL = "api/member";
 export const member = {
   // 고객 정보 호출
   info: async(data) => { 

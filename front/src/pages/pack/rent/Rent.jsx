@@ -87,7 +87,7 @@ const Rent = () => {
   return (
     <RentContainer>
       {isLoading && <Spinner />}
-      <h1>살게요</h1>
+      <h1>빌려드려요</h1>
       <ItemController setNewCondition={setNewCondition} />
       {itemList.length ? (
         <ItemList itemList={itemList} />
