@@ -13,19 +13,18 @@ export default function({mypageTab}) {
     const [oneData, setOneData] = useState(null);
     const [roundData, setRoundData] = useState(null);
     console.log(oneData);
-    const handleLikeData = (ticketId, value) => {
-
+    const handleOneIsLike = (idx) => {
+        
     }
+
     useEffect(() => {
         const getData = async () => {
             if(mypageTab === 1) {
                 const response = await member.one(memberId);
-                console.log(response);
                 setOneData(response);
             }
             else {
                 const response = await member.round(memberId);
-                console.log(response);
                 setRoundData(response);
             }
         };
@@ -34,18 +33,24 @@ export default function({mypageTab}) {
     return(
         <div>
             {mypageTab === 1 ? oneData &&
-            oneData.map((one) => 
-                <div key={one.ticket.id} style={{display: 'flex',alignItems: 'center', marginLeft: '160px'}}>
-                    <OneWayTicket isRound={false} handleLikeData={handleLikeData} isLike={one.isLike} ticket={one.ticket} />
+            oneData.map((one, idx) => {
+                return (
+                    <div key={one.ticket.id} style={{display: 'flex',alignItems: 'center', marginLeft: '160px'}}>
+                    <OneWayTicket idx={idx} isRound={false} isLike={one.isLike} ticket={one.ticket} handleLikeData={handleOneIsLike}/>
                     <MypageFlightPrice wantedPrice={one.wantedPrice} wish={'one'} wayId={one.onewayId}/>
                 </div>
-            ) : <span>?!</span>}
+                )
+            }
+            ) : null}
             {mypageTab === 2 ? roundData &&
             roundData.map((one) => {
-                <div style={{display: 'flex',alignItems: 'center', border: '2px solid black',}}>
-                    <RoundTicket />
-                    <MypageFlightPrice wantedPrice={one.wantedPrice} wish={'round'} wayId={one.roundwayId}/>
-                </div>
+                console.log(one);
+                return(
+                    <div key={`${one.goWay.id}-${one.returnWay.id}`} style={{display: 'flex',alignItems: 'center', marginLeft: '160px'}}>
+                        <RoundTicket isLike={one.isLike} goWay={one.goWay} returnWay={one.returnWay} totalPrice={one.totalPrice} handleLikeData={handleOneIsLike}/>
+                        <MypageFlightPrice wantedPrice={one.wantedPrice} wish={'round'} wayId={one.roundwayId}/>
+                    </div>
+                )
             }) : null}
         </div>
     )
