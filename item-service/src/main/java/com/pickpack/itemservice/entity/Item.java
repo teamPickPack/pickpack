@@ -1,6 +1,7 @@
 package com.pickpack.itemservice.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,7 +38,7 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Chatroom> chatroomList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Soldout soldout;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -87,8 +88,9 @@ public class Item {
     public void setImage(String imgUrl){
         this.imgUrl = imgUrl;
     }
-    public void complete(){
+    public void complete(Soldout soldout){
         this.isComplete = true;
+        soldout.setItem(this);
     }
 }
 

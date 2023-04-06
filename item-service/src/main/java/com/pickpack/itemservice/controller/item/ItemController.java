@@ -86,10 +86,10 @@ public class ItemController {
         }
     }
 
-    @PutMapping("/complete")
-    public ResponseEntity<?> completeItem(@RequestBody Long itemId){
+    @PostMapping("/complete")
+    public ResponseEntity<?> completeItem(@RequestBody ItemMemberReq itemMemberReq){
         try {
-            return new ResponseEntity<>(itemService.completeItem(itemId), HttpStatus.OK);
+            return new ResponseEntity<>(itemService.completeItem(itemMemberReq.getItemId(), itemMemberReq.getMemberId()), HttpStatus.OK);
         }catch (Exception e){
             return exceptionHandling(e);
         }
