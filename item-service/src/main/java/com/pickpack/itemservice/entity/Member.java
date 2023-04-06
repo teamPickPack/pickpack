@@ -19,7 +19,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String mid;
-    private String pwd;
+    private String password;
     private String nickname;
 
     @OneToMany(mappedBy = "member")
