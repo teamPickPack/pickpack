@@ -1,7 +1,23 @@
+import { useState } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
+import { chat } from "../../../apis/chat";
+import store from "../../../store/store";
 import ChatItem from "./ChatItem";
 
 const ChatList = (props) => {
+  const [chatList, setChatList] = useState([]);
+
+  useEffect(() => {
+    const getChatList = async () => {
+      const result = await chat.get.room(store.getState().user.nickname);
+
+      setChatList(result);
+    };
+
+    getChatList();
+  }, []);
+
   return (
     <>
       <ListHeader>
@@ -10,17 +26,21 @@ const ChatList = (props) => {
           <TrashCanSVG />
           <CloseSVG
             clickEvent={() => {
-              console.log(123);
               props.setChatOpen(!props.chatOpen);
             }}
           />
         </div>
       </ListHeader>
       <ListBody>
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
-        <ChatItem />
+        {chatList
+          .sort((a, b) => {
+            if (a.lastMessageTime > b.lastMessageTime) return -1;
+            if (a.lastMessageTime === b.lastMessageTime) return 0;
+            return 1;
+          })
+          .map((chatItem, idx) => {
+            return <ChatItem chatItem={chatItem} key={idx} />;
+          })}
       </ListBody>
     </>
   );
@@ -74,7 +94,18 @@ const TrashCanSVG = () => {
   );
 };
 
-const ListBody = styled.div``;
+const ListBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 580px;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  ::-webkit-scrollbar {
+    display: none; /* Chrome/Safari 용 스크롤바 제거 */
+  }
+`;
 
 const ListHeader = styled.div`
   background: #432c7a;

@@ -2,10 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import jwt_decode from "jwt-decode";
 
 const initialState = {
-  memberId: null, 
+  memberId: null,
   nickname: null,
   accessToken: null,
   refreshToken: null,
+  firebaseOnMessage: false,
+  likeCount: [0, 0],
 };
 
 const userSlice = createSlice({
@@ -18,6 +20,12 @@ const userSlice = createSlice({
       state.accessToken = token;
       state.nickname = userInfo.nickname;
       state.memberId = (userInfo.id + 7) * 2373.15763; // 유저아이디 대충 암호화~
+    },
+    setFirebaseOnMessage(state, action) {
+      state.firebaseOnMessage = action.payload;
+    },
+    setLikeCount(state, action) {
+      state.likeCount = action.payload;
     },
   },
 });
