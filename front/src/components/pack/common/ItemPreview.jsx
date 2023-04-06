@@ -43,7 +43,7 @@ const ItemPreview = (props) => {
 
     interval = Math.floor(seconds / 3600);
     if (interval >= 1) {
-      return interval + "시간 전";
+      return interval + "시간전";
     }
 
     interval = Math.floor(seconds / 60);

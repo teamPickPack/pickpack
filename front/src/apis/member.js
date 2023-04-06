@@ -3,8 +3,8 @@ import Send from "./send";
 const memberURL = "api/member";
 export const member = {
   // 고객 정보 호출
-  info: async(data) => { 
-    const response  = await Send.get(`${memberURL}/${data / 2373.15763 - 7}`);
+  info: async (data) => {
+    const response = await Send.get(`${memberURL}/${data / 2373.15763 - 7}`);
     return response;
   },
   // 고객 회원가입
@@ -18,11 +18,24 @@ export const member = {
     return response;
   },
   //고객 거래 목록 호출
-  deal : async(data) => {
-    const response = await Send.get(`${memberURL}/${data / 2373.15763 - 7}/deal`);
+  deal: async (data) => {
+    const response = await Send.get(
+      `${memberURL}/${data / 2373.15763 - 7}/deal`
+    );
     return response;
-  }
-
+  },
+  rent: async (data) => {
+    const response = await Send.get(
+      `${memberURL}/${data / 2373.15763 - 7}/rent`
+    );
+    return response;
+  },
+  item: async (data) => {
+    const response = await Send.get(
+      `${memberURL}/${data / 2373.15763 - 7}/item`
+    );
+    return response;
+  },
 };
 //사용범: api 사용할 곳에서
 //import {member} from '?'

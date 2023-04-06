@@ -17,7 +17,6 @@ import { createPortal } from "react-dom";
 import { flight } from "../../../apis/flight";
 
 export default function List() {
-
   const {
     wayType,
     criterion,
@@ -70,7 +69,7 @@ export default function List() {
           },
         };
         console.log(data);
-        const response = (await flight.post.one(data));
+        const response = await flight.post.one(data);
         console.log(response);
         setData(response.ticketList);
         setTotalCount(response.totalCount);
@@ -116,14 +115,14 @@ export default function List() {
   }, [accessToken]);
 
   useEffect(() => {
-    console.log('currentPage가 돌아가유');
-    if(currentPage > 0){
+    console.log("currentPage가 돌아가유");
+    if (currentPage > 0) {
       const getFlightList = async () => {
         if (wayType === "one") {
           if (!departure.code | !destination.code | !startDate) {
             return;
           }
-  
+
           const data = {
             filter: {
               direct: direct,
@@ -142,7 +141,7 @@ export default function List() {
             },
           };
           console.log(data);
-          const response = (await flight.post.one(data));
+          const response = await flight.post.one(data);
           setData((data) => [...data, ...response.ticketList]);
         } else {
           if (!departure.code | !destination.code | !startDate | !endDate) {
@@ -167,14 +166,14 @@ export default function List() {
               sortType: "price",
             },
           };
-  
+
           console.log(data);
-  
+
           const response = await flight.post.round(data);
           setData((data) => [...data, ...response.ticketList]);
         }
       };
-  
+
       getFlightList();
     }
   }, [currentPage]);
@@ -250,7 +249,7 @@ export default function List() {
   const [compareBoxHeight, setCompareBoxHeight] = useState(
     window.innerHeight - 160
   );
-  
+
   // ---------------------- 무한 스크롤 부분.. ----------------------------
   const [timer, setTimer] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -328,7 +327,13 @@ export default function List() {
             onClick={() => handleCompareModalVisible("body")}
             style={{ minWidth: "1200px" }}
           >
-            <FistSection style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <FistSection
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <SearchTicket />
             </FistSection>
             <Content flexStyle={compareBoxVisible}>
@@ -404,18 +409,20 @@ export default function List() {
                     >
                       {totalCount && `${totalCount}개의 결과`}
                     </span>
-                    {data && <div>
-                      <label style={{ fontSize: "16px", fontWeight: "600" }}>
-                        정렬{" "}
-                      </label>
-                      <select style={{ fontSize: "16px", fontWeight: "600" }}>
-                        <option value="">금액낮은순</option>
-                        <option value="">변동폭큰순</option>
-                        <option value="">출발시간빠른순</option>
-                        <option value="">출발시간늦은순</option>
-                        <option value="">소요시간낮은순</option>
-                      </select>
-                    </div>}
+                    {data && (
+                      <div>
+                        <label style={{ fontSize: "16px", fontWeight: "600" }}>
+                          정렬{" "}
+                        </label>
+                        <select style={{ fontSize: "16px", fontWeight: "600" }}>
+                          <option value="">금액낮은순</option>
+                          <option value="">변동폭큰순</option>
+                          <option value="">출발시간빠른순</option>
+                          <option value="">출발시간늦은순</option>
+                          <option value="">소요시간낮은순</option>
+                        </select>
+                      </div>
+                    )}
                   </SearchInfo>
                 </AdditionalInfo>
                 <TicketList
@@ -426,34 +433,42 @@ export default function List() {
                     padding: "24px 0px",
                   }}
                 >
-                  {wayType === 'one' && data ? 
-                    data.map((one) => {
-                      one.isCheck = initialCheck('oneWay', one.ticket.id);
-                      return(
-                          <OneWayTicket key={one.ticket.id} fromCompare={false} isRound={false} handleLikeData={handleLikeData} 
-                          isCheck={one.isCheck} isLike={one.like} ticket={one.ticket} />
-                      )
-                    }) : null
-                  }
-                  {wayType === 'round' && data ?
-                    data.map((one, index) => {
-                      one.isCheck = initialCheck(
-                        "round",
-                        `${one.goWay.ticket.id}-${one.returnWay.ticket.id}`
-                      );
-                      return (
-                        <RoundTicket
-                          key={`${one.goWay.ticket.id}-${one.returnWay.ticket.id}-${index}`}
-                          fromCompare={false}
-                          handleLikeData={handleLikeData}
-                          isCheck={one.isCheck}
-                          isLike={one.like}
-                          goWay={one.goWay}
-                          returnWay={one.returnWay}
-                          totalPrice={one.totalPrice}
-                        />
-                      );
-                    }) : null}
+                  {wayType === "one" && data
+                    ? data.map((one) => {
+                        one.isCheck = initialCheck("oneWay", one.ticket.id);
+                        return (
+                          <OneWayTicket
+                            key={one.ticket.id}
+                            fromCompare={false}
+                            isRound={false}
+                            handleLikeData={handleLikeData}
+                            isCheck={one.isCheck}
+                            isLike={one.like}
+                            ticket={one.ticket}
+                          />
+                        );
+                      })
+                    : null}
+                  {wayType === "round" && data
+                    ? data.map((one, index) => {
+                        one.isCheck = initialCheck(
+                          "round",
+                          `${one.goWay.ticket.id}-${one.returnWay.ticket.id}`
+                        );
+                        return (
+                          <RoundTicket
+                            key={`${one.goWay.ticket.id}-${one.returnWay.ticket.id}-${index}`}
+                            fromCompare={false}
+                            handleLikeData={handleLikeData}
+                            isCheck={one.isCheck}
+                            isLike={one.like}
+                            goWay={one.goWay}
+                            returnWay={one.returnWay}
+                            totalPrice={one.totalPrice}
+                          />
+                        );
+                      })
+                    : null}
                 </TicketList>
               </div>
               {(compareBoxVisible && ticketListWidth > 880) ||
