@@ -5,6 +5,7 @@ import com.pickpack.flightservice.api.request.RoundTicketLikeReq;
 import com.pickpack.flightservice.entity.Member;
 import com.pickpack.flightservice.entity.OnewayTicketLike;
 import com.pickpack.flightservice.entity.RoundTicketLike;
+import com.pickpack.flightservice.entity.Ticket;
 import com.pickpack.flightservice.repository.MemberRepository;
 import com.pickpack.flightservice.repository.ticket.OnewayTicketLikeRepository;
 import com.pickpack.flightservice.repository.ticket.RoundTicketLikeRepository;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -32,13 +34,16 @@ public class TicketLikeServiceImpl implements TicketLikeService {
     @Override
     public void likeOnewayTicket(OnewayTicketLikeReq onewayTicketLikeReq) {
         Member member = memberRepository.getById(onewayTicketLikeReq.getMemberId());
+        Optional<Ticket> ticket = ticketRepository.findById(onewayTicketLikeReq.getTicketId());
+
         OnewayTicketLike onewayTicketLike = onewayTicketLikeRepository.findByTicketIdAndMember(onewayTicketLikeReq.getTicketId(), member);
+
         if(onewayTicketLike == null){
             onewayTicketLike = OnewayTicketLike.builder()
                     .isDelete(false)
                     .isChange(false)
                     .ticketId(onewayTicketLikeReq.getTicketId())
-                    .wantedPrice(0)
+                    .wantedPrice(ticket.get().getPrice())
                     .member(member)
                     .build();
         }else{
@@ -69,6 +74,9 @@ public class TicketLikeServiceImpl implements TicketLikeService {
     @Override
     public void likeRoundTicket(RoundTicketLikeReq roundTicketLikeReq) {
         Member member = memberRepository.getById(roundTicketLikeReq.getMemberId());
+        Optional<Ticket> ticketFrom = ticketRepository.findById(roundTicketLikeReq.getTicketFromId());
+        Optional<Ticket> ticketTo = ticketRepository.findById(roundTicketLikeReq.getTicketToId());
+
         RoundTicketLike roundTicketLike = roundTicketLikeRepository.findByTicketToIdAndTicketFromIdAndMember(roundTicketLikeReq.getTicketToId(), roundTicketLikeReq.getTicketFromId(), member);
         if(roundTicketLike == null) {
             roundTicketLike = RoundTicketLike.builder()
@@ -76,7 +84,7 @@ public class TicketLikeServiceImpl implements TicketLikeService {
                     .isChange(false)
                     .ticketToId(roundTicketLikeReq.getTicketToId())
                     .ticketFromId(roundTicketLikeReq.getTicketFromId())
-                    .wantedPrice(0)
+                    .wantedPrice(ticketFrom.get().getPrice() + ticketTo.get().getPrice())
                     .member(member)
                     .build();
         }else{
