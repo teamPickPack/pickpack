@@ -182,7 +182,7 @@ const NavSection = styled.div`
 `;
 const Background = styled.div`
   position: fixed;
-  z-index: 50;
+  z-index: 10000;
   top: 0;
   bottom: 0;
   left: 0;
