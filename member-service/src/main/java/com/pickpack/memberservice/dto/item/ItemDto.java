@@ -14,7 +14,7 @@ public class ItemDto {
     private Category category;
     private Integer price;
     private String content;
-    private String img_url;
+    private String imgUrl;
     private String registDate;
     private Long buyer;
     private boolean isComplete;
