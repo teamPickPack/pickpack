@@ -30,14 +30,10 @@ export const messaging = getMessaging();
 
 export const getFirebasToken = async () => {
   onMessage(messaging, (res) => {
-    console.log("PICK PACK RESPONSE : ", res);
-
     const likeCountData = [
       res.data.OnewayLikeCount,
       res.data.RoundwayLikeCount,
     ];
-
-    console.log(likeCountData);
 
     if (+likeCountData[0] + +likeCountData[1] > 0) {
       store.dispatch(userAction.setLikeCount(likeCountData));
@@ -51,21 +47,20 @@ export const getFirebasToken = async () => {
     vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY,
   })
     .then((token) => {
-      console.log(token);
       Send.post(`/api/member/fcm`, {
         targetToken: token,
         memberId: store.getState().user.memberId / 2373.15763 - 7,
       }).then((res) => {
         if (res === "success") {
           try {
-            console.log(res);
+            console.log("Success To Connect FCM Service");
           } catch (err) {
-            console.log(err);
+            console.error(err);
           }
         }
       });
     })
     .catch((err) => {
-      console.log(err, "can't get the firebase token");
+      console.error(err, "Can't Get the Firebase Token");
     });
 };

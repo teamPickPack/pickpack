@@ -18,9 +18,6 @@ const Main = () => {
   return (
     <>
       <FirstSection>
-        {/* <div className="greetings-section">
-          <div>안녕하세요</div>
-        </div> */}
         <div className="search-section">
           <SearchTicket
             departure={departure}
@@ -55,6 +52,17 @@ const FirstSection = styled.div`
   height: 200px;
   background: url(${mainBanner});
   background-size: cover;
+  // background: linear-gradient(
+  //   170deg,
+  //   #fff2db 20.29%,
+  //   #ff8fb1 60.29%,
+  //   #ffffff 80.36%
+  // );
+
+  // // -webkit-background-clip: text;
+  // // -webkit-text-fill-color: transparent;
+  // // background-clip: text;
+  // // text-fill-color: transparent;
   padding: 48px 0;
   margin-bottom: 48px;
   display: flex;

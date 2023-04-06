@@ -48,7 +48,6 @@ const Modify = () => {
         const res = await item.post.detail(param.itemNo, memberId);
 
         window.scrollTo(0, 0);
-        console.log(res.item);
         if (memberId !== res.item.memberId) {
           alert("비정상적인 접근입니다.");
 
@@ -198,14 +197,8 @@ const Modify = () => {
 
     let imgUrl = "";
     await loadedImage.forEach((element, idx) => {
-      console.log(element);
       imgUrl += element + "|";
-      // if (idx === loadedImage.length - 1) {
-      //   imgUrl = imgUrl.substring(0, imgUrl.length - 1);
-      // }
     });
-
-    console.log(imgUrl);
 
     const data = {
       item: {
@@ -220,8 +213,6 @@ const Modify = () => {
       },
       imgs: images,
     };
-
-    console.log(imgUrl, data);
 
     const modifyData = async () => {
       const formData = new FormData();
