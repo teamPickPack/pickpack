@@ -2,6 +2,7 @@ package com.pickpack.itemservice.entity;
 
 import com.pickpack.itemservice.service.itemLike.ItemLikeService;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Member {
 
     @Column(name = "member_id")
