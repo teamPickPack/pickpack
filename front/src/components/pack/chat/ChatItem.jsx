@@ -83,7 +83,13 @@ const ChatItem = (props) => {
         <input type="checkbox" value={chatItem.roomId} />
         <div>
           <p>{chatItem.nickName}</p>
-          <p>{chatItem.lastMessage}</p>
+          <p>
+            {chatItem.lastMessage
+              ? chatItem.lastMessage.substring(0, 4) === "http"
+                ? "사진"
+                : chatItem.lastMessage
+              : "새로운 채팅방입니다."}
+          </p>
         </div>
       </div>
       <div className="right-div">
