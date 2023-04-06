@@ -3,6 +3,7 @@ import OneWayTicket from "./elements/OneWayTicket";
 import RoundTicket from "./elements/RoundTicket";
 import SearchTicket from "../main/elements/SearchTicket";
 import CompareModal from "./elements/CompareModal";
+import Loading from "./elements/Loading";
 import mainBanner from "../../../assets/image/mainBanner.png";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -313,19 +314,7 @@ export default function List() {
   return (
     <>
       {pageLoading ? (
-        <div
-          style={{
-            position: "fixed",
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            zIndex: 1001,
-            background: "white",
-          }}
-        >
-          로딩중입니다..
-        </div>
+        <Loading />
       ) : (
         <>
           {compareModalVisible && (
