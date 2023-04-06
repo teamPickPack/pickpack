@@ -41,7 +41,7 @@ const WorldMap = (props) => {
         maxBounds={L.latLngBounds([-90, -Infinity], [90, Infinity])}
         maxBoundsViscosity={1}
       >
-        <TileLayer url="http://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}" />
+        <TileLayer url="https://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}" />
         {/* <TileLayer url="http://mt0.google.com/vt/lyrs=p&hl=ko&x={x}&y={y}&z={z}" /> */}
         {/* <TileLayer url="http://mt0.google.com/vt/lyrs=y&hl=ko&x={x}&y={y}&z={z}" /> */}
         {/* <TileLayer url="http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png" /> */}

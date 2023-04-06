@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import borrow from "../../../assets/image/borrow.jpg";
 import { chatAction } from "../../../store/chatSlice";
@@ -10,6 +10,10 @@ import noImg from "../../../assets/image/noimg.png";
 const ChatItem = (props) => {
   const dispatch = useDispatch();
   const [chatItem, setChatItem] = useState(props.chatItem);
+
+  const myNickName = useSelector((state) => {
+    return state.user.nickname;
+  });
 
   const openChatRoom = () => {
     const data = {
@@ -68,10 +72,13 @@ const ChatItem = (props) => {
     return "방금 전";
   };
 
-  // console.log(chatItem);
+  const getImgUrl = (imgUrl) => {
+    const imgs = imgUrl.split("|");
+    return imgs[0];
+  };
 
   return (
-    <ChatItemContainer onClick={openChatRoom}>
+    <ChatItemContainer>
       <div className="left-div">
         <input type="checkbox" value={chatItem.roomId} />
         <div>
@@ -83,19 +90,22 @@ const ChatItem = (props) => {
         <div className="right-info">
           <div className="">{timeAgo(chatItem.lastMessageTime)}</div>
           {chatItem.new ? (
-            <div className="new-box">New</div>
+            chatItem.lastWriter !== myNickName && (
+              <div className="new-box">New</div>
+            )
           ) : (
             <div className="empty-box"></div>
           )}
         </div>
         <img
-          src={chatItem.imgUrl.substring(0, chatItem.imgUrl.length - 1)}
+          src={getImgUrl(chatItem.imgUrl)}
           alt={chatItem.imgUrl}
           onError={(e) => {
             e.target.src = noImg;
           }}
         />
       </div>
+      <div className="open-chat-box" onClick={openChatRoom}></div>
     </ChatItemContainer>
   );
 };
@@ -170,6 +180,14 @@ const ChatItemContainer = styled.div`
       margin-left: 8px;
       border: 1px solid #d9d9d9;
     }
+  }
+
+  .open-chat-box {
+    position: absolute;
+    background: none;
+    width: 93%;
+    right: 0;
+    height: 72px;
   }
 `;
 
