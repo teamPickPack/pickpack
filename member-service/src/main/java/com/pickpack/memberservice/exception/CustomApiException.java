@@ -2,6 +2,7 @@ package com.pickpack.memberservice.exception;
 
 import com.pickpack.memberservice.api.commonApi.ErrorApi;
 import com.pickpack.memberservice.exception.custom.*;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CustomApiException {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    // 이미 삭제된 티켓일때
+    @ExceptionHandler(AlreadyDeleteTicketException.class)
+    public ResponseEntity<?> apiException6(AlreadyDeleteTicketException e){
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ErrorApi("이미 삭제된 티켓입니다."), HttpStatus.BAD_REQUEST);
+    }
 
     // 동일한 닉네임이 존재할때
     @ExceptionHandler(AlreadyNicknameException.class)
