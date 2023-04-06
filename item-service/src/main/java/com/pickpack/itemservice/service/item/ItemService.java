@@ -12,6 +12,7 @@ import com.pickpack.itemservice.repository.city.CityRepository;
 import com.pickpack.itemservice.repository.item.ItemRepository;
 import com.pickpack.itemservice.repository.itemLike.ItemLikeRepository;
 import com.pickpack.itemservice.repository.member.MemberRepository;
+import com.pickpack.itemservice.repository.soldout.SoldoutRepository;
 import com.pickpack.itemservice.s3.AwsS3Uploader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class ItemService {
     private final CityRepository cityRepository;
     private final MemberRepository memberRepository;
     private final ItemLikeRepository itemLikeRepository;
+    private final SoldoutRepository soldoutRepository;
     private final AwsS3Uploader s3Uploader;
     private static String dirName = "item";
     private static Integer itemSize = 12;
@@ -168,10 +170,15 @@ public class ItemService {
         return new ItemDetailRes(isLike, item, items);
     }
 
-    public Long completeItem(Long itemId){
+    public Long completeItem(Long itemId, Long memberId){
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new IsNullException(itemId + "에 해당하는 물품 게시글이 없습니다."));
-        item.complete();
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IsNullException(memberId + "에 해당하는 회원이 없습니다."));
+        Soldout soldout = Soldout.createSoldout(item, member);
+        soldoutRepository.save(soldout);
+        item.complete(soldout);
         itemRepository.save(item);
+        System.out.println(soldout.toString());
+
         return item.getId();
     }
 
