@@ -23,7 +23,6 @@ export const item = {
   },
   post: {
     item: async (data) => {
-      console.log(data);
       const response = await Send.post(`${itemURL}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -51,6 +50,10 @@ export const item = {
       });
       return response;
     },
+    complete: async (data) => {
+      const response = await Send.put(`${itemURL}/complete`, data);
+      return response;
+    },
   },
   put: {
     like: async (itemId, memberId) => {
@@ -68,6 +71,7 @@ export const item = {
       });
       return response;
     },
+
     // schedule: async (reservationIdx, acceptFlag) => {
     //   const response = await Send.put(
     //     `${masterURL}/reservation/accept/${reservationIdx}/${acceptFlag}`,

@@ -20,8 +20,6 @@ const ItemController = (props) => {
   const navigator = useNavigate();
 
   useEffect(() => {
-    console.log("여긴 컨트롤러");
-
     const getTagList = async () => {
       const res = await item.get.tag();
       setTagList(res.results);
@@ -32,8 +30,6 @@ const ItemController = (props) => {
 
   const searchHandler = async (e) => {
     e.preventDefault();
-
-    console.log("여긴 컨트롤러 검색부분");
 
     if (searchType === "tag" && !inputText.current.value) {
       alert("검색할 도시를 선택해주세요.");

@@ -70,8 +70,6 @@ const Buy = () => {
 
     if ((totalHeight > scrollPoint) | !hasNext | (pageNum === 0)) return;
 
-    console.log(123);
-
     if (timer) return;
     setTimer(true);
     setIsLoading(true);

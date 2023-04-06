@@ -26,8 +26,6 @@ const Detail = () => {
     const getItemInfo = async () => {
       const res = await item.post.detail(param.itemNo, memberId);
 
-      console.log(res);
-
       window.scrollTo(0, 0);
       setItemDetail(res);
       setIsLike(res.isLike);
@@ -40,8 +38,6 @@ const Detail = () => {
     if (!itemDetail) {
       return;
     }
-
-    console.log(itemDetail.item.imgUrl);
 
     let imgs = itemDetail.item.imgUrl.split("|").filter((img) => {
       return img !== "";
@@ -213,9 +209,7 @@ const Detail = () => {
                         id="like"
                         value={itemDetail.isLike}
                         type="checkbox"
-                        onChange={() => {
-                          console.log("hi");
-                        }}
+                        onChange={() => {}}
                         checked={isLike}
                       />
                       <label htmlFor="like" onClick={likeHandler}>
