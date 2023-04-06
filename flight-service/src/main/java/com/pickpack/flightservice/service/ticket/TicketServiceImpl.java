@@ -90,7 +90,9 @@ public class TicketServiceImpl implements TicketService {
 
             boolean isLike = false; //항공권 찜여부
             OnewayTicketLike onewayTicketLike = onewayTicketLikeRepository.findByTicketIdAndMember(ticket.getId(), member);
-            if(onewayTicketLike != null) isLike = true;
+            if(onewayTicketLike != null && !onewayTicketLike.getIsDelete()) {
+                isLike = true;
+            }
 
             OneWayTicketRes ticketRes = OneWayTicketRes.builder().
                     isLike(isLike)
@@ -255,7 +257,9 @@ public class TicketServiceImpl implements TicketService {
 
                boolean isLike = false; //항공권 찜여부
                RoundTicketLike roundTicketLike = roundTicketLikeRepository.findByTicketToIdAndTicketFromIdAndMember(goWayTicket.getId(), returnWayTicket.getId(), member);
-               if(roundTicketLike != null) isLike = true;
+               if(roundTicketLike != null && !roundTicketLike.getIsDelete()) {
+                   isLike = true;
+               }
 
                RoundTicketRes ticketRes = RoundTicketRes.builder().
                        isLike(isLike)
