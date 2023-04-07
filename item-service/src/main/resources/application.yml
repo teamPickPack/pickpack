@@ -1,0 +1,58 @@
+server:
+  port: 0
+  tomcat:
+    mbeanregistry:
+      enabled: true
+
+spring:
+  application:
+    name: item
+  config:
+    import: "optional:configserver:http://54.180.157.223:7777/"
+  cloud:
+    config:
+      name: member
+      profile: default
+  servlet:
+    multipart:
+      max-file-size: 256MB
+      max-request-size: 256MB
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+logging:
+  config: classpath:Logback-spring.xml
+  level:
+    org.hibernate.sql : debug
+
+cloud:
+  aws:
+    s3:
+      bucket: pickpack8
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
