@@ -1,0 +1,72 @@
+server:
+  port: 0
+  tomcat:
+    mbeanregistry:
+      enabled: true
+
+spring:
+  application:
+    name: flight
+  config:
+    import: "optional:configserver:http://54.180.157.223:7777/"
+  cloud:
+    config:
+      name: member
+      profile: default
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      cache-null-values: true
+  redis:
+    host: 54.180.157.223
+    port: 6370
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+logging:
+  level:
+    org.hibernate.sql : debug
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+########## 암호화 정보 ##############
+
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://54.180.157.223:3306/pickpack?
+#    username:  encrypt
+#    password:  encrypt
+
+#cloud:
+#  aws:
+#    credentials:
+#      access-key:  encrypt
+#      secret-key:  encrypt
