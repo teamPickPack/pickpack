@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import store from "../../../store/store";
 import { chat } from "../../../apis/chat";
 import noImg from "../../../assets/image/noimg.png";
+import { item } from "../../../apis/item";
 
 const ChatItem = (props) => {
   const dispatch = useDispatch();
@@ -15,14 +16,27 @@ const ChatItem = (props) => {
     return state.user.nickname;
   });
 
-  const openChatRoom = () => {
+  const openChatRoom = async () => {
+    const response = await item.post.detail(
+      chatItem.itemId,
+      store.getState().user.memberId / 2373.15763 - 7
+    );
+
+    const writerNickname = response.item.nickname;
+
     const data = {
       itemId: chatItem.itemId,
-      seller: chatItem.nickName,
-      buyer: store.getState().user.nickname,
+      seller:
+        writerNickname === chatItem.nickName
+          ? chatItem.nickName
+          : store.getState().user.nickname,
+      buyer:
+        writerNickname === chatItem.nickName
+          ? store.getState().user.nickname
+          : chatItem.nickName,
     };
 
-    chat.post.chat(data);
+    await chat.post.chat(data);
   };
 
   const timeAgo = (datetimeString) => {
