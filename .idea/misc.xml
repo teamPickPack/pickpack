@@ -5,6 +5,7 @@
     <file type="web" url="file://$PROJECT_DIR$/apigateway-service" />
     <file type="web" url="file://$PROJECT_DIR$/discoveryservice" />
   </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="azul-11" project-jdk-type="JavaSDK" />
   <component name="ProjectType">
     <option name="id" value="jpab" />
   </component>
