@@ -1,0 +1,57 @@
+
+spring:
+  data:
+    redis:
+      host: 54.180.157.223
+      port: 6379
+      password: "pickpack"
+  application:
+    name: chat
+  #  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    # rewriteBatchedStatements=true <- mysql jdbc
+#    url: jdbc:mysql://54.180.157.223:3306/pickpack?serverTimezone=UTC&characterEncoding=UTF-8&rewriteBatchedStatements=true&profileSQL=true&logger=Slf4JLogger
+#    username: root
+#    password: ssafy
+  config:
+    import: "optional:configserver:http://54.180.157.223:7777/"
+  cloud:
+    config:
+      name: member
+      profile: default
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate:
+        format_sql: true
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+#cloud:
+#  aws:
+#    s3:
+#      bucket: travelmaker2
+#    #TODO CloudFormation
+#    stack.auto: false
+#    region.static: ap-northeast-2
+#    credentials:
+#      accessKey: AKIAXDB4L5CHN5CQPZHG
+#      secretKey: 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
+server:
+  port: 9090
