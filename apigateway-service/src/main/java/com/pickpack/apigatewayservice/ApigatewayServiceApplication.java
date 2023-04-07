@@ -1,13 +1,18 @@
-package com.pickpack.apigatewayservice;
+package com.pickpack.memberservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
 
 @SpringBootApplication
-public class ApigatewayServiceApplication {
+//@EnableScheduling
+@EnableCaching
+public class MemberServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ApigatewayServiceApplication.class, args);
+        SpringApplication.run(MemberServiceApplication.class, args);
     }
 
 }
