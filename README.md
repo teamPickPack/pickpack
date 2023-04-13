@@ -1,13 +1,28 @@
-# 🛫 Pick&Pack 🛬
+# 🛫 Pick&Packer 🛬
 
-<Br>
-<Br>
-<Br>
+## **합리적인 항공권 결정**과 여행 물품 현지 거래를 위한 웹 서비스
+
+## ✨ 프로젝트 진행 기간
+- 2023.02 ~ 2023.04
+
+## 🎨 기획 배경
+코로나19가 완화됨에 따라 해외여행 수요가 급증하고 있다. 해외 여행을 계획하는 데 가장 중요한 것은 항공권이다. 기존 항공권 예매 사이트에서 불편한 점을 찾을 수 있었다.
+### 불편한 점
+- 항공권 가격의 과거 데이터를 제공하지 않아 지금 보고 있는 항공권 가격이 합리적인지 알 수 없다.
+- 여러 개의 항공권을 한 눈에 비교할 수 없다.
+- 찜한 항공권의 가격이 원하는 가격에 도달했는지 확인하는 과정이 귀찮다.
+- 대부분 항공권 예약 사이트에선 인기 여행지로 도시만 추천한다.
+
+## 🧸 주요 기능
+- 항공권 가격 추이를 시각적으로 볼 수 있다.
+- 여러 개의 항공권을 선택해 한 눈에 비교할 수 있다.
+- 원하는 가격에 도달하면 찜한거 알림을 받을 수 있다.
+- 관광지 기준으로 주변 공항을 지도에 표시한다.
+- 여행 물품을 구매/대여할 수 있다.
+<br>
 
 ## 🌎 Pick 서비스 - 메인 페이지
 
-<br>
-<br>
 
 ### 지도 & 여행지 서비스
 
@@ -45,8 +60,8 @@
 <br>
 
 <div width="100%">
-<img src="https://drive.google.com/uc?export=view&id=1_BibUfU4tKV-NXhwWPjPUrLn5a6LesXs" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1BSs2U5GDzmlXb4s_hfZK_MgzV1pd2k9Z" width="100%"> 
+<img src="https://drive.google.com/uc?export=view&id=1_BibUfU4tKV-NXhwWPjPUrLn5a6LesXs" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1BSs2U5GDzmlXb4s_hfZK_MgzV1pd2k9Z" width="77%"> 
 </div>
 
 <br/>
@@ -71,11 +86,10 @@
 
 
 <div width="100%">
-<img src="https://drive.google.com/uc?export=view&id=1E4AHWRgVMLkm1v-__M45Qfh4AQ-TkDs4" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1o1hOpnde20ZwhsyopXjk3EV8QncpBtsf" width="100%"> 
+<img src="https://drive.google.com/uc?export=view&id=1E4AHWRgVMLkm1v-__M45Qfh4AQ-TkDs4" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1o1hOpnde20ZwhsyopXjk3EV8QncpBtsf" width="77%"> 
 </div>
 
-<br>
 <br>
 <br>
 
@@ -89,17 +103,16 @@
 
 
 <br>
-<Br>
-<br>
+
 
 > 편도 검색 결과
 
 <br>
 
 <div width="100%">
-<img src="https://drive.google.com/uc?export=view&id=1lGaQrm0L8yesChbDk_ZdKj-Vnz33nz1E" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1k2NTE8m66uz_kT4t8cFldMDafNe09LVs" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1hJ8Rxc9aUD6Jwa3URzysHUDhVJ0YQSa7" width="100%"> 
+<img src="https://drive.google.com/uc?export=view&id=1lGaQrm0L8yesChbDk_ZdKj-Vnz33nz1E" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1k2NTE8m66uz_kT4t8cFldMDafNe09LVs" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1hJ8Rxc9aUD6Jwa3URzysHUDhVJ0YQSa7" width="77%"> 
 </div> 
 
 > 왕복 검색 결과
@@ -107,9 +120,9 @@
 <br>
 
 <div width="100%">
-<img src="https://drive.google.com/uc?export=view&id=105Gt2K7hfmT37p3LsJshs1Cl376CyURl" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1UREK3B66UKKiS87YyGb6v5c1GKGntnQB" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1y_buVBadG8iu1ngDcQpxO7_dGdTFEUKA" width="100%"> 
+<img src="https://drive.google.com/uc?export=view&id=105Gt2K7hfmT37p3LsJshs1Cl376CyURl" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1UREK3B66UKKiS87YyGb6v5c1GKGntnQB" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1y_buVBadG8iu1ngDcQpxO7_dGdTFEUKA" width="77%"> 
 </div> 
 
 
@@ -117,13 +130,9 @@
 <br>
 <hr>
 <br>
-<br>
 
 ## 🛒 Pack 서비스 
 
-<br>
-<br>
-<br>
 
 
 ### 여행 물품 거래 서비스
@@ -143,10 +152,10 @@
 
 
 <div width="100%">
-<img src="https://drive.google.com/uc?export=view&id=1HvwgVdoJmExi7eH3ZuuLDGIrKFxqj0DR" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=10kAS3Adp1Q9dS-QY7Z-5dOXP4_IJTl14" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=17GBuGgMBVKe_DivusvQ2ydbY-n_YNKdD" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1VvPZ_p3hDlOSJ5M08ZzEhiYTvO2i_22c" width="100%"> 
+<img src="https://drive.google.com/uc?export=view&id=1HvwgVdoJmExi7eH3ZuuLDGIrKFxqj0DR" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=10kAS3Adp1Q9dS-QY7Z-5dOXP4_IJTl14" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=17GBuGgMBVKe_DivusvQ2ydbY-n_YNKdD" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1VvPZ_p3hDlOSJ5M08ZzEhiYTvO2i_22c" width="77%"> 
 </div>
 
 <br>
@@ -157,8 +166,7 @@
 
 ## 🪂 사용자 서비스 페이지
 
-<br>
-<br>
+
 
 ### 로그인/회원가입
 
@@ -169,8 +177,8 @@
 
 
 <div width="100%">
-<img src="https://drive.google.com/uc?export=view&id=16ORns1eZsC4nLyPDsAeySEKXKbM1Dvqv" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=15I7ME8Q0FFap81AtsPdseg1ijvyxXu_O" width="100%"> 
+<img src="https://drive.google.com/uc?export=view&id=16ORns1eZsC4nLyPDsAeySEKXKbM1Dvqv" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=15I7ME8Q0FFap81AtsPdseg1ijvyxXu_O" width="77%"> 
 </div>
 
 <br/>
@@ -186,10 +194,10 @@
 <br>
 
 <div width="100%">
-<img src="https://drive.google.com/uc?export=view&id=17GBuGgMBVKe_DivusvQ2ydbY-n_YNKdD" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1VvPZ_p3hDlOSJ5M08ZzEhiYTvO2i_22c" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=1XLHPn6bJa1gwPVUaPNf6zPqrGdNRjjra" width="100%"> 
-<img src="https://drive.google.com/uc?export=view&id=116XUFJDYUCzEiBtaLLoeKXuXojrszQo1" width="100%"> 
+<img src="https://drive.google.com/uc?export=view&id=17GBuGgMBVKe_DivusvQ2ydbY-n_YNKdD" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1VvPZ_p3hDlOSJ5M08ZzEhiYTvO2i_22c" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=1XLHPn6bJa1gwPVUaPNf6zPqrGdNRjjra" width="77%"> 
+<img src="https://drive.google.com/uc?export=view&id=116XUFJDYUCzEiBtaLLoeKXuXojrszQo1" width="77%"> 
 </div>
 
 <br>
@@ -206,7 +214,7 @@
 <br>
 
 <div width="100%">
-<img src="https://drive.google.com/uc?export=view&id=1Sd0urVarB7TbIZvojh5tAq01lNfdDxtK" width="100%"> 
+<img src="https://drive.google.com/uc?export=view&id=1Sd0urVarB7TbIZvojh5tAq01lNfdDxtK" width="77%"> 
 </div>
 
 
@@ -318,13 +326,13 @@
 <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
 <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
 <img src="https://img.shields.io/badge/Spring cloud-6DB33F?style=for-the-badge&logo=icloud&logoColor=white">
-<img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=icloud&logoColor=white">
+<img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white">
 <br>
 <img src="https://img.shields.io/badge/Let's Encrypt-003A70?style=for-the-badge&logo=Let's Encrypt&logoColor=white">
-<img src="https://img.shields.io/badge/prometheus-E6522C?style=for-the-badge&logo=Let's Encrypt&logoColor=white">
+<img src="https://img.shields.io/badge/prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white">
 <img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white">
-<img src="https://img.shields.io/badge/apachespark-E25A1C?style=for-the-badge&logo=icloud&logoColor=white">
-<img src="https://img.shields.io/badge/apachehadoop-66CCFF?style=for-the-badge&logo=icloud&logoColor=white">
+<img src="https://img.shields.io/badge/apachespark-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white">
+<img src="https://img.shields.io/badge/apachehadoop-66CCFF?style=for-the-badge&logo=apachehadoop&logoColor=white">
 <br>
 
 </div>
@@ -354,6 +362,8 @@
 - Micrometer Prometheus
 - com.auth0:java-jwt `4.0.0`
 - okhttp3 `4.2.2`
+- hadoop `3.2.2`
+- spark `3.2.1`
 
 <br>
 
@@ -385,16 +395,14 @@
 
 ### ✨ 기술 특이점
 
-<br>
-<br>
 
 🎯 **빅데이터 분산 시스템 구현**
 
 
-* ⚙ 항공권 크롤링
+* ⚙ **항공권 크롤링**
   - Selenium을 통해 G마켓 항공에서 매일 미래 7일치 항공권 데이터를 수집 (1일 약 40만건)
 
-* 🐘 Hadoop
+* 🐘 **Hadoop**
   - 수집한 항공권 데이터를 전처리 및 부하방지를 위해 분산 저장
 
 
@@ -449,9 +457,6 @@
 
 
 <br>
-<br>
-<br>
-
 
 
 🎯 **모니터링**
@@ -459,8 +464,6 @@
 * prometheus & grafana
   - 서버의 metric을 수집하여, 해당 서버의 부하 및 메모리 사용량 등을 시각화
 
-<br>
-<br>
 <br>
 
 
@@ -472,8 +475,6 @@
   - kibana : 로그 데이터 시각화
 
 
-<br>
-<br>
 <br>
 
 
@@ -522,7 +523,7 @@
 
 | 최희수          | 김승희   | 이상민   | 김아린  | 신현광  | 허윤회  |
 | ----------------- | -------- | -------- | ------- | ------- | ------- |
-| <img src="https://drive.google.com/uc?export=view&id=1Aa5NYhPoOCgEs5zLE_TKz9HhzbBkxluq" width="100"> |<img src="https://drive.google.com/uc?export=view&id=1iRNaffC1C31PEIkaKrORM2K_dcXfVQBP" width="100">  | <img src="https://drive.google.com/uc?export=view&id=1R2oxLcnj5wYU-uxUN_doBKmwCw0E3f1O" width="100"> | <img src="https://drive.google.com/uc?export=view&id=1OS2S1F7fOgOJLcy4S1iZxWJ8ZVR1QXQy" width="100"> | <img src="https://drive.google.com/uc?export=view&id=1Ovhz5u-F0prGnCZDD6EBCX2r0sNLrEjX" width="100">  | <img src="https://drive.google.com/uc?export=view&id=1xurbEFC175fHUnzxL9rmap9vUR_BvyUL" width="100">  |
+| <img src="https://drive.google.com/uc?export=view&id=1LKbviC-bMYXOXG6OuQI4D6AZEq5Exfze" width="100"> |<img src="https://drive.google.com/uc?export=view&id=1iRNaffC1C31PEIkaKrORM2K_dcXfVQBP" width="100">  | <img src="https://drive.google.com/uc?export=view&id=1R2oxLcnj5wYU-uxUN_doBKmwCw0E3f1O" width="100"> | <img src="https://drive.google.com/uc?export=view&id=1OS2S1F7fOgOJLcy4S1iZxWJ8ZVR1QXQy" width="100"> | <img src="https://drive.google.com/uc?export=view&id=1Ovhz5u-F0prGnCZDD6EBCX2r0sNLrEjX" width="100">  | <img src="https://drive.google.com/uc?export=view&id=1xurbEFC175fHUnzxL9rmap9vUR_BvyUL" width="100">  |
 | Leader & Backend | Backend | Backend | Backend | Frontend | Frontend |
 
 <br>
